@@ -2,7 +2,7 @@
 
 **Link do vídeo:** PENDENTE — gravação e publicação ainda não concluídas.
 
-Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas, turnês e espetáculos teatrais.  **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
+Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas, turnês e espetáculos teatrais. **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
 
 ## Integrantes
 
@@ -141,7 +141,7 @@ O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos 
 | Billie Eilish | Hit Me Hard and Soft: The Tour | Consulta editorial, sem reserva |
 | Taylor Swift | The Eras Tour | Consulta editorial, sem reserva |
 | Beyoncé | Renaissance World Tour | Consulta editorial, sem reserva |
-| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |
+| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |\n| O Fantasma da Ópera | Musical teatral | Consulta editorial, sem reserva |\n| Wicked | Musical teatral | Consulta editorial, sem reserva |
 
 O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
 
