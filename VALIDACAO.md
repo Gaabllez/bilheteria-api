@@ -18,6 +18,31 @@ O Passo 6 exige três eventos. A revisão de conformidade mantém os seis artist
 
 O ensaio isolado do erro de concorrência confirmou **16/16 antes → 11/16 com o erro proposital → 16/16 após desfazer**. A falha central foi `cobrou 200 pessoas por 50 poltronas`: cobrar antes de reservar permite que pedidos concorrentes paguem pelo mesmo lugar. O auxiliar `node validacao/demonstrar-concorrencia.mjs` trabalha em cópia temporária, valida a causa da falha e a restauração, sem deixar o projeto incorreto. Ele serve para ensaiar; o vídeo ainda deve mostrar a alteração, `npm test`, a explicação e a reversão.
 
+### Evidência no GitHub Actions
+
+A [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771), do [PR #4](https://github.com/Gaabllez/bilheteria-api/pull/4), validou o commit **`153b8d7cfbfcd6e0621dad1e65110069e39f84df`** com Node.js **22.23.5** no Ubuntu. Os dois jobs, `validar` e `interface`, passaram.
+
+| Verificação da conformidade | Resultado |
+|---|---|
+| Instalação com lockfile original, TypeScript e JavaScript | Aprovados |
+| `npm test` original e conferência da pontuação | 14 cenários, **16/16 pontos** |
+| Backend, catálogo e gate | **38 testes/subtestes aprovados**, zero falhas |
+| Interface no Chromium | **17 cenários aprovados**, zero falhas |
+| Arquivos fornecidos pelo professor | **10 preservados**, conferidos por hash |
+| Ensaio do erro em cópia temporária | **16/16 → 11/16 proposital → 16/16** |
+| Quantidade na API | **3 eventos**, com 100 poltronas no evento 1 |
+| Benchmark | 200 pedidos, estoque consistente e demais eventos intactos |
+
+A suíte de interface confirmou seis cards com apenas três opções de reserva, ausência de preço e checkout nos três artistas editoriais, detalhes e agendas oficiais, API com três eventos, filtros e busca, layout de 360/390/768 px, erros HTTP, queda de conexão, comprovante e impressão. O cenário novo rejeita uma resposta indevida da API que tente oferecer uma turnê editorial para reserva. Os oito arquivos de fotografia carregaram nas capturas de desktop e celular do artefato `interface`.
+
+### Benchmark da revisão de conformidade
+
+| Cenário | Pedidos | Tempo (ms) | Pedidos/s | Vendidos (201) | Ocupada (409) | Pagamento (502) |
+|---|---:|---:|---:|---:|---:|---:|
+| Padrão (`main.ts`), 26/11/2026 | 200 | 168 | 1191 | 93 | 100 | 7 |
+
+O servidor começou vazio, com os parâmetros originais: 80 ms de latência, 10% de falha e timeout de 500 ms. Restaram **7 poltronas** no evento 1, e os **outros dois eventos ficaram intactos**. As sete recusas são falhas simuladas previstas, não falhas dos testes. Tempo e distribuição variam por execução.
+
 As seções abaixo registram as validações históricas dos PRs #2 e #3; suas contagens não devem ser confundidas com a revisão de conformidade.
 
 ## Histórico — catálogo e interface do PR #3
