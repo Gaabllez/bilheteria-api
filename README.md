@@ -9,11 +9,18 @@ Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [mode
 | Nome | RGM | GitHub | Contribuição registrada |
 |---|---|---|---|
 | Gabriel Galvão Fredrich | 33632308 | [Gaabllez](https://github.com/Gaabllez) | API, integração, validação automatizada, catálogo e aprimoramentos da interface |
-| Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar pelo integrante |
+| Inácio Assis dos Santos Netto | 32830980 | [nettoinacio](https://github.com/nettoinacio) | Ampliação do catálogo e da navegação com categorias de artistas e teatro; inclusão de registros editoriais de espetáculos teatrais; atualização da interface, documentação e testes. |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | [Mvsff](https://github.com/Mvsff) | Painel web responsivo e preservação da resposta da reserva após a atualização dos eventos |
 | Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Ampliação do catálogo de 6 para 12 artistas/turnês; inclusão de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran; criação da arte vetorial editorial; atualização do catálogo, interface, README e testes; correção dos IDs e dos testes após os checks de CI |
 
-As contribuições de Gabriel, Marcus e Rafael estão registradas na tabela. A conta e a contribuição de Inácio ainda precisam ser confirmadas.
+As contribuições dos quatro integrantes estão registradas na tabela.
+
+### Contribuição de Inácio Assis dos Santos Netto (@nettoinacio)
+
+- Ampliou a navegação do catálogo com filtros específicos para artistas e espetáculos teatrais, preservando os filtros por estilo musical.
+- Incluiu registros editoriais para O Fantasma da Ópera e Wicked, sem habilitar reservas ou alterar os três eventos exigidos pelo enunciado.
+- Atualizou a validação do catálogo, os textos da interface e os testes automatizados para contemplar os novos tipos de conteúdo.
+- Registrou seu usuário GitHub e a contribuição nesta seção de integrantes.
 
 ### Contribuição de Rafael Olívio Ribeiro Campos (@rafaeloliviooo)
 
@@ -119,7 +126,7 @@ O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, 
 
 ## Catálogo e interface
 
-O site mantém 12 registros de turnês de 12 artistas, com busca, filtros, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
+O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
 
 | Artista | Turnê | Uso no projeto |
 |---|---|---|
@@ -146,7 +153,7 @@ O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) reúne as **oito partes obrigatóri
 
 Ainda depende do grupo:
 
-- Confirmar a conta e a contribuição de Inácio e verificar os commits próprios de cada integrante.
+- Verificar os commits próprios de cada integrante e confirmar que a descrição das contribuições corresponde ao trabalho realizado.
 - Gravar e publicar o vídeo com o código da entrega, testar o acesso sem login e colocar o link verdadeiro no início deste README.
 - Confirmar o nome cadastrado do grupo e o prazo da turma no Blackboard e realizar o envio com os links, nomes completos e RGMs.
 
