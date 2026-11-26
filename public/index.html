@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090e18">
+  <meta name="description" content="Painel de controle e documentação interativa da API Bilheteria.">
+  <title>Bilheteria API — Central de operações</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="Bilheteria API início">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>bilheteria<span>.</span></strong><small>API CONTROL CENTER</small></span>
+      </a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Navegação principal">
+        <a class="nav-link active" href="#overview"><span class="nav-icon">◫</span> Visão geral <span class="nav-indicator"></span></a>
+        <a class="nav-link" href="#events"><span class="nav-icon">▦</span> Eventos</a>
+        <a class="nav-link" href="#endpoints"><span class="nav-icon">⌘</span> Endpoints <span class="nav-count">02</span></a>
+        <a class="nav-link" href="#playground"><span class="nav-icon">⚡</span> Testar API</a>
+      </nav>
+      <div class="sidebar-label sidebar-label-spaced">RECURSOS</div>
+      <nav class="side-nav">
+        <a class="nav-link" href="#rules"><span class="nav-icon">◇</span> Regras de negócio</a>
+        <a class="nav-link" href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noreferrer"><span class="nav-icon">↗</span> Repositório</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-status"><span class="status-dot" id="sidebar-dot"></span><div><strong id="sidebar-status-text">Verificando API</strong><small>Conexão local</small></div></div>
+        <div class="sidebar-foot">BILHETERIA API <span>•</span> v1.0.0</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><b>/</b><strong>Visão geral</strong></div>
+        <div class="topbar-right"><span class="environment"><i></i> AMBIENTE LOCAL</span><a class="github-link" href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noreferrer" aria-label="Abrir GitHub">GH <span>↗</span></a></div>
+      </header>
+
+      <section class="hero" id="overview">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> CENTRAL DE OPERAÇÕES <span class="eyebrow-version">API v1.0</span></div>
+          <h1>Uma bilheteria.<br><em>Controle total.</em></h1>
+          <p class="hero-description">Acompanhe eventos, consulte disponibilidade e experimente as requisições da API em um só lugar.</p>
+          <div class="hero-actions"><a class="button button-primary" href="#playground"><span>⚡</span> Explorar API</a><a class="button button-quiet" href="#endpoints">Ver documentação <span>↘</span></a></div>
+          <div class="hero-meta"><span class="live-pulse"></span><span id="hero-status">Conectando ao servidor...</span><span class="meta-divider">/</span><code id="base-url">localhost:3000</code></div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="hero-core"><div class="core-symbol">B<span>.</span></div><div class="core-caption">TICKET<br>ENGINE</div></div>
+          <div class="float-chip chip-top"><span class="chip-spark">✦</span> RESERVAS EM TEMPO REAL</div>
+          <div class="float-chip chip-bottom"><span class="chip-check">✓</span> API READY</div><div class="visual-line"></div>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="Indicadores da API">
+        <article class="stat-card"><div class="stat-top"><span>ENDPOINTS ATIVOS</span><span class="stat-icon">⌘</span></div><div class="stat-value">02</div><div class="stat-foot"><span class="stat-accent">GET</span> consulta <span class="stat-accent">POST</span> reserva</div></article>
+        <article class="stat-card"><div class="stat-top"><span>EVENTOS CADASTRADOS</span><span class="stat-icon">▦</span></div><div class="stat-value" id="stat-events">—</div><div class="stat-foot">Eventos disponíveis na API</div></article>
+        <article class="stat-card"><div class="stat-top"><span>TAXA DE SERVIÇO</span><span class="stat-icon">％</span></div><div class="stat-value">10<span class="stat-unit">%</span></div><div class="stat-foot">Aplicada sobre o subtotal</div></article>
+        <article class="stat-card"><div class="stat-top"><span>TIMEOUT DE PAGAMENTO</span><span class="stat-icon">◷</span></div><div class="stat-value">500<span class="stat-unit">ms</span></div><div class="stat-foot">Operadora simulada</div></article>
+      </section>
+
+      <section class="section-block" id="events">
+        <div class="section-heading"><div><div class="section-kicker">01 / CATÁLOGO</div><h2>Eventos em destaque</h2><p>Disponibilidade atual consultada diretamente no servidor.</p></div><button class="button button-outline button-small" id="refresh-events"><span class="refresh-symbol">↻</span> Atualizar dados</button></div>
+        <div class="events-grid" id="events-grid"><div class="loading-card"><span class="loader"></span> Carregando eventos...</div></div>
+      </section>
+
+      <section class="section-block" id="endpoints">
+        <div class="section-heading"><div><div class="section-kicker">02 / REFERÊNCIA</div><h2>Endpoints da API</h2><p>Rotas HTTP disponíveis, parâmetros e respostas esperadas.</p></div><span class="section-counter">02 ROTAS</span></div>
+        <div class="endpoint-list">
+          <article class="endpoint-card">
+            <div class="endpoint-main"><span class="method method-get">GET</span><div class="endpoint-info"><h3>/eventos</h3><p>Lista os eventos cadastrados e a quantidade de ingressos disponíveis.</p></div><span class="endpoint-response response-ok">200 OK</span><button class="icon-button endpoint-try" data-action="get-events" aria-label="Testar GET eventos">↗</button></div>
+            <div class="endpoint-detail"><span>SEM PARÂMETROS</span><code>GET <b>/eventos</b></code><span>Resposta: <b>EventoInfo[]</b></span></div>
+          </article>
+          <article class="endpoint-card">
+            <div class="endpoint-main"><span class="method method-post">POST</span><div class="endpoint-info"><h3>/reservas</h3><p>Cria uma reserva com um ou mais ingressos e processa o pagamento simulado.</p></div><span class="endpoint-response response-created">201 CREATED</span><a class="icon-button endpoint-try" href="#playground" aria-label="Testar POST reservas">↗</a></div>
+            <div class="endpoint-detail"><span>BODY: JSON</span><code>POST <b>/reservas</b></code><span>Erros: <b>400 · 404 · 409 · 502</b></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block playground-section" id="playground">
+        <div class="section-heading"><div><div class="section-kicker">03 / LABORATÓRIO</div><h2>Teste a API</h2><p>Monte uma requisição real e acompanhe a resposta HTTP.</p></div><span class="playground-badge"><span class="live-pulse"></span> REQUEST PLAYGROUND</span></div>
+        <div class="playground-grid">
+          <div class="request-panel">
+            <div class="panel-heading"><div><span class="panel-step">01</span><div><h3>Nova reserva</h3><p>POST /reservas</p></div></div><span class="method method-post">POST</span></div>
+            <form id="reservation-form">
+              <label class="field-label" for="event-select">EVENTO</label><select id="event-select" required><option value="">Carregando eventos...</option></select>
+              <div class="ticket-heading"><label class="field-label">INGRESSOS</label><button type="button" class="text-button" id="add-ticket">＋ Adicionar pessoa</button></div>
+              <div id="ticket-list" class="ticket-list"></div>
+              <div class="form-note"><span>ⓘ</span> Estudantes, PCDs e pessoas com 60 anos ou mais têm direito à meia-entrada.</div>
+              <button class="button button-primary submit-button" type="submit"><span>⚡</span> Enviar requisição <span class="button-arrow">→</span></button>
+            </form>
+          </div>
+          <div class="response-panel">
+            <div class="panel-heading"><div><span class="panel-step">02</span><div><h3>Resposta do servidor</h3><p>HTTP response</p></div></div><span class="response-live" id="response-state">AGUARDANDO</span></div>
+            <div class="response-toolbar"><span class="response-tab active">BODY</span><span class="response-format">JSON</span><button class="copy-button" id="copy-response" type="button">Copiar <span>⧉</span></button></div>
+            <div class="response-meta"><span>STATUS <b id="response-status">—</b></span><span>TEMPO <b id="response-time">—</b></span></div>
+            <pre class="response-code" id="response-body"><span class="code-muted">// A resposta da API aparecerá aqui.</span>
+<span class="code-muted">// Envie uma requisição para começar.</span></pre>
+            <div class="response-footer"><span class="response-dot"></span> Resposta exibida em JSON</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block rules-section" id="rules">
+        <div class="section-heading"><div><div class="section-kicker">04 / REGRAS</div><h2>Regras de negócio</h2><p>Critérios aplicados pelo serviço de bilheteria.</p></div></div>
+        <div class="rules-grid">
+          <article class="rule-card"><span class="rule-number">01</span><div class="rule-symbol">◈</div><h3>Meia-entrada</h3><p>Estudantes, pessoas com deficiência e pessoas com idade igual ou superior a 60 anos pagam metade do valor.</p></article>
+          <article class="rule-card"><span class="rule-number">02</span><div class="rule-symbol">％</div><h3>Taxa de serviço</h3><p>Uma taxa de 10% é aplicada sobre a soma dos ingressos para formar o total da reserva.</p></article>
+          <article class="rule-card"><span class="rule-number">03</span><div class="rule-symbol">⛨</div><h3>Concorrência segura</h3><p>As poltronas são reservadas antes do pagamento. Em caso de falha, elas são liberadas novamente.</p></article>
+        </div>
+      </section>
+
+      <footer class="footer"><a class="footer-brand" href="#overview"><span class="brand-mark small-mark"><span></span><span></span><span></span></span> bilheteria<span>.</span></a><span>Interface de documentação e testes · API Bilheteria</span><a href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noreferrer">Código-fonte no GitHub ↗</a></footer>
+    </main>
+  </div>
+
+  <template id="ticket-template">
+    <div class="ticket-row">
+      <div class="ticket-row-top"><span class="ticket-index">INGRESSO 01</span><button type="button" class="remove-ticket" aria-label="Remover ingresso">×</button></div>
+      <div class="ticket-fields">
+        <label class="ticket-name">NOME<input name="nome" type="text" placeholder="Nome do participante" maxlength="80" required></label>
+        <label>IDADE<input name="idade" type="number" min="0" max="120" value="25" required></label>
+        <label>POLTRONA<input name="poltrona" type="number" min="1" value="1" required></label>
+      </div>
+      <div class="ticket-options"><label><input name="estudante" type="checkbox"><span>Estudante</span></label><label><input name="pcd" type="checkbox"><span>Pessoa com deficiência</span></label></div>
+    </div>
+  </template>
+</body>
+</html>

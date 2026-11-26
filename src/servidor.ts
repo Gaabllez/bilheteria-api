@@ -1,12 +1,18 @@
 // Camada HTTP com Express. Só monta o app: quem chama listen() é o main.ts.
 import express from "express";
 import type { NextFunction, Request, Response } from "express";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { Bilheteria } from "./bilheteria.ts";
 import { ErroDeNegocio } from "./dominio.ts";
 
 export function criarServidor(bilheteria: Bilheteria) {
   const app = express();
   app.use(express.json());
+
+  // A interface web fica em /public e é servida na raiz da aplicação.
+  const diretorioAtual = dirname(fileURLToPath(import.meta.url));
+  app.use(express.static(resolve(diretorioAtual, "../public")));
 
   app.get("/eventos", (req, res) => {
     res.json(bilheteria.listarEventos());
@@ -18,7 +24,7 @@ export function criarServidor(bilheteria: Bilheteria) {
   });
 
   // O Express 5 manda para cá o erro de qualquer rota, inclusive das async.
-  // Ele só reconhece o tratador de erro pelos 4 parâmetros, mesmo sem usar o `next`.
+  // Ele só reconhece o tratador de erro pelos 4 parâmetros, mesmo sem usar o next.
   app.use((erro: Error, req: Request, res: Response, next: NextFunction) => {
     if (erro instanceof ErroDeNegocio) {
       res.status(erro.status).json({ mensagem: erro.message });
