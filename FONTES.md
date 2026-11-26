@@ -37,3 +37,10 @@ As fotos de Bruno Mars (2024) e The Weeknd (2018) são de arquivo e não retrata
 `public/catalogo.json` concentra nomes, turnês, estilos, descrições, fontes, fotos, créditos e parâmetros fictícios de reserva. `src/catalogo.ts` lê essa fonte para criar os eventos da API. O navegador lê o mesmo arquivo e confere nome, ID, preço e capacidade antes de habilitar as reservas.
 
 Ao atualizar a seleção, confira as fontes oficiais, atualize `verifiedAt`, revise os créditos das imagens e reinicie a API. O evento de ID 1 deve manter 100 poltronas e preço fictício de R$ 100 para preservar o contrato do benchmark. A interface recusa inconsistências entre metadados e API e permite repetir o carregamento pelo botão Atualizar.
+
+## Espetáculos teatrais adicionados em 26/11/2026
+
+- **O Fantasma da Ópera:** a página oficial de origem de Londres identifica a produção original como estabelecida em 1986. O catálogo registra “Desde 1986 (Londres)” como referência histórica, não como calendário de apresentações. [Fonte oficial](https://www.phantomoftheopera.com/london/about).
+- **Wicked:** o guia oficial registra a abertura na Broadway em 2003. O catálogo registra “Desde 2003 (Broadway)” como referência histórica, não como disponibilidade atual. [Guia oficial](https://wickedthemusical.com/wp-content/uploads/2025/04/Wicked-Study-Guide-Large-File-Sile.pdf).
+
+Ambos são registros editoriais não reserváveis. Os valores e capacidades fictícios presentes no JSON são dados técnicos internos do catálogo; a interface não os exibe como preços nem permite checkout para esses registros.
