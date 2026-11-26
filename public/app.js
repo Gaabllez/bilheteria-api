@@ -38,7 +38,7 @@ async function loadCatalog() {
         !["artist", "tour", "genre", "year", "description", "imageAlt", "status"].every((field) => hasText(item[field])) ||
         !["pop", "rnb", "rock", "latino", "theatre"].includes(item.category) ||
         !["artist", "theatre"].includes(item.type) ||
-        !/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(item.image) ||
+        !(/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(item.image) || /^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/[^?#]+(?:\?width=\d{1,4})?$/.test(item.image)) ||
         !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
         typeof item.reservable !== "boolean" || !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
         !/^#[a-f0-9]{6}$/i.test(item.accent) || !["contain", "cover"].includes(item.dialogImageFit) || !positions || positions.some((position) => position > 100) ||
@@ -319,6 +319,7 @@ function showEventDetails(id) {
   $("#event-dialog-price").textContent = event ? money(round(event.preco / 2)) : "";
   const photo = $("#event-dialog-image");
   photo.src = data.image;
+  photo.addEventListener("error", () => { photo.src = "/images/artists/catalog-placeholder.svg"; }, { once: true });
   photo.alt = data.imageAlt;
   photo.style.objectPosition = data.objectPosition;
   photo.style.objectFit = data.dialogImageFit;
@@ -351,6 +352,7 @@ function createEventCard(event) {
   const cover = node("div", "event-cover");
   const image = node("img", "event-img");
   image.src = data.image;
+  image.addEventListener("error", () => { image.src = "/images/artists/catalog-placeholder.svg"; }, { once: true });
   image.alt = data.imageAlt;
   image.loading = "lazy";
   image.decoding = "async";
