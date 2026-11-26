@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { Bilheteria } from "./bilheteria.ts";
 import { ErroDeNegocio } from "./dominio.ts";
 
-export function criarServidor(bilheteria: Bilheteria, bilheteriaCatalogo: Bilheteria = bilheteria) {
+export function criarServidor(bilheteria: Bilheteria) {
   const app = express();
   app.use(express.json());
 
@@ -14,17 +14,6 @@ export function criarServidor(bilheteria: Bilheteria, bilheteriaCatalogo: Bilhet
 
   app.post("/reservas", async (req, res) => {
     const comprovante = await bilheteria.reservar(req.body);
-    res.status(201).json(comprovante);
-  });
-
-  // Rotas da interface: simulam reservas para todas as turnês marcadas no catálogo.
-  // A API original /eventos e /reservas continua limitada aos três eventos do enunciado.
-  app.get("/catalogo/eventos", (req, res) => {
-    res.json(bilheteriaCatalogo.listarEventos());
-  });
-
-  app.post("/catalogo/reservas", async (req, res) => {
-    const comprovante = await bilheteriaCatalogo.reservar(req.body);
     res.status(201).json(comprovante);
   });
 
