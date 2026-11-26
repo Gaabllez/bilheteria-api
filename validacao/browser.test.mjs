@@ -112,13 +112,18 @@ async function prepararCapturaCompleta(page) {
   await aguardarPintura(page);
 }
 
-test("12 turnês e três eventos reserváveis mantêm busca, filtros e seleção corretos", { timeout: 30000 }, async (t) => {
+test("14 registros editoriais e três eventos reserváveis mantêm busca, filtros e seleção corretos", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     await abrir(page, server);
     assert.match(await page.title(), /Bilheteria/i);
-    assert.equal(await page.locator(".event-card").count(), 12);
+    assert.equal(await page.locator(".event-card").count(), 14);
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
     assert.equal(await page.locator(".event-book").count(), 3);
+    await page.locator('[data-filter="teatro"]').click();
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["O Fantasma da Ópera", "Wicked"]);
+    await page.locator('[data-filter="artistas"]').click();
+    assert.equal(await page.locator(".event-card").count(), 12);
+    await page.locator('[data-filter="todos"]').click();
     assert.deepEqual(await page.locator("#event-select option").evaluateAll((options) => options.map((option) => option.value)), ["1", "2", "3"]);
     const response = await page.request.get(`${server.url}/eventos`);
     assert.deepEqual((await response.json()).map((event) => event.id), [1, 2, 3]);
@@ -399,7 +404,7 @@ test("falha inicial dos metadados permite recuperar o catálogo pelo botão Atua
     await page.locator("#submit-reservation:not([disabled])").waitFor();
     assert.ok(metadataRequests >= 2, "Atualizar deve buscar novamente os metadados que falharam.");
     assert.ok(eventRequests >= 1);
-    assert.equal(await page.locator(".event-card").count(), 12);
+    assert.equal(await page.locator(".event-card").count(), 14);
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
   });
 });
