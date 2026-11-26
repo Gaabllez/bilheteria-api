@@ -36,7 +36,8 @@ async function loadCatalog() {
     const positions = typeof item?.objectPosition === "string" && /^\d{1,3}% \d{1,3}%$/.test(item.objectPosition) ? item.objectPosition.match(/\d+/g).map(Number) : null;
     if (!item || !Number.isSafeInteger(item.id) || item.id < 1 || entries.has(item.id) ||
         !["artist", "tour", "genre", "year", "description", "imageAlt", "status"].every((field) => hasText(item[field])) ||
-        !["pop", "rnb", "rock", "latino"].includes(item.category) ||
+        !["pop", "rnb", "rock", "latino", "theatre"].includes(item.category) ||
+        !["artist", "theatre"].includes(item.type) ||
         !/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(item.image) ||
         !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
         typeof item.reservable !== "boolean" || !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
@@ -358,7 +359,7 @@ function createEventCard(event) {
   image.style.objectPosition = data.objectPosition;
   cover.append(image, node("span", "event-tag", data.genre), node("span", "event-year", data.year));
   const info = node("div", "event-info");
-  info.append(node("span", "event-genre", "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
+  info.append(node("span", "event-genre", data.type === "theatre" ? "ESPETÁCULO TEATRAL" : "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
   const foot = node("div", "event-footer");
   const price = node("div", reservable ? "event-price" : "event-price event-editorial-price");
   if (reservable) {
@@ -404,11 +405,13 @@ function renderEvents() {
   });
   const matching = displayed.filter((event) => {
     const info = meta(event);
-    const matchesCategory = state.filter === "todos" || info.category === state.filter;
+    const matchesCategory = state.filter === "todos" ||
+      (state.filter === "artistas" ? info.type === "artist" :
+        state.filter === "teatro" ? info.type === "theatre" : info.category === state.filter);
     const matchesSearch = !search || searchText(info.artist + " " + info.tour + " " + info.genre + " " + info.description).includes(search);
     return matchesCategory && matchesSearch;
   });
-  $("#catalog-counter").textContent = matching.length + (matching.length === 1 ? " turnê encontrada" : " turnês encontradas");
+  $("#catalog-counter").textContent = matching.length + (matching.length === 1 ? " evento encontrado" : " eventos encontrados");
   $("#events-grid").replaceChildren(...(matching.length ? matching.map(createEventCard) : [node("div", "empty-events", displayed.length ? "Nenhum evento corresponde à busca. Experimente outro filtro." : "Nenhum evento disponível no momento.")]));
 }
 
