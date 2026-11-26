@@ -163,7 +163,7 @@
     },
     {
       "id": 4,
-      "reservable": false,
+      "reservable": true,
       "artist": "Coldplay",
       "tour": "Music Of The Spheres World Tour",
       "category": "rock",
@@ -214,7 +214,7 @@
     },
     {
       "id": 5,
-      "reservable": false,
+      "reservable": true,
       "artist": "Shakira",
       "tour": "Las Mujeres Ya No Lloran World Tour",
       "category": "latino",
@@ -258,7 +258,7 @@
     },
     {
       "id": 6,
-      "reservable": false,
+      "reservable": true,
       "artist": "Linkin Park",
       "tour": "From Zero World Tour",
       "category": "rock",
@@ -329,7 +329,7 @@
     },
     {
       "id": 101,
-      "reservable": false,
+      "reservable": true,
       "artist": "Adele",
       "tour": "Adele Live 2016",
       "category": "pop",
@@ -373,7 +373,7 @@
     },
     {
       "id": 102,
-      "reservable": false,
+      "reservable": true,
       "artist": "Dua Lipa",
       "tour": "Radical Optimism Tour",
       "category": "pop",
@@ -417,7 +417,7 @@
     },
     {
       "id": 103,
-      "reservable": false,
+      "reservable": true,
       "artist": "Billie Eilish",
       "tour": "Hit Me Hard and Soft: The Tour",
       "category": "pop",
@@ -461,7 +461,7 @@
     },
     {
       "id": 104,
-      "reservable": false,
+      "reservable": true,
       "artist": "Taylor Swift",
       "tour": "The Eras Tour",
       "category": "pop",
@@ -505,7 +505,7 @@
     },
     {
       "id": 105,
-      "reservable": false,
+      "reservable": true,
       "artist": "Beyoncé",
       "tour": "Renaissance World Tour",
       "category": "rnb",
@@ -549,7 +549,7 @@
     },
     {
       "id": 106,
-      "reservable": false,
+      "reservable": true,
       "artist": "Ed Sheeran",
       "tour": "Mathematics Tour",
       "category": "pop",
@@ -593,7 +593,7 @@
     },
     {
       "id": 107,
-      "reservable": false,
+      "reservable": true,
       "artist": "O Fantasma da Ópera",
       "tour": "Musical teatral",
       "category": "theatre",
@@ -637,7 +637,7 @@
     },
     {
       "id": 108,
-      "reservable": false,
+      "reservable": true,
       "artist": "Wicked",
       "tour": "Musical teatral",
       "category": "theatre",
