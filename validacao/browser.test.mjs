@@ -399,7 +399,7 @@ test("falha inicial dos metadados permite recuperar o catálogo pelo botão Atua
     await page.locator("#submit-reservation:not([disabled])").waitFor();
     assert.ok(metadataRequests >= 2, "Atualizar deve buscar novamente os metadados que falharam.");
     assert.ok(eventRequests >= 1);
-    assert.equal(await page.locator(".event-card").count(), 6);
+    assert.equal(await page.locator(".event-card").count(), 12);
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
   });
 });

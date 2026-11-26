@@ -11,7 +11,7 @@ test("catálogo reúne 12 turnês de 12 artistas, fontes HTTPS, fotos locais e r
   assert.equal(catalogo.events.length, 12);
   assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 12);
   assert.deepEqual(catalogo.events.filter((evento) => evento.reservable).map((evento) => evento.id), [1, 2, 3]);
-  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 101, 102, 103, 104, 105, 106]);
   assert.equal(catalogo.verifiedAt, "2026-11-26");
   assert.deepEqual(new Set(catalogo.events.map((evento) => evento.category)), new Set(["pop", "rnb", "rock", "latino"]));
   for (const evento of catalogo.events) {
@@ -58,7 +58,7 @@ test("artistas editoriais não geram estoque, reservas ou cobranças", async () 
     limitePagamentoMs: 500,
   });
   const antes = bilheteria.listarEventos();
-  for (const eventoId of [4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+  for (const eventoId of [4, 5, 6, 101, 102, 103, 104, 105, 106]) {
     await assert.rejects(() => bilheteria.reservar({
       eventoId,
       ingressos: [{ nome: "Pessoa de teste", idade: 25, estudante: false, pcd: false, poltrona: 1 }],
