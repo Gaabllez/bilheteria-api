@@ -49,3 +49,15 @@ npm run bench
 | Padrão | 200 | Pendente | Pendente | Pendente | Pendente |
 
 Reinicie o servidor antes de repetir o benchmark. Os números devem ser preenchidos com uma execução real. O cenário esperado é aproximadamente 90 vendas, 100 conflitos e 10 falhas, com variação aleatória; isso não é um resultado medido.
+
+## Histórico de atualizações e validação
+
+- `0efed25`: implementação da API, regras de meia-entrada, cálculo funcional, domínio e reservas concorrentes.
+- `86196cc`: configuração de GitHub Actions para typecheck, testes originais e benchmark.
+- `9abc09e` (Mvsff): painel web responsivo com listagem de eventos, formulário e respostas HTTP.
+- `98fa503` (Mvsff): preservação da resposta da reserva ao atualizar eventos.
+- `0635c27`: integração do painel pelo main.ts e restauração do servidor original.
+
+### Estado da validação
+
+Os dez arquivos protegidos foram comparados com o modelo do professor e possuem SHA idêntico. A execução local dos testes foi bloqueada por falha de resolução DNS do GitHub no ambiente de validação. A aprovação dos testes, o typecheck, o funcionamento visual e os resultados do benchmark ainda precisam de evidência de execução. Consulte [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions). Não foram registrados resultados estimados como medidos.
