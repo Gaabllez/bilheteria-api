@@ -112,18 +112,31 @@ async function prepararCapturaCompleta(page) {
   await aguardarPintura(page);
 }
 
-test("catálogo real, busca sem acentos e filtros selecionam o evento", { timeout: 30000 }, async (t) => {
+test("seis turnês e três eventos reserváveis mantêm busca, filtros e seleção corretos", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     await abrir(page, server);
     assert.match(await page.title(), /Bilheteria/i);
     assert.equal(await page.locator(".event-card").count(), 6);
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
+    assert.equal(await page.locator(".event-book").count(), 3);
+    assert.deepEqual(await page.locator("#event-select option").evaluateAll((options) => options.map((option) => option.value)), ["1", "2", "3"]);
+    const response = await page.request.get(`${server.url}/eventos`);
+    assert.deepEqual((await response.json()).map((event) => event.id), [1, 2, 3]);
     await page.locator('[data-filter="rock"]').click();
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Coldplay", "Linkin Park"]);
     assert.equal(await page.locator('[data-filter="rock"]').getAttribute("aria-pressed"), "true");
-    await page.locator(".event-book").first().click();
-    assert.equal(await page.locator("#event-select").inputValue(), "4");
-    await preco(page, "#summary-total", "R$ 132,00");
+    assert.equal(await page.locator(".event-book").count(), 0);
+    assert.doesNotMatch(await page.locator("#events-grid").textContent(), /R\$/);
+    await page.locator(".event-details").first().click();
+    assert.equal(await page.locator("#event-dialog-title").textContent(), "Coldplay");
+    assert.equal(await page.locator("#event-reserve").isVisible(), false);
+    assert.equal(await page.locator("#event-dialog-price").isVisible(), false);
+    assert.match(await page.locator("#event-dialog-editorial").textContent(), /Não há reserva simulada/);
+    await page.locator("#close-event").click();
+    await page.locator('[data-filter="pop"]').click();
+    await page.locator(".event-book").nth(1).click();
+    assert.equal(await page.locator("#event-select").inputValue(), "2");
+    await preco(page, "#summary-total", "R$ 154,00");
     await page.locator('[data-filter="todos"]').click();
     await page.locator("#search-events").fill("GÁGA");
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Lady Gaga"]);
@@ -152,7 +165,9 @@ test("detalhes mostram a turnê e o link oficial e iniciam a simulação correta
       assert.equal(await page.locator("#event-official-link").getAttribute("href"), event.officialUrl);
       assert.equal(await page.locator("#event-official-link").getAttribute("target"), "_blank");
       assert.match(await page.locator("#event-official-link").getAttribute("rel"), /noopener/);
-      assert.match(await page.locator("#event-dialog").textContent(), /simulad|simula[çc][ãa]o/i);
+      assert.equal(await page.locator("#event-dialog-simulation").isVisible(), event.reservable);
+      assert.equal(await page.locator("#event-dialog-editorial").isVisible(), !event.reservable);
+      assert.equal(await page.locator("#event-reserve").isVisible(), event.reservable);
       await page.locator("#close-event").click();
       assert.equal(await page.locator("#event-dialog").isVisible(), false);
     }
@@ -398,9 +413,35 @@ test("catálogo vazio, esgotado ou malformado não permite reserva", { timeout: 
       await page.locator("#refresh-events:not([disabled])").waitFor();
       assert.equal(await page.locator("#submit-reservation").isDisabled(), true);
       if (payload.length === 1) assert.equal(await page.locator(".event-book").isDisabled(), true);
-      else assert.equal(await page.locator(".event-card").count(), 0);
+      else if (status === "online") {
+        assert.equal(await page.locator(".event-book").count(), 0);
+        assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.filter((event) => !event.reservable).map((event) => event.artist));
+      } else assert.equal(await page.locator(".event-card").count(), 0);
       await page.unroute("**/eventos");
     }
+  });
+});
+
+test("uma turnê editorial recebida como evento da API bloqueia a reserva", { timeout: 30000 }, async (t) => {
+  await fixture(t, async ({ page, server }) => {
+    const editorial = catalog.events.find((event) => !event.reservable);
+    await page.route("**/eventos", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify([...events, {
+        id: editorial.id,
+        nome: `${editorial.artist} — ${editorial.tour}`,
+        preco: editorial.price,
+        capacidade: editorial.capacity,
+        disponivel: editorial.capacity,
+      }]),
+    }));
+    await page.goto(server.url, { waitUntil: "domcontentloaded" });
+    await page.locator("#connection-label.offline").waitFor({ state: "attached" });
+    await page.locator("#refresh-events:not([disabled])").waitFor();
+    assert.equal(await page.locator("#submit-reservation").isDisabled(), true);
+    assert.equal(await page.locator("#event-select").inputValue(), "");
+    assert.equal(await page.locator(".event-book").count(), 0);
   });
 });
 

@@ -39,12 +39,15 @@ async function loadCatalog() {
         !["pop", "rnb", "rock", "latino"].includes(item.category) ||
         !/^\/images\/artists\/[a-z0-9-]+\.webp$/.test(item.image) ||
         !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
-        !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
+        typeof item.reservable !== "boolean" || !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
         !/^#[a-f0-9]{6}$/i.test(item.accent) || !["contain", "cover"].includes(item.dialogImageFit) || !positions || positions.some((position) => position > 100) ||
         !credit || !["author", "license", "description"].every((field) => hasText(credit[field])) || !isHttpsUrl(credit.licenseUrl) || !isHttpsUrl(credit.sourceUrl)) {
       throw new Error("O catálogo contém informações incompletas ou inválidas.");
     }
     entries.set(item.id, item);
+  }
+  if ([...entries.values()].filter((item) => item.reservable).length !== 3 || !entries.get(1)?.reservable) {
+    throw new Error("O catálogo precisa informar os três eventos disponíveis para simulação.");
   }
   // Só guarda metadados validados. O botão Atualizar tenta de novo após uma falha.
   catalog = entries;
@@ -300,8 +303,8 @@ function sourceLink(text, url) {
 
 function showEventDetails(id) {
   const event = state.events.find((item) => item.id === id);
-  if (state.processing || state.loading || !state.connected || !event || $("#receipt-dialog").open) return;
-  const data = meta(event);
+  const data = catalog.get(id);
+  if (state.processing || state.loading || !state.connected || !data || (data.reservable && !event) || $("#receipt-dialog").open) return;
   detailedEventId = id;
   $("#event-dialog-title").textContent = data.artist;
   $("#event-dialog-tour").textContent = data.tour;
@@ -310,7 +313,9 @@ function showEventDetails(id) {
   $("#event-dialog-style").textContent = data.genre;
   $("#event-dialog-year").textContent = data.year;
   $("#event-dialog-note").textContent = data.status + " Fontes consultadas em " + catalogVerifiedAt + ".";
-  $("#event-dialog-price").textContent = money(round(event.preco / 2));
+  $("#event-dialog-simulation").hidden = !event;
+  $("#event-dialog-editorial").hidden = Boolean(event);
+  $("#event-dialog-price").textContent = event ? money(round(event.preco / 2)) : "";
   const photo = $("#event-dialog-image");
   photo.src = data.image;
   photo.alt = data.imageAlt;
@@ -336,9 +341,11 @@ function showEventDetails(id) {
 
 function createEventCard(event) {
   const data = meta(event);
-  const soldOut = event.disponivel === 0;
+  const reservable = data.reservable;
+  const soldOut = reservable && event.disponivel === 0;
   const unavailable = state.processing || state.loading || !state.connected;
   const card = node("article", "event-card");
+  card.dataset.reservable = String(reservable);
   card.style.setProperty("--event-accent", data.accent);
   const cover = node("div", "event-cover");
   const image = node("img", "event-img");
@@ -353,21 +360,28 @@ function createEventCard(event) {
   const info = node("div", "event-info");
   info.append(node("span", "event-genre", "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
   const foot = node("div", "event-footer");
-  const price = node("div", "event-price");
-  price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
+  const price = node("div", reservable ? "event-price" : "event-price event-editorial-price");
+  if (reservable) {
+    price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
+  } else {
+    price.append(node("small", "", "SÓ PARA EXPLORAR"), node("strong", "", "Agenda oficial"), node("small", "price-note", "Datas no site do artista"));
+  }
   const actions = node("div", "event-actions");
   const details = node("button", "event-details", "Ver turnê");
   details.type = "button";
   details.setAttribute("aria-label", "Ver turnê de " + data.artist);
   details.disabled = unavailable;
   details.addEventListener("click", () => showEventDetails(event.id));
-  const book = node("button", "event-book", soldOut ? "Simulação esgotada" : "Simular");
-  book.type = "button";
-  book.setAttribute("aria-label", soldOut ? "Simulação esgotada para " + data.artist : "Simular reserva para " + data.artist);
-  book.dataset.soldOut = String(soldOut);
-  book.disabled = unavailable || state.uncertain || soldOut;
-  book.addEventListener("click", () => chooseEvent(event.id));
-  actions.append(details, book);
+  actions.append(details);
+  if (reservable) {
+    const book = node("button", "event-book", soldOut ? "Simulação esgotada" : "Simular");
+    book.type = "button";
+    book.setAttribute("aria-label", soldOut ? "Simulação esgotada para " + data.artist : "Simular reserva para " + data.artist);
+    book.dataset.soldOut = String(soldOut);
+    book.disabled = unavailable || state.uncertain || soldOut;
+    book.addEventListener("click", () => chooseEvent(event.id));
+    actions.append(book);
+  }
   foot.append(price, actions);
   info.append(foot);
   card.append(cover, info);
@@ -381,14 +395,21 @@ function renderEvents() {
     return;
   }
   const search = searchText(state.search);
-  const matching = state.events.filter((event) => {
+  // Apenas a API oferece reservas. As outras turnês continuam disponíveis
+  // para conhecer o artista, sem criar estoque ou preço de venda na interface.
+  const available = new Map(state.events.map((event) => [event.id, event]));
+  const displayed = [...catalog.values()].flatMap((item) => {
+    const event = available.get(item.id);
+    return event ? [event] : item.reservable ? [] : [{ id: item.id }];
+  });
+  const matching = displayed.filter((event) => {
     const info = meta(event);
     const matchesCategory = state.filter === "todos" || info.category === state.filter;
     const matchesSearch = !search || searchText(info.artist + " " + info.tour + " " + info.genre + " " + info.description).includes(search);
     return matchesCategory && matchesSearch;
   });
   $("#catalog-counter").textContent = matching.length + (matching.length === 1 ? " turnê encontrada" : " turnês encontradas");
-  $("#events-grid").replaceChildren(...(matching.length ? matching.map(createEventCard) : [node("div", "empty-events", state.events.length ? "Nenhum evento corresponde à busca. Experimente outro filtro." : "Nenhum evento disponível no momento.")]));
+  $("#events-grid").replaceChildren(...(matching.length ? matching.map(createEventCard) : [node("div", "empty-events", displayed.length ? "Nenhum evento corresponde à busca. Experimente outro filtro." : "Nenhum evento disponível no momento.")]));
 }
 
 function isEvent(event) {
@@ -405,7 +426,7 @@ async function loadEvents(record = false) {
     if (!Array.isArray(events) || !events.every(isEvent) || new Set(events.map((event) => event.id)).size !== events.length) throw new Error("O servidor retornou um formato de eventos inesperado.");
     if (!events.every((event) => {
       const info = meta(event);
-      return info && event.nome === info.artist + " — " + info.tour && event.preco === info.price && event.capacidade === info.capacity;
+      return info?.reservable === true && event.nome === info.artist + " — " + info.tour && event.preco === info.price && event.capacidade === info.capacity;
     })) {
       catalogLoaded = false;
       throw new Error("O catálogo e os dados de reserva estão inconsistentes.");

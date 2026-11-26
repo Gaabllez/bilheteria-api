@@ -8,10 +8,14 @@ Projeto final de Paradigmas de Linguagens de Programação, baseado no [modelo d
 
 | Nome | RGM | GitHub | Parte principal |
 |---|---|---|---|
-| Gabriel Galvão Fredrich | 33632308 | Gaabllez | A confirmar |
+| Gabriel Galvão Fredrich | 33632308 | Gaabllez | Implementação da API e integração do projeto, validação automatizada, catálogo e aprimoramentos da interface registrados nos commits da conta |
 | Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | Mvsff | Painel web responsivo e preservação do comprovante após atualização dos eventos |
 | Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | A confirmar |
+
+As contribuições de Gabriel e Marcus acima foram identificadas no histórico das contas `Gaabllez` e `Mvsff`. A participação de Inácio e Rafael precisa ser confirmada por eles e registrada com commits das próprias contas; os campos pendentes não representam contribuições já verificadas.
+
+O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) organiza as oito partes obrigatórias. O [guia de entrega](docs/ENTREGA.md) reúne a rubrica, os itens restantes e o texto para o Blackboard.
 
 ## Executar
 
@@ -33,8 +37,17 @@ Em outro terminal:
 ```bash
 curl http://localhost:3000/eventos
 curl -X POST http://localhost:3000/reservas -H 'Content-Type: application/json' -d '{"eventoId":1,"ingressos":[{"nome":"Ana","idade":20,"estudante":true,"pcd":false,"poltrona":7}]}'
-npm run bench
 ```
+
+Antes do benchmark, encerre o servidor com `Ctrl+C` e execute `npm start` novamente. Em outro terminal, execute `npm run bench`. Isso garante que a medição comece com as 100 poltronas livres do evento 1. Há comandos equivalentes para PowerShell no [roteiro](docs/ROTEIRO_VIDEO.md#2-projeto-rodando).
+
+## Aderência ao enunciado
+
+O servidor cria **exatamente três eventos**, conforme o Passo 6: Lady Gaga (ID 1), Bruno Mars (ID 2) e The Weeknd (ID 3). O evento 1 começa com 100 poltronas. A operadora mantém latência de 80 ms, taxa de falha de 10% e tempo limite da bilheteria de 500 ms; a porta padrão é 3000.
+
+Os seis artistas permanecem na apresentação do site. Coldplay, Shakira e Linkin Park são conteúdo editorial, com detalhes e agenda oficial, e não são eventos da API nem opções de reserva. O campo `reservable` do catálogo distingue esses usos, e a configuração exige exatamente três eventos reserváveis, incluindo o ID 1.
+
+Os arquivos fornecidos prontos pelo professor são conferidos por hash. A revisão de código e os testes não substituem o vídeo, a participação individual e o envio ao Blackboard; os itens que dependem do grupo estão no [guia de entrega](docs/ENTREGA.md).
 
 ## Decisões
 
@@ -56,7 +69,7 @@ npm run bench
 
 **Histórico do PR #2:** a [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a`, mediu 200 pedidos em 246 ms (814 pedidos/s), com 90 reservas, 100 conflitos, 10 recusas simuladas e 10 poltronas restantes.
 
-**Catálogo atual:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), commit `a630347`, mediu 200 pedidos em **169 ms (1181 pedidos/s)**. O gate confirmou 85 reservas, 100 conflitos, 15 recusas simuladas, **15 lugares restantes no evento 1** e os outros cinco eventos intactos. Ambas as revisões usaram Node.js 22.23.5. O tempo varia entre execuções; não é uma comparação de desempenho entre versões.
+**Histórico do catálogo com seis eventos, antes do ajuste ao Passo 6:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), commit `a630347`, mediu 200 pedidos em **169 ms (1181 pedidos/s)**. O gate confirmou 85 reservas, 100 conflitos, 15 recusas simuladas, **15 lugares restantes no evento 1** e os outros cinco eventos intactos naquela versão. Ambas as revisões usaram Node.js 22.23.5. O tempo varia entre execuções; não é uma comparação de desempenho entre versões. A configuração atual possui três eventos na API.
 
 ## Histórico de atualizações e validação
 
@@ -69,12 +82,13 @@ npm run bench
 - `a70cb49`: validação de entrada da API, correções de formulário/conexão/comprovante e novas regressões.
 - `5b2a15a` / [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2): teste móvel corrigido e Actions atualizadas para runtime suportado.
 - `a630347` / [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3): seis artistas e turnês reais, fontes oficiais, fotografias locais com créditos, nova apresentação visual e catálogo compartilhado entre API e interface.
+- Ajuste de conformidade ao enunciado: três eventos na API, três artistas adicionais somente para consulta, validação dessa configuração e documentação das oito partes do vídeo e da entrega.
 
 ### Estado da validação
 
 **Histórico do PR #2:** a [execução 45749110996, de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), aprovou os jobs `validar` e `interface` em Node.js 22.23.5: 32 testes/subtestes adicionais, 14 cenários de interface, benchmark e auditoria sem vulnerabilidades reportadas naquela revisão. Essa execução antecede o novo catálogo.
 
-**Revisão atual do catálogo:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050) aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
+**Histórico do PR #3, anterior ao ajuste de três eventos:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050) aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**. A tabela abaixo pertence a essa execução; as evidências da revisão de conformidade devem ser consultadas no [relatório de validação](VALIDACAO.md) e na [execução correspondente ao commit entregue](https://github.com/Gaabllez/bilheteria-api/actions).
 
 | Verificação | Resultado |
 |---|---|
@@ -83,7 +97,7 @@ npm run bench
 | Regressões de backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas (29 + 3 + 4) |
 | Interface no Chromium | **16 cenários aprovados**, zero falhas |
 | Arquivos fornecidos pelo professor | **10 preservados**, verificados por hash |
-| Benchmark de 200 pedidos | Gate aprovado; estoque consistente nos seis eventos |
+| Benchmark de 200 pedidos | Gate aprovado; estoque consistente nos seis eventos daquela revisão |
 
 O executor original retorna código zero mesmo quando um teste falha. Por isso, `validacao/conferir-testes.mjs` exige os **16 pontos e todos os cenários aprovados**. Os arquivos originais em `testes/` não foram alterados. As regressões novas ficam em `validacao/`.
 
@@ -93,16 +107,16 @@ O [relatório de validação](VALIDACAO.md) registra erros reproduzidos, correç
 
 A interface criada por **Marcus (Mvsff)** foi aprimorada em `public/`, preservando seu fluxo de reserva e a resposta do POST após atualizar os eventos. A seleção atual reúne as turnês abaixo, conferidas em fontes oficiais em **26/11/2026**; as categorias organizam os filtros do site.
 
-| Artista | Turnê e página oficial | Categoria |
-|---|---|---|
-| Lady Gaga | [The MAYHEM Ball](https://www.ladygaga.com/us-en/live/) | Pop |
-| Bruno Mars | [The Romantic Tour](https://www.brunomars.com/theromantictour) | Pop |
-| The Weeknd | [After Hours Til Dawn](https://www.theweeknd.com/tour/) | R&B |
-| Coldplay | [Music Of The Spheres World Tour](https://www.coldplay.com/tour/) | Rock |
-| Shakira | [Las Mujeres Ya No Lloran World Tour](https://www.shakira.com/tour-hub/) | Latino |
-| Linkin Park | [From Zero World Tour](https://www.linkinpark.com/tour) | Rock |
+| Artista | Turnê e página oficial | Categoria | Uso no projeto |
+|---|---|---|---|
+| Lady Gaga | [The MAYHEM Ball](https://www.ladygaga.com/us-en/live/) | Pop | Evento 1, reserva simulada |
+| Bruno Mars | [The Romantic Tour](https://www.brunomars.com/theromantictour) | Pop | Evento 2, reserva simulada |
+| The Weeknd | [After Hours Til Dawn](https://www.theweeknd.com/tour/) | R&B | Evento 3, reserva simulada |
+| Coldplay | [Music Of The Spheres World Tour](https://www.coldplay.com/tour/) | Rock | Consulta editorial, sem reserva |
+| Shakira | [Las Mujeres Ya No Lloran World Tour](https://www.shakira.com/tour-hub/) | Latino | Consulta editorial, sem reserva |
+| Linkin Park | [From Zero World Tour](https://www.linkinpark.com/tour) | Rock | Consulta editorial, sem reserva |
 
-O [catálogo JSON](public/catalogo.json) é a fonte única dos nomes, metadados, preços fictícios e capacidades usados por `src/catalogo.ts` e pelo cliente. A disponibilidade do simulador vem de `GET /eventos`. O evento 1 mantém preço-base de R$ 100 e 100 poltronas para preservar o benchmark.
+O [catálogo JSON](public/catalogo.json) é a fonte dos seis artistas e de seus metadados. `src/catalogo.ts` instancia somente os três itens com `reservable: true`; seus preços fictícios, capacidades e disponibilidade são usados pela API e pelo formulário. `GET /eventos` devolve exatamente esses três eventos. O evento 1 mantém preço-base de R$ 100 e 100 poltronas para preservar o benchmark. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout.
 
 - Página inicial com destaque fotográfico, cards responsivos e busca por artista ou turnê, com ou sem acentos.
 - Detalhes de cada turnê com situação da pesquisa, agenda oficial, fotografia e atribuição.
@@ -139,4 +153,10 @@ O workflow executa também os testes de navegador e salva evidências em seus ar
 
 ## Pendências para a entrega acadêmica
 
-O código e os testes não substituem as etapas de entrega do enunciado. Ainda é necessário informar o link do vídeo, confirmar o GitHub e a contribuição de todos os integrantes e verificar os commits próprios de cada pessoa. Na revisão do histórico, foram identificados commits das contas `Gaabllez` e `Mvsff`; a contribuição das demais contas precisa ser confirmada pelo grupo. O README mantém os campos desconhecidos como pendentes.
+O código e os testes não substituem as etapas de entrega do enunciado. O grupo ainda precisa:
+
+- Confirmar o GitHub e a contribuição real de Inácio e Rafael, com commits de cada um na própria conta.
+- Gravar e publicar o vídeo seguindo o [roteiro de oito partes](docs/ROTEIRO_VIDEO.md), com o código da entrega, e substituir a indicação pendente no início deste README pelo link acessível sem login.
+- Conferir o nome cadastrado do grupo e o prazo da turma e realizar o envio ao Blackboard usando o [guia e texto de entrega](docs/ENTREGA.md).
+
+No histórico revisado, foram identificados commits das contas `Gaabllez` e `Mvsff`. Não foram inventados contas, contribuições, link de vídeo ou confirmação de envio para preencher as etapas ainda não comprovadas. O trabalho vale **3,5 pontos**: até **2,5** pelo código (`2,5 × pontos do npm test ÷ 16`), **0,75** pelas três partes da avaliação do vídeo e **0,25** pelo README completo.
