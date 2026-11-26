@@ -2,7 +2,7 @@
 
 **Link do vídeo:** PENDENTE — gravação e publicação ainda não concluídas.
 
-Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas e turnês reais. **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
+Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas, turnês e espetáculos teatrais.  **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
 
 ## Integrantes
 
