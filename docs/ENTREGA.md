@@ -19,7 +19,7 @@ Os **16 pontos dos testes equivalem a 2,5 pontos de código**, não aos 3,5 pont
 
 ## Situação do repositório
 
-O código foi organizado para manter três eventos na API, com o evento 1 começando com 100 poltronas. Os seis artistas permanecem no catálogo do site; três são exclusivamente editoriais. As decisões solicitadas pelo README e a tabela de benchmark estão preenchidas. O [relatório de validação](../VALIDACAO.md) e o [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions) registram resultados por revisão; confira a execução do commit que será entregue.
+O código mantém três eventos na API, com o evento 1 começando com 100 poltronas. O catálogo do site contém 12 artistas/turnês e dois espetáculos teatrais; somente três artistas são reserváveis, e os outros 11 registros são editoriais. As decisões solicitadas pelo README e a tabela de benchmark estão preenchidas. O [relatório de validação](../VALIDACAO.md) e o [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions) registram resultados por revisão; confira a execução do commit que será entregue.
 
 O [roteiro do vídeo](ROTEIRO_VIDEO.md) está preparado com as oito partes obrigatórias e comandos de demonstração. Ele é material de preparação, não um vídeo já gravado.
 
@@ -30,9 +30,9 @@ O [roteiro do vídeo](ROTEIRO_VIDEO.md) está preparado com as oito partes obrig
 | Integrante | RGM | Conta identificada | Situação a conferir |
 |---|---|---|---|
 | Gabriel Galvão Fredrich | 33632308 | `Gaabllez` | Commits identificados no histórico; revisar a descrição da participação no README |
-| Inácio Assis dos Santos Netto | 32830980 | A confirmar | Informar conta, contribuição real e commit próprio no repositório |
+| Inácio Assis dos Santos Netto | 32830980 | `nettoinacio` | Commits de catálogo teatral, filtros, validação, documentação e testes identificados; confirmar que o resumo corresponde ao trabalho realizado |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | `Mvsff` | Commits identificados no histórico; revisar a descrição da participação no README |
-| Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | Informar conta, contribuição real e commit próprio no repositório |
+| Rafael Olívio Ribeiro Campos | 34289461 | `rafaeloliviooo` | Commits de expansão do catálogo, arte editorial, interface, README e testes identificados; confirmar que o resumo corresponde ao trabalho realizado |
 
 O enunciado pede que os colegas sejam colaboradores e que **cada integrante faça commits com a própria conta**. Ele determina **zero no projeto inteiro, código e vídeo, para quem não tiver commit próprio**. Não atribua commits a outra pessoa para preencher o requisito: cada um deve realizar e registrar sua contribuição real.
 
@@ -92,4 +92,4 @@ Rafael Olívio Ribeiro Campos — RGM 34289461
 
 ## O que ainda não está comprovado
 
-Até a preparação deste material, não há link de vídeo publicado, confirmação das contas e contribuições de Inácio e Rafael, nome cadastrado do grupo, prazo exato da turma ou comprovante de envio ao Blackboard disponíveis neste repositório. Esses dados precisam ser fornecidos e conferidos pelo grupo; não foram inventados para marcar a entrega como concluída.
+Até a preparação deste material, não há link de vídeo publicado, nome cadastrado do grupo, prazo exato da turma ou comprovante de envio ao Blackboard disponíveis neste repositório. As contas e os commits de Inácio (`nettoinacio`) e Rafael (`rafaeloliviooo`) estão identificados no histórico; o grupo ainda deve confirmar que as descrições de contribuição refletem o trabalho efetivamente realizado. Não se deve considerar a entrega concluída sem o vídeo e o envio no Blackboard.
