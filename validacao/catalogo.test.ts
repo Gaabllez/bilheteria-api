@@ -58,6 +58,27 @@ test("API oferece exatamente três eventos e mantém os registros editoriais sem
   }
 });
 
+test("interface disponibiliza todos os 14 shows para simulação e permite reservar um registro expandido", async (t) => {
+  const catalogo = lerCatalogo();
+  const servidor = await iniciarServidorUI();
+  t.after(servidor.fechar);
+  const eventos = await fetch(`${servidor.url}/catalogo/eventos`).then((resposta) => resposta.json());
+  assert.equal(eventos.length, catalogo.events.length);
+  assert.deepEqual(eventos.map((evento: { id: number }) => evento.id), catalogo.events.map((evento) => evento.id));
+  const coldplay = eventos.find((evento: { id: number }) => evento.id === 4)!;
+  const resposta = await fetch(`${servidor.url}/catalogo/reservas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventoId: coldplay.id, ingressos: [{ nome: "Pessoa teste", idade: 25, estudante: false, pcd: false, poltrona: 1 }] }),
+  });
+  assert.equal(resposta.status, 201);
+  const recibo = await resposta.json();
+  assert.equal(recibo.eventoId, 4);
+  assert.equal(recibo.ingressos[0].poltrona, 1);
+  const atualizado = await fetch(`${servidor.url}/catalogo/eventos`).then((r) => r.json());
+  assert.equal(atualizado.find((evento: { id: number }) => evento.id === 4).disponivel, coldplay.capacidade - 1);
+});
+
 test("artistas editoriais não geram estoque, reservas ou cobranças", async () => {
   let cobrancas = 0;
   const bilheteria = criarBilheteria({
