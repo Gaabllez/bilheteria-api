@@ -6,15 +6,15 @@ A revisão anterior partiu de `8e49302` (interface integrada pelo PR #1). As cor
 
 ## Conformidade com o enunciado — três eventos na API
 
-O Passo 6 exige três eventos. A revisão de conformidade mantém os seis artistas na apresentação, mas cria somente **Lady Gaga (ID 1), Bruno Mars (ID 2) e The Weeknd (ID 3)** na bilheteria. O evento 1 tem 100 poltronas. Coldplay, Shakira e Linkin Park ficam disponíveis para consulta editorial, sem preço, opção no formulário ou botão de reserva. O detalhe de cada turnê encaminha à agenda oficial.
+O Passo 6 exige três eventos. A versão atual mantém **Lady Gaga (ID 1), Bruno Mars (ID 2) e The Weeknd (ID 3)** na bilheteria, com 100 poltronas no evento 1. O catálogo editorial agora contém 12 artistas/turnês e dois espetáculos teatrais (14 registros); os outros 11 são somente para consulta e não têm botão de reserva. O detalhe editorial encaminha ao canal oficial.
 
 - O catálogo exige exatamente três itens `reservable: true`, incluindo o evento 1; dados inconsistentes impedem a inicialização.
 - `GET /eventos` devolve três eventos. Tentativas de reservar IDs editoriais retornam 404, sem cobrança nem alteração do estoque.
 - O benchmark verifica explicitamente a quantidade de eventos, os 200 pedidos e o estoque restante.
-- A interface continua com as seis fotografias, busca, filtros e detalhes; somente três artistas oferecem simulação. Uma resposta indevida da API oferecendo artista editorial bloqueia o formulário.
+- A interface atual apresenta 14 registros editoriais, busca, filtros por estilo/categoria e detalhes; somente os três artistas reserváveis oferecem simulação. Uma resposta indevida da API oferecendo um registro editorial bloqueia o formulário.
 - O [roteiro de vídeo](docs/ROTEIRO_VIDEO.md) segue as oito partes do professor, com comandos Bash e PowerShell. O [guia de entrega](docs/ENTREGA.md) traz rubrica, contribuições comprovadas e texto para o Blackboard.
 
-**Validação local desta revisão, em 26/11/2026:** typecheck e sintaxe aprovados; 14 cenários oficiais com **16/16 pontos** pelo executor original; **38 testes/subtestes adicionais aprovados**; os **10 arquivos fornecidos pelo professor preservados**. A CLI `npm test` esbarra na restrição local de IPC (`EPERM` do `tsx`); o mesmo executor foi rodado com `node --import tsx`, sem alterar arquivos do professor. O workflow executa também o comando original `npm test`, a interface e o benchmark.
+**Validação comprovada do commit `153b8d7` (antes da inclusão dos dois registros teatrais e dos novos filtros):** typecheck e sintaxe aprovados; 14 cenários oficiais com **16/16 pontos**; **38 testes/subtestes adicionais aprovados**; os **10 arquivos fornecidos pelo professor preservados**. A CLI local `npm test` encontrou restrição de IPC (`EPERM` do `tsx`); o executor foi repetido com `node --import tsx`. Esses números pertencem ao commit validado e não devem ser apresentados como teste da versão atual.
 
 O ensaio isolado do erro de concorrência confirmou **16/16 antes → 11/16 com o erro proposital → 16/16 após desfazer**. A falha central foi `cobrou 200 pessoas por 50 poltronas`: cobrar antes de reservar permite que pedidos concorrentes paguem pelo mesmo lugar. O auxiliar `node validacao/demonstrar-concorrencia.mjs` trabalha em cópia temporária, valida a causa da falha e a restauração, sem deixar o projeto incorreto. Ele serve para ensaiar; o vídeo ainda deve mostrar a alteração, `npm test`, a explicação e a reversão.
 
@@ -33,7 +33,7 @@ A [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/ru
 | Quantidade na API | **3 eventos**, com 100 poltronas no evento 1 |
 | Benchmark | 200 pedidos, estoque consistente e demais eventos intactos |
 
-A suíte de interface confirmou seis cards com apenas três opções de reserva, ausência de preço e checkout nos três artistas editoriais, detalhes e agendas oficiais, API com três eventos, filtros e busca, layout de 360/390/768 px, erros HTTP, queda de conexão, comprovante e impressão. O cenário novo rejeita uma resposta indevida da API que tente oferecer uma turnê editorial para reserva. Os oito arquivos de fotografia carregaram nas capturas de desktop e celular do artefato `interface`.
+Na versão validada daquele commit, a suíte de interface confirmou seis cards e três opções de reserva, além dos cenários de responsividade, erros HTTP, comprovante e impressão. Isso é evidência histórica da versão anterior ao catálogo teatral, não da interface atual.
 
 ### Benchmark da revisão de conformidade
 
@@ -192,7 +192,7 @@ O benchmark deve ser executado em um servidor recém-iniciado, em outro terminal
 
 ## Pendências fora do código
 
-O README ainda precisa do link do vídeo e da confirmação das contas GitHub e contribuições de Inácio e Rafael, que estão marcadas como pendentes. O histórico revisado identifica `Gaabllez` e `Mvsff`; não é adequado atribuir commits ou contribuições desconhecidos aos demais integrantes.
+O README ainda precisa do link do vídeo. Os commits recentes identificam `nettoinacio` e `rafaeloliviooo`, e as contribuições estão descritas no README; o grupo deve confirmar que os resumos correspondem ao trabalho realizado. Também faltam o nome cadastrado do grupo, o prazo exato e a confirmação do envio ao Blackboard.
 
 O grupo deve gravar o vídeo com a versão final, mostrar `git log -1`, seguir o roteiro do enunciado, demonstrar temporariamente o erro de concorrência e desfazê-lo, conferir os links sem login e realizar a entrega no Blackboard. Essas etapas continuam necessárias para a entrega acadêmica.
 
