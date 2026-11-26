@@ -46,9 +46,9 @@ npm run bench
 
 | Cenário | Pedidos | Tempo (ms) | Vendidos | Poltrona ocupada | Falha de pagamento |
 |---|---:|---:|---:|---:|---:|
-| Padrão | 200 | Pendente | Pendente | Pendente | Pendente |
+| Padrão (GitHub Actions, 26/11/2026) | 200 | 168 | 88 | 100 | 12 |
 
-Reinicie o servidor antes de repetir o benchmark. Os números devem ser preenchidos com uma execução real. O cenário esperado é aproximadamente 90 vendas, 100 conflitos e 10 falhas, com variação aleatória; isso não é um resultado medido.
+**Resultado medido:** [execução #5 no GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), no Ubuntu com Node.js 22. Foram 200 pedidos em 168 ms (1194 pedidos/s). Os resultados variam devido à falha aleatória de 10% da operadora simulada. Reinicie o servidor antes de repetir o benchmark.
 
 ## Histórico de atualizações e validação
 
@@ -60,4 +60,23 @@ Reinicie o servidor antes de repetir o benchmark. Os números devem ser preenchi
 
 ### Estado da validação
 
-Os dez arquivos protegidos foram comparados com o modelo do professor e possuem SHA idêntico. A execução local dos testes foi bloqueada por falha de resolução DNS do GitHub no ambiente de validação. A aprovação dos testes, o typecheck, o funcionamento visual e os resultados do benchmark ainda precisam de evidência de execução. Consulte [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions). Não foram registrados resultados estimados como medidos.
+Os dez arquivos protegidos foram comparados com o modelo do professor e possuem SHA idêntico. Na [execução do GitHub Actions de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), `npm ci`, `npm run typecheck`, `npm test` (**16 de 16 pontos, 100%**) e `npm run bench` foram concluídos com sucesso. Essa validação cobre o backend e as requisições HTTP, mas não substitui inspeção visual e testes de interação no navegador.
+
+## Nova experiência web: bilheteria para público
+
+A interface demonstrativa de **Marcus (Mvsff)** foi preservada e aprimorada em `public/`, sem alterar os dez arquivos protegidos. A atualização inclui:
+
+- Página inicial com identidade visual, catálogo com fotografias e layout responsivo.
+- Busca por nome e filtros de shows, teatro e festivais.
+- Consulta real de disponibilidade em `GET /eventos`, sem dados falsos de poltronas ocupadas.
+- Fluxo de reserva com múltiplos participantes, escolha de poltrona e meia-entrada calculada em tempo real.
+- Resumo com subtotal, taxa de serviço de 10% e valor total, seguindo as fórmulas do backend.
+- Confirmação via `POST /reservas`, com comprovante imprimível e atualização do catálogo após compra.
+- Mensagens específicas para conflitos HTTP 409 e falhas de pagamento simuladas HTTP 502.
+- Área técnica recolhível com os endpoints e a última resposta JSON.
+
+**Atenção:** evento, imagens e pagamentos são **demonstrativos**; o sistema não vende ingressos reais, não seleciona assentos disponíveis individualmente e não processa pagamentos de verdade. Execute `npm start` e abra [http://localhost:3000](http://localhost:3000).
+
+### Verificação estática do front-end
+
+O JavaScript passou em verificação sintática, os seletores de IDs usados pelo script estão presentes no HTML e as chaves do CSS estão balanceadas. A validação automática do professor continua sendo executada pelo GitHub Actions; a interface também deve ser inspecionada no navegador em desktop e celular.
