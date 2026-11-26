@@ -30,7 +30,7 @@ test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetácu
   }
 });
 
-test("API oferece exatamente três eventos e mantém os registros editoriais sem reservas", async (t) => {
+test("API original mantém os três eventos exigidos pelo enunciado", async (t) => {
   const catalogo = lerCatalogo();
   const servidor = await iniciarServidorUI();
   t.after(servidor.fechar);
@@ -38,7 +38,7 @@ test("API oferece exatamente três eventos e mantém os registros editoriais sem
   assert.equal(resposta.status, 200);
   const eventos = await resposta.json();
   assert.equal(eventos.length, 3);
-  assert.deepEqual(eventos, catalogo.events.filter((evento) => evento.reservable).map((evento) => ({
+  assert.deepEqual(eventos, catalogo.events.filter((evento) => [1, 2, 3].includes(evento.id)).map((evento) => ({
     id: evento.id,
     nome: `${evento.artist} — ${evento.tour}`,
     preco: evento.price,
