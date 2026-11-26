@@ -598,14 +598,14 @@
       "tour": "Musical teatral",
       "category": "theatre",
       "genre": "Teatro musical",
-      "year": "2016–2017",
+      "year": "Desde 1986 (Londres)",
       "description": "Uma produção de teatro musical inspirada no clássico de mistério e romance ambientado em uma casa de ópera.",
       "image": "/images/artists/catalog-placeholder.svg",
       "imageAlt": "Arte abstrata ilustrativa do espetáculo O Fantasma da Ópera; não é uma fotografia da produção.",
       "objectPosition": "50% 50%",
       "accent": "#d6a66b",
       "officialUrl": "https://www.thephantomoftheopera.com/",
-      "sourceUrl": "https://www.thephantomoftheopera.com/",
+      "sourceUrl": "https://www.phantomoftheopera.com/london/about",
       "status": "Registro editorial de espetáculo teatral. Consulte o canal oficial para informações sobre montagens e apresentações.",
       "price": 100,
       "capacity": 100,
@@ -613,8 +613,8 @@
         {
           "publisher": "The Phantom of the Opera",
           "title": "Official Website",
-          "url": "https://www.thephantomoftheopera.com/",
-          "supports": "Referência oficial do espetáculo; não confirma datas ou disponibilidade de ingressos."
+          "url": "https://www.phantomoftheopera.com/london/about",
+          "supports": "O site oficial identifica a produção original de Londres como estabelecida em 1986; não comprova datas futuras nem disponibilidade de ingressos."
         }
       ],
       "credit": {
@@ -642,14 +642,14 @@
       "tour": "Musical teatral",
       "category": "theatre",
       "genre": "Teatro musical",
-      "year": "2024–2025",
+      "year": "Desde 2003 (Broadway)",
       "description": "Musical teatral que revisita o universo de Oz por uma perspectiva diferente, com foco na história de duas bruxas.",
       "image": "/images/artists/catalog-placeholder.svg",
       "imageAlt": "Arte abstrata ilustrativa do espetáculo Wicked; não é uma fotografia da produção.",
       "objectPosition": "50% 50%",
       "accent": "#ef7fc0",
       "officialUrl": "https://www.wickedthemusical.com/",
-      "sourceUrl": "https://www.wickedthemusical.com/",
+      "sourceUrl": "https://wickedthemusical.com/wp-content/uploads/2025/04/Wicked-Study-Guide-Large-File-Sile.pdf",
       "status": "Registro editorial de espetáculo teatral. Consulte o canal oficial para informações sobre montagens e apresentações.",
       "price": 100,
       "capacity": 100,
@@ -657,8 +657,8 @@
         {
           "publisher": "Wicked",
           "title": "Official Website",
-          "url": "https://www.wickedthemusical.com/",
-          "supports": "Referência oficial do musical; não confirma datas ou disponibilidade de ingressos."
+          "url": "https://wickedthemusical.com/wp-content/uploads/2025/04/Wicked-Study-Guide-Large-File-Sile.pdf",
+          "supports": "O guia oficial do musical registra que WICKED abriu na Broadway em 2003; não comprova disponibilidade atual de ingressos."
         }
       ],
       "credit": {
