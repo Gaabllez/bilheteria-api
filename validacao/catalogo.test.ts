@@ -6,23 +6,23 @@ import { criarBilheteria } from "../src/bilheteria.ts";
 import { NaoEncontradoErro } from "../src/dominio.ts";
 import { iniciarServidorUI } from "./servidor-ui.ts";
 
-test("catálogo reúne 12 turnês de 12 artistas, fontes HTTPS, fotos locais e referência de data", () => {
+test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetáculos teatrais, fontes HTTPS, fotos locais e referência de data", () => {
   const catalogo = lerCatalogo();
-  assert.equal(catalogo.events.length, 12);
-  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 12);
+  assert.equal(catalogo.events.length, 14);
+  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 14);
   assert.deepEqual(catalogo.events.filter((evento) => evento.reservable).map((evento) => evento.id), [1, 2, 3]);
-  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 101, 102, 103, 104, 105, 106]);
+  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 101, 102, 103, 104, 105, 106, 107, 108]);
   assert.equal(catalogo.verifiedAt, "2026-11-26");
-  assert.deepEqual(new Set(catalogo.events.map((evento) => evento.category)), new Set(["pop", "rnb", "rock", "latino"]));
+  assert.deepEqual(new Set(catalogo.events.map((evento) => evento.category)), new Set(["pop", "rnb", "rock", "latino", "theatre"]));
   for (const evento of catalogo.events) {
     assert.equal(new URL(evento.officialUrl).protocol, "https:");
     assert.equal(new URL(evento.sourceUrl).protocol, "https:");
     assert.ok(statSync(new URL(`../public${evento.image}`, import.meta.url)).size > 1000, `Foto local ausente ou vazia para ${evento.artist}`);
-    assert.ok(evento.imageAlt.includes(evento.artist), `A fotografia precisa identificar ${evento.artist}`);
+    assert.ok(evento.imageAlt.includes(evento.artist), `O texto alternativo precisa identificar ${evento.artist}`);
   }
 });
 
-test("API oferece exatamente três eventos e mantém nove artistas no catálogo editorial", async (t) => {
+test("API oferece exatamente três eventos e mantém os registros editoriais sem reservas", async (t) => {
   const catalogo = lerCatalogo();
   const servidor = await iniciarServidorUI();
   t.after(servidor.fechar);
@@ -58,7 +58,7 @@ test("artistas editoriais não geram estoque, reservas ou cobranças", async () 
     limitePagamentoMs: 500,
   });
   const antes = bilheteria.listarEventos();
-  for (const eventoId of [4, 5, 6, 101, 102, 103, 104, 105, 106]) {
+  for (const eventoId of [4, 5, 6, 101, 102, 103, 104, 105, 106, 107, 108]) {
     await assert.rejects(() => bilheteria.reservar({
       eventoId,
       ingressos: [{ nome: "Pessoa de teste", idade: 25, estudante: false, pcd: false, poltrona: 1 }],
