@@ -26,6 +26,8 @@ npm start
 
 Com o servidor ativo, abra [http://localhost:3000](http://localhost:3000) para usar o catálogo e reservar ingressos de demonstração. A camada HTTP original do professor permanece intacta. A porta padrão é 3000; `PORT` permite outra porta quando o ambiente precisar.
 
+Não há etapa de build: `npm start` executa `src/main.ts` com `tsx` e serve os arquivos de `public/`. Os comandos e as dependências originais do professor foram mantidos.
+
 Em outro terminal:
 
 ```bash
@@ -42,7 +44,7 @@ npm run bench
 4. **Outro paradigma:** o cálculo poderia ser imperativo, com loops e acumuladores mutáveis. Funcionaria, mas a composição funcional deixa a transformação e a soma explícitas e facilita testes isolados.
 5. **Concorrente × paralelo:** no processo Node, o trecho síncrono não é interrompido por outro pedido enquanto o await permite progresso de outras requisições. Em vários processos ou núcleos com estado compartilhado, seria necessário coordenar reservas com transações, restrições de unicidade ou operações atômicas em armazenamento compartilhado.
 
-## Resultados do bench
+## Resultados históricos do bench
 
 | Cenário | Pedidos | Tempo (ms) | Vendidos | Poltrona ocupada | Falha de pagamento |
 |---|---:|---:|---:|---:|---:|
@@ -63,39 +65,49 @@ npm run bench
 - `8e49302` / [PR #1](https://github.com/Gaabllez/bilheteria-api/pull/1): catálogo e experiência visual de bilheteria.
 - `a70cb49`: validação de entrada da API, correções de formulário/conexão/comprovante e novas regressões.
 - `5b2a15a` / [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2): teste móvel corrigido e Actions atualizadas para runtime suportado.
+- Atualização atual: seis artistas e turnês reais, fontes oficiais, fotografias locais com créditos, nova apresentação visual e catálogo compartilhado entre API e interface.
 
 ### Estado da validação
 
-Na [validação completa de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), os dois jobs (`validar` e `interface`) passaram em Node.js 22.23.5:
+**Histórico do PR #2:** a [execução 45749110996, de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), aprovou os jobs `validar` e `interface` em Node.js 22.23.5: 32 testes/subtestes adicionais, 14 cenários de interface, benchmark e auditoria sem vulnerabilidades reportadas naquela revisão. Essa execução antecede o novo catálogo.
+
+**Revisão atual do catálogo — verificações locais:**
 
 | Verificação | Resultado |
 |---|---|
-| Instalação com lockfile e TypeScript | Aprovados |
+| TypeScript e sintaxe JavaScript | Aprovados |
 | Testes originais do professor | 14 cenários, **16/16 pontos** |
-| Regressões de backend e do gate | **32 testes/subtestes aprovados** (29 do backend + 3 do gate) |
-| Interface no Chromium | **14 cenários aprovados**, desktop e larguras móveis de 360, 390 e 768 px |
+| Regressões de backend, gate e catálogo | **36 testes/subtestes aprovados** (29 + 3 + 4) |
+| Interface no Chromium | **16 cenários preparados; execução no CI pendente** |
 | Arquivos fornecidos pelo professor | **10 preservados**, verificados por hash |
-| Benchmark de 200 pedidos | Sem exceder capacidade; contagem e estoque consistentes |
-| Auditoria de dependências | Zero vulnerabilidades reportadas na revisão |
 
 O executor original retorna código zero mesmo quando um teste falha. Por isso, `validacao/conferir-testes.mjs` exige os **16 pontos e todos os cenários aprovados**. Os arquivos originais em `testes/` não foram alterados. As regressões novas ficam em `validacao/`.
 
 O [relatório de validação](VALIDACAO.md) registra erros reproduzidos, correções, comandos, evidências e limites dos testes.
 
-## Nova experiência web: bilheteria para público
+## Catálogo real e nova interface
 
-A interface demonstrativa de **Marcus (Mvsff)** foi preservada e aprimorada em `public/`, sem alterar os dez arquivos protegidos. A atualização inclui:
+A interface criada por **Marcus (Mvsff)** foi aprimorada em `public/`, preservando seu fluxo de reserva e a resposta do POST após atualizar os eventos. A seleção atual reúne as turnês abaixo, conferidas em fontes oficiais em **26/11/2026**; as categorias organizam os filtros do site.
 
-- Página inicial com identidade visual, catálogo com fotografias e layout responsivo.
-- Busca por nome e filtros de shows, teatro e festivais.
-- Consulta real de disponibilidade em `GET /eventos`, sem dados falsos de poltronas ocupadas.
-- Fluxo de reserva com múltiplos participantes, escolha de poltrona e meia-entrada calculada em tempo real.
-- Resumo com subtotal, taxa de serviço de 10% e valor total, seguindo as fórmulas do backend.
-- Confirmação via `POST /reservas`, com comprovante imprimível e atualização do catálogo após compra.
-- Mensagens específicas para conflitos HTTP 409 e falhas de pagamento simuladas HTTP 502.
-- Área técnica recolhível com os endpoints e a última resposta JSON.
+| Artista | Turnê e página oficial | Categoria |
+|---|---|---|
+| Lady Gaga | [The MAYHEM Ball](https://www.ladygaga.com/us-en/live/) | Pop |
+| Bruno Mars | [The Romantic Tour](https://www.brunomars.com/theromantictour) | Pop |
+| The Weeknd | [After Hours Til Dawn](https://www.theweeknd.com/tour/) | R&B |
+| Coldplay | [Music Of The Spheres World Tour](https://www.coldplay.com/tour/) | Rock |
+| Shakira | [Las Mujeres Ya No Lloran World Tour](https://www.shakira.com/tour-hub/) | Latino |
+| Linkin Park | [From Zero World Tour](https://www.linkinpark.com/tour) | Rock |
 
-**Atenção:** evento, imagens e pagamentos são **demonstrativos**; o sistema não vende ingressos reais, não seleciona assentos disponíveis individualmente e não processa pagamentos de verdade. Execute `npm start` e abra [http://localhost:3000](http://localhost:3000).
+O [catálogo JSON](public/catalogo.json) é a fonte única dos nomes, metadados, preços fictícios e capacidades usados por `src/catalogo.ts` e pelo cliente. A disponibilidade do simulador vem de `GET /eventos`. O evento 1 mantém preço-base de R$ 100 e 100 poltronas para preservar o benchmark.
+
+- Página inicial com destaque fotográfico, cards responsivos e busca por artista ou turnê, com ou sem acentos.
+- Detalhes de cada turnê com situação da pesquisa, agenda oficial, fotografia e atribuição.
+- Reserva pela API com participantes, poltronas, meia-entrada, taxa de 10%, comprovante imprimível e atualização do estoque.
+- Área técnica recolhida por padrão, com endpoints e última resposta HTTP.
+
+As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaques — que somam **850.490 bytes**. Autoria, licença, contexto e alterações constam nos [créditos das fotografias](public/images/artists/CREDITS.md); as referências das turnês estão em [FONTES.md](FONTES.md). Fotos de arquivo são identificadas com seu contexto original.
+
+**Preços, capacidades, reservas e pagamentos são demonstrativos.** O site não vende ingressos reais. Os textos registram a situação encontrada nas fontes consultadas e encaminham à agenda oficial; não inventam próximas datas nem disponibilidade comercial.
 
 ### Correções funcionais e validação da interface
 
@@ -108,14 +120,14 @@ A interface demonstrativa de **Marcus (Mvsff)** foi preservada e aprimorada em `
 - A impressão mantém o aviso de comprovante fictício, e um recibo fechado não aparece numa impressão comum da página.
 - Rótulos, campos, foco de teclado e menu móvel foram revisados; a busca encontra palavras com ou sem acento.
 
-Além da automação, a interface foi inspecionada no navegador com imagens reais. Foram realizadas duas reservas na API de demonstração, incluindo três participantes, meia por estudante/idade, subtotal, taxa, comprovante e atualização da disponibilidade. A suíte automatizada substitui imagens e fontes externas para testar os fluxos sem depender desses serviços.
+A nova suíte inclui detalhes das turnês e recuperação após falha inicial do catálogo. Usa as fotografias locais reais e substitui apenas fontes externas. Os 16 cenários ainda aguardam execução no CI nesta atualização; o resultado de 14 cenários do PR #2 permanece como histórico da interface anterior.
 
 ### Repetir as validações adicionais
 
 ```bash
 node validacao/conferir-originais.mjs
 node validacao/conferir-testes.mjs
-node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs
+node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
 node --check public/app.js
 ```
 

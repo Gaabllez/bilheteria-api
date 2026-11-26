@@ -9,13 +9,48 @@ const confirmedSeats = new Map();
 const uncertainSeats = new Map();
 const REQUEST_TIMEOUT_MS = 10000;
 const searchText = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
-const catalog = {
-  1: { category: "show", tag: "SHOW AO VIVO", genre: "MÚSICA & ENERGIA", description: "A energia de um show inesquecível. Encontre seu lugar e deixe a música fazer o resto.", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=85", alt: "Luzes coloridas iluminando um show ao vivo" },
-  2: { category: "teatro", tag: "ARTES CÊNICAS", genre: "CULTURA & EMOÇÃO", description: "Histórias que ganham vida no palco, com emoção e um lugar reservado para você.", image: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1000&q=85", alt: "Cortinas e luzes de um palco teatral" },
-  3: { category: "festival", tag: "EXPERIÊNCIA", genre: "FESTIVAL & CONEXÃO", description: "Música, encontros e momentos especiais em um só lugar. Venha viver tudo isso.", image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=85", alt: "Multidão reunida em festival de música" }
-};
-const fallbackCover = { category: "show", tag: "EVENTO", genre: "EXPERIÊNCIA", description: "Uma nova experiência esperando por você.", image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=1000&q=85", alt: "Pessoas aproveitando apresentação musical" };
-const meta = (event) => catalog[event.id] || fallbackCover;
+let catalog = new Map();
+let catalogLoaded = false;
+let catalogVerifiedAt = "";
+let detailedEventId = null;
+const meta = (event) => catalog.get(event.id);
+const hasText = (value) => typeof value === "string" && value.trim().length > 0;
+
+function isHttpsUrl(value) {
+  if (!hasText(value)) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
+  } catch { return false; }
+}
+
+async function loadCatalog() {
+  const data = await api("/catalogo.json", {}, false);
+  const date = data && hasText(data.verifiedAt) ? new Date(data.verifiedAt) : null;
+  if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data.verifiedAt) || !date || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== data.verifiedAt || !Array.isArray(data.events) || !data.events.length) {
+    throw new Error("O catálogo editorial não está no formato esperado.");
+  }
+  const entries = new Map();
+  for (const item of data.events) {
+    const credit = item?.credit;
+    const positions = typeof item?.objectPosition === "string" && /^\d{1,3}% \d{1,3}%$/.test(item.objectPosition) ? item.objectPosition.match(/\d+/g).map(Number) : null;
+    if (!item || !Number.isSafeInteger(item.id) || item.id < 1 || entries.has(item.id) ||
+        !["artist", "tour", "genre", "year", "description", "imageAlt", "status"].every((field) => hasText(item[field])) ||
+        !["pop", "rnb", "rock", "latino"].includes(item.category) ||
+        !/^\/images\/artists\/[a-z0-9-]+\.webp$/.test(item.image) ||
+        !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
+        !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
+        !/^#[a-f0-9]{6}$/i.test(item.accent) || !["contain", "cover"].includes(item.dialogImageFit) || !positions || positions.some((position) => position > 100) ||
+        !credit || !["author", "license", "description"].every((field) => hasText(credit[field])) || !isHttpsUrl(credit.licenseUrl) || !isHttpsUrl(credit.sourceUrl)) {
+      throw new Error("O catálogo contém informações incompletas ou inválidas.");
+    }
+    entries.set(item.id, item);
+  }
+  // Só guarda metadados validados. O botão Atualizar tenta de novo após uma falha.
+  catalog = entries;
+  catalogVerifiedAt = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(date);
+  catalogLoaded = true;
+}
 
 function node(tag, className, text) {
   const el = document.createElement(tag);
@@ -83,12 +118,17 @@ async function api(path, options = {}, record = true) {
 
 function updateControls() {
   const blocked = state.processing;
+  const unavailable = blocked || !state.connected || state.loading;
   $("#reservation-form").setAttribute("aria-busy", String(blocked));
-  $$("#reservation-form input, #reservation-form button, .event-book").forEach((control) => {
-    control.disabled = blocked || (control.classList.contains("event-book") && control.dataset.soldOut === "true");
-  });
+  $$("#reservation-form input, #reservation-form button").forEach((control) => { control.disabled = blocked; });
+  $$(".event-book").forEach((control) => { control.disabled = unavailable || state.uncertain || control.dataset.soldOut === "true"; });
+  $$(".event-details").forEach((control) => { control.disabled = unavailable; });
+  $("#featured-tour").disabled = unavailable || !state.events.some((event) => event.id === 1);
+  const detailedEvent = state.events.find((event) => event.id === detailedEventId);
+  $("#event-reserve").disabled = unavailable || state.uncertain || !detailedEvent || detailedEvent.disponivel === 0;
+  $("#event-reserve").textContent = detailedEvent?.disponivel === 0 ? "Simulação esgotada" : "Simular reserva";
   $("#add-ticket").disabled = blocked || $$(".ticket-card").length >= 12;
-  $("#event-select").disabled = blocked || !state.connected;
+  $("#event-select").disabled = unavailable;
   $("#refresh-events").disabled = blocked || state.loading;
   $("#submit-reservation").disabled = blocked || !state.connected || state.loading || state.uncertain || !selectedEvent() || selectedEvent().disponivel === 0;
   $("#reset-reservation").hidden = !state.uncertain;
@@ -159,7 +199,7 @@ function calculateSummary() {
   checkout.replaceChildren();
   const mark = node("div", "checkout-event-icon", "✦");
   const details = node("div");
-  details.append(node("strong", "", event?.nome || "Selecione um evento"), node("span", "", event ? tickets.length + (tickets.length === 1 ? " ingresso" : " ingressos") + " • " + event.disponivel + " lugares disponíveis" : "Seu resumo aparecerá aqui"));
+  details.append(node("strong", "", event?.nome || "Selecione um evento"), node("span", "", event ? tickets.length + (tickets.length === 1 ? " ingresso" : " ingressos") + " • " + event.disponivel + " lugares no simulador" : "Seu resumo aparecerá aqui"));
   checkout.append(mark, details);
 }
 
@@ -172,7 +212,7 @@ function renderSelectedEvent() {
     image.src = meta(event).image;
     image.alt = "";
     const detail = node("div");
-    detail.append(node("strong", "", event.nome), node("span", "", money(event.preco) + " • " + event.disponivel + " de " + event.capacidade + " lugares disponíveis"));
+    detail.append(node("strong", "", event.nome), node("span", "", money(event.preco) + " • " + event.disponivel + " de " + event.capacidade + " lugares no simulador"));
     target.append(image, detail);
   } else {
     target.append(node("span", "selected-placeholder", "Selecione um evento para conferir disponibilidade e valores."));
@@ -238,45 +278,97 @@ function renumberTickets() {
   });
 }
 
+function chooseEvent(id) {
+  const event = state.events.find((item) => item.id === id);
+  if (state.processing || state.loading || !state.connected || state.uncertain || !event || event.disponivel === 0) return;
+  if ($("#event-dialog").open) $("#event-dialog").close();
+  $("#event-select").value = String(id);
+  formMessage();
+  renderSelectedEvent();
+  updateControls();
+  $("#reserva").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  $("#event-select").focus({ preventScroll: true });
+}
+
+function sourceLink(text, url) {
+  const link = node("a", "", text);
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  return link;
+}
+
+function showEventDetails(id) {
+  const event = state.events.find((item) => item.id === id);
+  if (state.processing || state.loading || !state.connected || !event || $("#receipt-dialog").open) return;
+  const data = meta(event);
+  detailedEventId = id;
+  $("#event-dialog-title").textContent = data.artist;
+  $("#event-dialog-tour").textContent = data.tour;
+  $("#event-dialog-description").textContent = data.description;
+  $("#event-dialog-genre").textContent = data.genre;
+  $("#event-dialog-style").textContent = data.genre;
+  $("#event-dialog-year").textContent = data.year;
+  $("#event-dialog-note").textContent = data.status + " Fontes consultadas em " + catalogVerifiedAt + ".";
+  $("#event-dialog-price").textContent = money(round(event.preco / 2));
+  const photo = $("#event-dialog-image");
+  photo.src = data.image;
+  photo.alt = data.imageAlt;
+  photo.style.objectPosition = data.objectPosition;
+  photo.style.objectFit = data.dialogImageFit;
+  const officialLink = $("#event-official-link");
+  officialLink.href = data.officialUrl;
+  officialLink.target = "_blank";
+  officialLink.rel = "noopener noreferrer";
+  const credit = data.credit;
+  $("#event-image-credit").replaceChildren(
+    document.createTextNode("Foto: " + credit.author + " · "),
+    sourceLink(credit.license, credit.licenseUrl),
+    document.createTextNode(" · "),
+    sourceLink("Ver original", credit.sourceUrl),
+    document.createTextNode(". " + credit.description)
+  );
+  const dialog = $("#event-dialog");
+  dialog.style.setProperty("--event-accent", data.accent);
+  updateControls();
+  if (!dialog.open) dialog.showModal();
+}
+
 function createEventCard(event) {
   const data = meta(event);
-  const remaining = Number(event.disponivel);
-  const sold = Math.max(0, event.capacidade - remaining);
-  const percent = event.capacidade ? Math.min(100, Math.max(0, sold / event.capacidade * 100)) : 0;
+  const soldOut = event.disponivel === 0;
+  const unavailable = state.processing || state.loading || !state.connected;
   const card = node("article", "event-card");
+  card.style.setProperty("--event-accent", data.accent);
   const cover = node("div", "event-cover");
-  const image = node("img");
+  const image = node("img", "event-img");
   image.src = data.image;
-  image.alt = data.alt;
+  image.alt = data.imageAlt;
   image.loading = "lazy";
-  cover.append(image, node("span", "cover-tag", data.tag), node("span", "cover-badge", "✳  " + data.genre));
+  image.decoding = "async";
+  image.width = data.credit.width || 800;
+  image.height = data.credit.height || 600;
+  image.style.objectPosition = data.objectPosition;
+  cover.append(image, node("span", "event-tag", data.genre), node("span", "event-year", data.year));
   const info = node("div", "event-info");
-  const top = node("div", "event-meta");
-  top.append(node("span", "", "EVENTO #" + String(event.id).padStart(2, "0")), node("span", "event-meta-dot"), node("span", "", "EXPERIÊNCIA AO VIVO"));
-  info.append(top, node("h3", "", event.nome), node("p", "event-desc", data.description));
-  const availability = node("div", "availability" + (remaining === 0 ? " sold" : remaining <= 10 ? " low" : ""));
-  availability.append(node("span", "availability-dot"), node("span", "", remaining > 0 ? remaining + " lugares disponíveis" : "Ingressos esgotados"));
-  info.append(availability);
-  const progress = node("div", "event-progress");
-  const fill = node("span");
-  fill.style.width = percent + "%";
-  progress.append(fill);
-  info.append(progress);
-  const foot = node("div", "event-card-foot");
+  info.append(node("span", "event-genre", "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
+  const foot = node("div", "event-footer");
   const price = node("div", "event-price");
-  price.append(node("small", "", "MEIA-ENTRADA"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
-  const action = node("button", "event-book", remaining > 0 ? "Escolher ingresso" : "Esgotado");
-  action.type = "button";
-  action.dataset.soldOut = String(remaining <= 0);
-  action.disabled = state.processing || remaining <= 0;
-  action.addEventListener("click", () => {
-    if (state.processing) return;
-    $("#event-select").value = String(event.id);
-    renderSelectedEvent();
-    updateControls();
-    $("#reserva").scrollIntoView({ behavior: "smooth" });
-  });
-  foot.append(price, action);
+  price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
+  const actions = node("div", "event-actions");
+  const details = node("button", "event-details", "Ver turnê");
+  details.type = "button";
+  details.setAttribute("aria-label", "Ver turnê de " + data.artist);
+  details.disabled = unavailable;
+  details.addEventListener("click", () => showEventDetails(event.id));
+  const book = node("button", "event-book", soldOut ? "Simulação esgotada" : "Simular");
+  book.type = "button";
+  book.setAttribute("aria-label", soldOut ? "Simulação esgotada para " + data.artist : "Simular reserva para " + data.artist);
+  book.dataset.soldOut = String(soldOut);
+  book.disabled = unavailable || state.uncertain || soldOut;
+  book.addEventListener("click", () => chooseEvent(event.id));
+  actions.append(details, book);
+  foot.append(price, actions);
   info.append(foot);
   card.append(cover, info);
   return card;
@@ -292,10 +384,10 @@ function renderEvents() {
   const matching = state.events.filter((event) => {
     const info = meta(event);
     const matchesCategory = state.filter === "todos" || info.category === state.filter;
-    const matchesSearch = !search || searchText(event.nome + " " + info.genre + " " + info.description).includes(search);
+    const matchesSearch = !search || searchText(info.artist + " " + info.tour + " " + info.genre + " " + info.description).includes(search);
     return matchesCategory && matchesSearch;
   });
-  $("#catalog-counter").textContent = matching.length + (matching.length === 1 ? " evento encontrado" : " eventos encontrados");
+  $("#catalog-counter").textContent = matching.length + (matching.length === 1 ? " turnê encontrada" : " turnês encontradas");
   $("#events-grid").replaceChildren(...(matching.length ? matching.map(createEventCard) : [node("div", "empty-events", state.events.length ? "Nenhum evento corresponde à busca. Experimente outro filtro." : "Nenhum evento disponível no momento.")]));
 }
 
@@ -308,15 +400,23 @@ async function loadEvents(record = false) {
   state.loading = true;
   updateControls();
   try {
+    if (!catalogLoaded) await loadCatalog();
     const events = await api("/eventos", {}, record);
     if (!Array.isArray(events) || !events.every(isEvent) || new Set(events.map((event) => event.id)).size !== events.length) throw new Error("O servidor retornou um formato de eventos inesperado.");
+    if (!events.every((event) => {
+      const info = meta(event);
+      return info && event.nome === info.artist + " — " + info.tour && event.preco === info.price && event.capacidade === info.capacity;
+    })) {
+      catalogLoaded = false;
+      throw new Error("O catálogo e os dados de reserva estão inconsistentes.");
+    }
     state.events = events;
     state.connected = true;
     const select = $("#event-select");
     const previous = select.value;
     select.replaceChildren();
     events.forEach((event) => {
-      const option = node("option", "", event.nome + " — " + money(event.preco) + " • " + event.disponivel + " disponíveis");
+      const option = node("option", "", event.nome + " — " + money(event.preco) + " • " + event.disponivel + " lugares no simulador");
       option.value = String(event.id);
       select.append(option);
     });
@@ -457,6 +557,9 @@ $$("[data-filter]").forEach((button) => button.addEventListener("click", () => {
   renderEvents();
 }));
 $("#refresh-events").addEventListener("click", () => loadEvents(true));
+$("#featured-tour").addEventListener("click", () => showEventDetails(1));
+$("#close-event").addEventListener("click", () => $("#event-dialog").close());
+$("#event-reserve").addEventListener("click", () => chooseEvent(detailedEventId));
 $("#event-select").addEventListener("change", () => {
   if (!state.uncertain) formMessage();
   renderSelectedEvent();
