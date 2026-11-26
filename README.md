@@ -137,10 +137,11 @@ As referências consultadas em **26/11/2026** estão em [FONTES.md](FONTES.md). 
 
 O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) reúne as **oito partes obrigatórias**, incluindo a demonstração do erro e sua reversão. O [guia de entrega](docs/ENTREGA.md) contém a rubrica, a conferência dos commits individuais e o texto preparado para o Blackboard.
 
-Ainda depende do grupo:
+O vídeo da apresentação já está publicado: [assistir no YouTube](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz).
+
+Antes da entrega final, o grupo deve:
 
 - Verificar os commits próprios de cada integrante e confirmar que a descrição das contribuições corresponde ao trabalho realizado.
-- Vídeo da apresentação publicado: [assistir no YouTube](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz).
 - Confirmar o nome cadastrado do grupo e o prazo da turma no Blackboard e realizar o envio com os links, nomes completos e RGMs.
 
 A pontuação máxima do trabalho é **3,5**: até **2,5** pelo código (`2,5 × pontos do npm test ÷ 16`), **0,75** pela avaliação do vídeo e **0,25** pelo README completo. A aprovação dos testes não substitui as etapas de entrega nem a participação individual exigida no enunciado.
