@@ -19,14 +19,14 @@ Os comandos `git`, `npm` e os exemplos de `node -e` abaixo podem ser usados em B
 
 **Na tela:** a tabela de integrantes no README e o terminal.
 
-Apresente o nome completo de cada integrante e a contribuição que ele realmente realizou. Os dados atualmente registrados são:
+Apresente o nome completo de cada integrante, a conta GitHub e a contribuição registrada. Confirme com cada pessoa que a descrição corresponde ao trabalho que realizou. Os dados atuais são:
 
 | Integrante | RGM | Referência para a apresentação |
 |---|---|---|
 | Gabriel Galvão Fredrich | 33632308 | Atividades registradas na conta `Gaabllez`, descritas no README |
-| Inácio Assis dos Santos Netto | 32830980 | Confirmar contribuição e conta antes da gravação |
+| Inácio Assis dos Santos Netto | 32830980 | `nettoinacio`: filtros de artistas/teatro, registros editoriais teatrais, validação, documentação e testes; conferir a descrição com o integrante |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | Painel web responsivo e preservação da resposta da reserva, conta `Mvsff` |
-| Rafael Olívio Ribeiro Campos | 34289461 | Confirmar contribuição e conta antes da gravação |
+| Rafael Olívio Ribeiro Campos | 34289461 | `rafaeloliviooo`: expansão do catálogo, seis artistas/turnês novos, arte editorial, atualização de interface e testes; conferir a descrição com o integrante |
 
 Execute e mostre:
 
