@@ -24,6 +24,8 @@ jobs:
         run: node validacao/conferir-testes.mjs
       - name: Regressões de API, concorrência, catálogo e gate
         run: node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
+      - name: Ensaiar erro de concorrência em cópia temporária e confirmar restauração
+        run: node validacao/demonstrar-concorrencia.mjs
       - name: Verificar JavaScript da interface
         run: node --check public/app.js
       - name: Benchmark HTTP

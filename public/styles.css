@@ -940,6 +940,11 @@ h2 em {
   margin-top:4px;
 }
 
+.event-card .event-editorial-price strong {
+  font-size:clamp(15px,1.4vw,20px);
+  letter-spacing:-.02em;
+}
+
 .event-price .price-note {
   font-size:9px;
   letter-spacing:0;

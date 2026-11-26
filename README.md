@@ -1,142 +1,138 @@
 # Bilheteria concorrente
 
-**Link do vídeo:** pendente de gravação e publicação.
+**Link do vídeo:** PENDENTE — gravação e publicação ainda não concluídas.
 
-Projeto final de Paradigmas de Linguagens de Programação, baseado no [modelo do professor](https://github.com/douglasmeneses/bilheteria-projeto-final).
+Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas e turnês reais. **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
 
 ## Integrantes
 
-| Nome | RGM | GitHub | Parte principal |
+| Nome | RGM | GitHub | Contribuição registrada |
 |---|---|---|---|
-| Gabriel Galvão Fredrich | 33632308 | Gaabllez | A confirmar |
-| Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar |
-| Marcus Vinícius Souza Fernandes Filho | 33204128 | Mvsff | Painel web responsivo e preservação do comprovante após atualização dos eventos |
-| Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | A confirmar |
+| Gabriel Galvão Fredrich | 33632308 | [Gaabllez](https://github.com/Gaabllez) | API, integração, validação automatizada, catálogo e aprimoramentos da interface |
+| Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar pelo integrante |
+| Marcus Vinícius Souza Fernandes Filho | 33204128 | [Mvsff](https://github.com/Mvsff) | Painel web responsivo e preservação da resposta da reserva após a atualização dos eventos |
+| Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | A confirmar pelo integrante |
+
+As contribuições de Gabriel e Marcus foram identificadas no [histórico das respectivas contas](https://github.com/Gaabllez/bilheteria-api/commits/main/). As contas e contribuições de Inácio e Rafael ainda precisam ser confirmadas, incluindo os commits feitos por cada um com a própria conta.
 
 ## Executar
 
-Node.js 22 ou superior.
+Use **Node.js 22 ou superior**. Na pasta do projeto:
 
 ```bash
 npm ci
-npm test
 npm run typecheck
+npm test
 npm start
 ```
 
-Com o servidor ativo, abra [http://localhost:3000](http://localhost:3000) para usar o catálogo e reservar ingressos de demonstração. A camada HTTP original do professor permanece intacta. A porta padrão é 3000; `PORT` permite outra porta quando o ambiente precisar.
+Abra [http://localhost:3000](http://localhost:3000). `npm start` executa `src/main.ts` com `tsx` e serve a interface de `public/`; não há etapa de build. A porta padrão é **3000**, com possibilidade de configuração pela variável `PORT`.
 
-Não há etapa de build: `npm start` executa `src/main.ts` com `tsx` e serve os arquivos de `public/`. Os comandos e as dependências originais do professor foram mantidos.
+O servidor cria **exatamente três eventos**, conforme o Passo 6 do enunciado. O evento de ID 1 começa com **100 poltronas**. A operadora simulada usa **80 ms de latência** e **10% de falha**, e a bilheteria limita a espera do pagamento a **500 ms**. Os arquivos fornecidos prontos pelo professor permanecem preservados e são conferidos por hash.
 
-Em outro terminal:
+### Consultar eventos e fazer uma reserva
+
+Com o servidor ativo, execute em outro terminal Bash ou Git Bash:
 
 ```bash
-curl http://localhost:3000/eventos
-curl -X POST http://localhost:3000/reservas -H 'Content-Type: application/json' -d '{"eventoId":1,"ingressos":[{"nome":"Ana","idade":20,"estudante":true,"pcd":false,"poltrona":7}]}'
+curl -i http://localhost:3000/eventos
+curl -i -X POST http://localhost:3000/reservas -H 'Content-Type: application/json' -d '{"eventoId":1,"ingressos":[{"nome":"Ana","idade":20,"estudante":true,"pcd":false,"poltrona":7}]}'
+```
+
+`GET /eventos` lista os três eventos e a disponibilidade. Quando aprovada, a reserva retorna **201** com o comprovante; nesse exemplo, a meia-entrada de R$ 50 mais a taxa de 10% totaliza **R$ 55**. A operadora pode recusar o pagamento com **502**; após uma reserva aprovada, repetir a mesma poltrona retorna **409**. Há [comandos equivalentes para PowerShell](docs/ROTEIRO_VIDEO.md#2-projeto-rodando).
+
+### Executar o benchmark
+
+**Reinicie o servidor antes de cada medição:** no terminal de `npm start`, pressione `Ctrl+C` e execute `npm start` novamente. Isso devolve o estado inicial, com as 100 poltronas do evento 1 livres. Em outro terminal:
+
+```bash
 npm run bench
 ```
 
-## Decisões
+## Perguntas do enunciado
 
-1. **Concorrência:** validamos e marcamos todas as poltronas sincronamente antes do primeiro await. Se a marcação fosse posterior ao pagamento, pedidos concorrentes poderiam cobrar a mesma poltrona. O timeout usa Promise.race e limpa o timer; falhas liberam as poltronas. A corrida limita a espera, mas não cancela uma cobrança externa real; em produção seriam necessários cancelamento ou compensação e idempotência.
-2. **OO:** Evento guarda as poltronas em um campo privado e expõe a disponibilidade por getter. Valida toda a lista antes de modificar o estado para evitar reservas parciais. A hierarquia de erros associa cada erro ao seu status HTTP e permite tratamento uniforme pelo servidor.
-3. **Funcional:** as fábricas retornam funções parametrizadas, map transforma pessoas em ingressos, reduce soma os valores. As funções não modificam os dados de entrada e podem ser testadas diretamente com valores e regras injetadas, sem HTTP.
-4. **Outro paradigma:** o cálculo poderia ser imperativo, com loops e acumuladores mutáveis. Funcionaria, mas a composição funcional deixa a transformação e a soma explícitas e facilita testes isolados.
-5. **Concorrente × paralelo:** no processo Node, o trecho síncrono não é interrompido por outro pedido enquanto o await permite progresso de outras requisições. Em vários processos ou núcleos com estado compartilhado, seria necessário coordenar reservas com transações, restrições de unicidade ou operações atômicas em armazenamento compartilhado.
+### 1. Concorrência. Como vocês garantem que duas pessoas não ficam com a mesma poltrona? Onde estava o await perigoso?
+
+Em `Bilheteria.reservar()`, todas as poltronas do pedido são validadas e marcadas por `evento.reservar(poltronas)` **antes do primeiro `await`**. Esse trecho síncrono termina antes de outro pedido executar no mesmo processo; quando a cobrança está aguardando, os próximos pedidos já encontram as poltronas ocupadas e são recusados antes de cobrar. O `await` perigoso seria o do pagamento se a marcação estivesse depois dele: vários pedidos poderiam ser cobrados pela mesma poltrona antes de descobrir o conflito. Falhas ou timeout liberam as poltronas. O `Promise.race` limita a espera, e o `finally` limpa o temporizador ao terminar; essa limitação de espera não cancela uma cobrança externa real.
+
+### 2. OO. O que o Evento esconde e por quê? Por que o reservar é tudo ou nada? Por que os erros são uma hierarquia de classes?
+
+`Evento` esconde a lista de poltronas vendidas no campo privado `#vendidas` e expõe a disponibilidade por um getter sem setter, impedindo que código externo altere o estoque diretamente. `reservar()` verifica a lista inteira antes de marcar qualquer poltrona: se uma delas for inválida ou estiver ocupada, nenhuma parte do pedido é vendida, preservando o comportamento de tudo ou nada. Os erros herdam de `ErroDeNegocio`, que reúne mensagem e status HTTP; cada subclasse representa um problema específico, e o servidor consegue tratar todos de maneira uniforme com `instanceof`, mantendo o status adequado para cada situação.
+
+### 3. Funcional. O que ganhamos com preco.ts puro? Como vocês testariam ele sem subir o servidor?
+
+As funções de `preco.ts` calculam resultados a partir das entradas, sem alterar as pessoas ou os ingressos recebidos e sem depender de servidor, pagamento ou estado global. Isso torna o cálculo previsível, reutilizável e fácil de testar: basta importar as funções, fornecer preços e listas conhecidos e comparar os resultados esperados, como `valorDoIngresso(80)("meia") === 40` e `aplicarTaxa(0.1)(100) === 110`. Também podemos congelar as entradas com `Object.freeze` para detectar mutações e injetar diferentes regras puras de meia-entrada em `montarIngressos()`. As fábricas, o `map` e o `reduce` deixam explícitas a transformação de pessoas em ingressos e a soma dos valores.
+
+### 4. Se fosse em outro paradigma. Escolham uma das partes e expliquem como ficaria em outro paradigma, e se ficaria melhor ou pior.
+
+O cálculo de preços poderia ser escrito de forma imperativa: um laço percorreria as pessoas, decidiria o tipo de ingresso, acrescentaria cada resultado a uma lista e atualizaria um acumulador para calcular o total. Essa abordagem também pode produzir o resultado correto, mas, para esta transformação de dados, exigiria controlar mais estado mutável e permitiria erros como alterar a entrada ou reutilizar um acumulador. A versão funcional ficou mais adequada porque separa a regra de meia, a transformação e a totalização em funções pequenas, que podem ser combinadas e testadas isoladamente. Por isso, mantivemos em `preco.ts` o estilo funcional solicitado pelo professor.
+
+### 5. Concorrente × paralelo. O Node roda o JavaScript numa linha só: os pedidos de vocês são concorrentes, não paralelos. O que mudaria se a venda rodasse em vários núcleos ao mesmo tempo?
+
+Neste processo Node, o JavaScript executa um trecho síncrono por vez, e os pedidos avançam de forma concorrente enquanto outros aguardam o pagamento. Em vários processos ou núcleos atendendo vendas ao mesmo tempo, listas privadas em memória deixariam de ser suficientes: dois processos poderiam considerar a mesma poltrona livre. Seria necessário coordenar o estoque em um armazenamento compartilhado, por exemplo com uma transação e uma restrição de unicidade por evento e poltrona, ou outra operação atômica que permitisse somente uma reserva. As cobranças também precisariam de idempotência e de uma estratégia de cancelamento ou compensação para lidar com falhas sem cobrar duas vezes.
 
 ## Resultados do bench
 
-| Cenário | Pedidos | Tempo (ms) | Vendidos | Poltrona ocupada | Falha de pagamento |
-|---|---:|---:|---:|---:|---:|
-| Padrão (GitHub Actions, 26/11/2026) | 200 | 168 | 88 | 100 | 12 |
-| Revisão anterior — PR #2 (26/11/2026) | 200 | 246 | 90 | 100 | 10 |
-| Catálogo real — PR #3 (26/11/2026) | 200 | 169 | 85 | 100 | 15 |
+Medição real de **26/11/2026**, no GitHub Actions, com **Ubuntu e Node.js 22.23.5**, registrada na [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771), referente ao commit [153b8d7cfbfcd6e0621dad1e65110069e39f84df](https://github.com/Gaabllez/bilheteria-api/commit/153b8d7cfbfcd6e0621dad1e65110069e39f84df).
 
-**Resultado medido:** [execução #5 no GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), no Ubuntu com Node.js 22. Foram 200 pedidos em 168 ms (1194 pedidos/s). Os resultados variam devido à falha aleatória de 10% da operadora simulada. Reinicie o servidor antes de repetir o benchmark.
+| Cenário | Pedidos | Tempo (ms) | Pedidos/s reportados | Vendidos — 201 | Poltrona ocupada — 409 | Falha de pagamento — 502 |
+|---|---:|---:|---:|---:|---:|---:|
+| Padrão (`main.ts`) | 200 | 168 | 1191 | 93 | 100 | 7 |
 
-**Histórico do PR #2:** a [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a`, mediu 200 pedidos em 246 ms (814 pedidos/s), com 90 reservas, 100 conflitos, 10 recusas simuladas e 10 poltronas restantes.
+Ao final, o evento 1 tinha **7 poltronas disponíveis**, compatíveis com as 93 reservas confirmadas, e os outros dois eventos estavam intactos. A quantidade de falhas é aleatória porque a operadora foi configurada com taxa de 10%; o tempo e a distribuição de respostas podem variar entre execuções. A tabela registra a medição acima, não um resultado fixo esperado.
 
-**Catálogo atual:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), commit `a630347`, mediu 200 pedidos em **169 ms (1181 pedidos/s)**. O gate confirmou 85 reservas, 100 conflitos, 15 recusas simuladas, **15 lugares restantes no evento 1** e os outros cinco eventos intactos. Ambas as revisões usaram Node.js 22.23.5. O tempo varia entre execuções; não é uma comparação de desempenho entre versões.
+## Validação
 
-## Histórico de atualizações e validação
-
-- `0efed25`: implementação da API, regras de meia-entrada, cálculo funcional, domínio e reservas concorrentes.
-- `86196cc`: configuração de GitHub Actions para typecheck, testes originais e benchmark.
-- `9abc09e` (Mvsff): painel web responsivo com listagem de eventos, formulário e respostas HTTP.
-- `98fa503` (Mvsff): preservação da resposta da reserva ao atualizar eventos.
-- `0635c27`: integração do painel pelo main.ts e restauração do servidor original.
-- `8e49302` / [PR #1](https://github.com/Gaabllez/bilheteria-api/pull/1): catálogo e experiência visual de bilheteria.
-- `a70cb49`: validação de entrada da API, correções de formulário/conexão/comprovante e novas regressões.
-- `5b2a15a` / [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2): teste móvel corrigido e Actions atualizadas para runtime suportado.
-- `a630347` / [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3): seis artistas e turnês reais, fontes oficiais, fotografias locais com créditos, nova apresentação visual e catálogo compartilhado entre API e interface.
-
-### Estado da validação
-
-**Histórico do PR #2:** a [execução 45749110996, de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), aprovou os jobs `validar` e `interface` em Node.js 22.23.5: 32 testes/subtestes adicionais, 14 cenários de interface, benchmark e auditoria sem vulnerabilidades reportadas naquela revisão. Essa execução antecede o novo catálogo.
-
-**Revisão atual do catálogo:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050) aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
+A mesma [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771) aprovou os jobs de backend e interface para o commit identificado acima:
 
 | Verificação | Resultado |
 |---|---|
 | TypeScript e sintaxe JavaScript | Aprovados |
-| Testes originais do professor | 14 cenários, **16/16 pontos** |
-| Regressões de backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas (29 + 3 + 4) |
-| Interface no Chromium | **16 cenários aprovados**, zero falhas |
-| Arquivos fornecidos pelo professor | **10 preservados**, verificados por hash |
-| Benchmark de 200 pedidos | Gate aprovado; estoque consistente nos seis eventos |
+| Testes originais do professor | **14 cenários, 16/16 pontos** |
+| Regressões adicionais de backend, catálogo e validação | **38 testes/subtestes aprovados**, zero falhas |
+| Interface no Chromium | **17 cenários aprovados**, zero falhas |
+| Arquivos originais do professor | **10 preservados**, verificados por hash |
+| Benchmark | 200 pedidos, estoque consistente nos três eventos |
 
-O executor original retorna código zero mesmo quando um teste falha. Por isso, `validacao/conferir-testes.mjs` exige os **16 pontos e todos os cenários aprovados**. Os arquivos originais em `testes/` não foram alterados. As regressões novas ficam em `validacao/`.
+O ensaio da demonstração de concorrência também foi executado em uma cópia isolada: **16/16 com o código correto → 11/16 com a reserva após o pagamento → 16/16 depois da restauração**. A versão incorreta produziu a falha “cobrou 200 pessoas por 50 poltronas”.
 
-O [relatório de validação](VALIDACAO.md) registra erros reproduzidos, correções, comandos, evidências e limites dos testes.
-
-## Catálogo real e nova interface
-
-A interface criada por **Marcus (Mvsff)** foi aprimorada em `public/`, preservando seu fluxo de reserva e a resposta do POST após atualizar os eventos. A seleção atual reúne as turnês abaixo, conferidas em fontes oficiais em **26/11/2026**; as categorias organizam os filtros do site.
-
-| Artista | Turnê e página oficial | Categoria |
-|---|---|---|
-| Lady Gaga | [The MAYHEM Ball](https://www.ladygaga.com/us-en/live/) | Pop |
-| Bruno Mars | [The Romantic Tour](https://www.brunomars.com/theromantictour) | Pop |
-| The Weeknd | [After Hours Til Dawn](https://www.theweeknd.com/tour/) | R&B |
-| Coldplay | [Music Of The Spheres World Tour](https://www.coldplay.com/tour/) | Rock |
-| Shakira | [Las Mujeres Ya No Lloran World Tour](https://www.shakira.com/tour-hub/) | Latino |
-| Linkin Park | [From Zero World Tour](https://www.linkinpark.com/tour) | Rock |
-
-O [catálogo JSON](public/catalogo.json) é a fonte única dos nomes, metadados, preços fictícios e capacidades usados por `src/catalogo.ts` e pelo cliente. A disponibilidade do simulador vem de `GET /eventos`. O evento 1 mantém preço-base de R$ 100 e 100 poltronas para preservar o benchmark.
-
-- Página inicial com destaque fotográfico, cards responsivos e busca por artista ou turnê, com ou sem acentos.
-- Detalhes de cada turnê com situação da pesquisa, agenda oficial, fotografia e atribuição.
-- Reserva pela API com participantes, poltronas, meia-entrada, taxa de 10%, comprovante imprimível e atualização do estoque.
-- Área técnica recolhida por padrão, com endpoints e última resposta HTTP.
-
-As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaques — que somam **850.490 bytes**. Autoria, licença, contexto e alterações estão na [página de créditos](public/creditos.html), servida em `/creditos.html`, e em [CREDITS.md](public/images/artists/CREDITS.md); as referências das turnês estão em [FONTES.md](FONTES.md). Fotos de arquivo são identificadas com seu contexto original.
-
-**Preços, capacidades, reservas e pagamentos são demonstrativos.** O site não vende ingressos reais. Os textos registram a situação encontrada nas fontes consultadas e encaminham à agenda oficial; não inventam próximas datas nem disponibilidade comercial.
-
-### Correções funcionais e validação da interface
-
-- Idade em branco, valores inválidos e poltronas duplicadas são recusados com mensagem persistente e foco no campo.
-- Adicionar uma pessoa após remover outra sugere uma poltrona diferente; após uma compra, o formulário é limpo e evita os lugares já confirmados nesta sessão.
-- Durante o envio, os controles ficam bloqueados para impedir alterações e pedidos simultâneos.
-- Falhas na listagem eliminam dados antigos e bloqueiam o envio até a reconexão.
-- Requisições têm prazo de 10 segundos. Se a resposta do POST se perder, a tela informa resultado desconhecido e exige iniciar outro pedido explicitamente; não repete a reserva automaticamente.
-- O recibo do POST permanece na área técnica após atualizar o catálogo, preservando a correção inicial do Marcus.
-- A impressão usa fundo branco e texto preto, preserva o aviso de comprovante fictício e omite a navegação. Um recibo fechado não aparece numa impressão comum da página.
-- Rótulos, campos, foco de teclado e menu móvel foram revisados; a busca encontra palavras com ou sem acento.
-
-A suíte aprovada no PR #3 inclui detalhes das turnês e recuperação após falha inicial do catálogo. Usa as fotografias locais reais e substitui apenas fontes externas. Na conferência manual, as seis fotos dos cards carregaram e uma reserva de Bruno Mars confirmou o comprovante **#1**, com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**.
-
-### Repetir as validações adicionais
+Para repetir as verificações adicionais:
 
 ```bash
 node validacao/conferir-originais.mjs
 node validacao/conferir-testes.mjs
 node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
 node --check public/app.js
+node validacao/demonstrar-concorrencia.mjs
 ```
 
-O workflow executa também os testes de navegador e salva evidências em seus artefatos. O [relatório](VALIDACAO.md) explica como rodá-los separadamente, sem modificar as dependências do professor.
+O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, pois o executor original pode terminar com código de saída zero mesmo exibindo falhas. Os testes originais foram preservados; as verificações adicionais ficam em `validacao/`. Consulte [VALIDACAO.md](VALIDACAO.md) para comandos de navegador, evidências, histórico e limites dos testes.
 
-## Pendências para a entrega acadêmica
+## Catálogo e interface
 
-O código e os testes não substituem as etapas de entrega do enunciado. Ainda é necessário informar o link do vídeo, confirmar o GitHub e a contribuição de todos os integrantes e verificar os commits próprios de cada pessoa. Na revisão do histórico, foram identificados commits das contas `Gaabllez` e `Mvsff`; a contribuição das demais contas precisa ser confirmada pelo grupo. O README mantém os campos desconhecidos como pendentes.
+O site mantém seis artistas, com busca, filtros, detalhes das turnês, fotos creditadas e links oficiais. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
+
+| Artista | Turnê | Uso no projeto |
+|---|---|---|
+| Lady Gaga | The MAYHEM Ball | Evento 1, reserva simulada |
+| Bruno Mars | The Romantic Tour | Evento 2, reserva simulada |
+| The Weeknd | After Hours Til Dawn | Evento 3, reserva simulada |
+| Coldplay | Music Of The Spheres World Tour | Consulta editorial, sem reserva |
+| Shakira | Las Mujeres Ya No Lloran World Tour | Consulta editorial, sem reserva |
+| Linkin Park | From Zero World Tour | Consulta editorial, sem reserva |
+
+O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
+
+As referências consultadas em **26/11/2026** estão em [FONTES.md](FONTES.md). Autoria, licenças e contexto das fotografias estão em [CREDITS.md](public/images/artists/CREDITS.md) e na [página de créditos](public/creditos.html), disponível em `/creditos.html` com o servidor ativo.
+
+## Vídeo e entrega
+
+O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) reúne as **oito partes obrigatórias**, incluindo a demonstração do erro e sua reversão. O [guia de entrega](docs/ENTREGA.md) contém a rubrica, a conferência dos commits individuais e o texto preparado para o Blackboard.
+
+Ainda depende do grupo:
+
+- Confirmar as contas e contribuições de Inácio e Rafael e verificar os commits próprios de cada integrante.
+- Gravar e publicar o vídeo com o código da entrega, testar o acesso sem login e colocar o link verdadeiro no início deste README.
+- Confirmar o nome cadastrado do grupo e o prazo da turma no Blackboard e realizar o envio com os links, nomes completos e RGMs.
+
+A pontuação máxima do trabalho é **3,5**: até **2,5** pelo código (`2,5 × pontos do npm test ÷ 16`), **0,75** pela avaliação do vídeo e **0,25** pelo README completo. A aprovação dos testes não substitui as etapas de entrega nem a participação individual exigida no enunciado.

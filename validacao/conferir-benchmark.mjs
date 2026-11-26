@@ -14,7 +14,10 @@ assert.ok(vendidos <= 100, "Foram vendidas mais poltronas que a capacidade do ev
 const resposta = await fetch(`${process.env.URL ?? "http://localhost:3000"}/eventos`);
 assert.equal(resposta.status, 200);
 const eventos = await resposta.json();
+assert.ok(Array.isArray(eventos), "A listagem de eventos precisa ser um array.");
+assert.equal(eventos.length, 3, "O Passo 6 do enunciado exige exatamente três eventos na API.");
 const show = eventos.find((evento) => evento.id === 1);
+assert.ok(show, "O evento 1 do benchmark precisa existir.");
 assert.equal(show.capacidade, 100);
 assert.equal(show.disponivel, 100 - vendidos, "Estoque incompatível com as reservas confirmadas.");
 assert.ok(eventos.filter((evento) => evento.id !== 1).every((evento) => evento.disponivel === evento.capacidade), "O benchmark alterou outro evento.");

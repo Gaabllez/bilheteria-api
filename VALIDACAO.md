@@ -4,7 +4,48 @@ Revisão realizada em **26/11/2026**, comparando o projeto com o enunciado e com
 
 A revisão anterior partiu de `8e49302` (interface integrada pelo PR #1). As correções funcionais estão em `a70cb49`; a revisão do teste móvel e das Actions está em `5b2a15a`. O [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2) reúne essa etapa e sua documentação. A nova interface preserva a contribuição de **Marcus (Mvsff)**, incluindo a resposta da reserva após atualizar os eventos.
 
-## Atualização atual: catálogo e interface
+## Conformidade com o enunciado — três eventos na API
+
+O Passo 6 exige três eventos. A revisão de conformidade mantém os seis artistas na apresentação, mas cria somente **Lady Gaga (ID 1), Bruno Mars (ID 2) e The Weeknd (ID 3)** na bilheteria. O evento 1 tem 100 poltronas. Coldplay, Shakira e Linkin Park ficam disponíveis para consulta editorial, sem preço, opção no formulário ou botão de reserva. O detalhe de cada turnê encaminha à agenda oficial.
+
+- O catálogo exige exatamente três itens `reservable: true`, incluindo o evento 1; dados inconsistentes impedem a inicialização.
+- `GET /eventos` devolve três eventos. Tentativas de reservar IDs editoriais retornam 404, sem cobrança nem alteração do estoque.
+- O benchmark verifica explicitamente a quantidade de eventos, os 200 pedidos e o estoque restante.
+- A interface continua com as seis fotografias, busca, filtros e detalhes; somente três artistas oferecem simulação. Uma resposta indevida da API oferecendo artista editorial bloqueia o formulário.
+- O [roteiro de vídeo](docs/ROTEIRO_VIDEO.md) segue as oito partes do professor, com comandos Bash e PowerShell. O [guia de entrega](docs/ENTREGA.md) traz rubrica, contribuições comprovadas e texto para o Blackboard.
+
+**Validação local desta revisão, em 26/11/2026:** typecheck e sintaxe aprovados; 14 cenários oficiais com **16/16 pontos** pelo executor original; **38 testes/subtestes adicionais aprovados**; os **10 arquivos fornecidos pelo professor preservados**. A CLI `npm test` esbarra na restrição local de IPC (`EPERM` do `tsx`); o mesmo executor foi rodado com `node --import tsx`, sem alterar arquivos do professor. O workflow executa também o comando original `npm test`, a interface e o benchmark.
+
+O ensaio isolado do erro de concorrência confirmou **16/16 antes → 11/16 com o erro proposital → 16/16 após desfazer**. A falha central foi `cobrou 200 pessoas por 50 poltronas`: cobrar antes de reservar permite que pedidos concorrentes paguem pelo mesmo lugar. O auxiliar `node validacao/demonstrar-concorrencia.mjs` trabalha em cópia temporária, valida a causa da falha e a restauração, sem deixar o projeto incorreto. Ele serve para ensaiar; o vídeo ainda deve mostrar a alteração, `npm test`, a explicação e a reversão.
+
+### Evidência no GitHub Actions
+
+A [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771), do [PR #4](https://github.com/Gaabllez/bilheteria-api/pull/4), validou o commit **`153b8d7cfbfcd6e0621dad1e65110069e39f84df`** com Node.js **22.23.5** no Ubuntu. Os dois jobs, `validar` e `interface`, passaram.
+
+| Verificação da conformidade | Resultado |
+|---|---|
+| Instalação com lockfile original, TypeScript e JavaScript | Aprovados |
+| `npm test` original e conferência da pontuação | 14 cenários, **16/16 pontos** |
+| Backend, catálogo e gate | **38 testes/subtestes aprovados**, zero falhas |
+| Interface no Chromium | **17 cenários aprovados**, zero falhas |
+| Arquivos fornecidos pelo professor | **10 preservados**, conferidos por hash |
+| Ensaio do erro em cópia temporária | **16/16 → 11/16 proposital → 16/16** |
+| Quantidade na API | **3 eventos**, com 100 poltronas no evento 1 |
+| Benchmark | 200 pedidos, estoque consistente e demais eventos intactos |
+
+A suíte de interface confirmou seis cards com apenas três opções de reserva, ausência de preço e checkout nos três artistas editoriais, detalhes e agendas oficiais, API com três eventos, filtros e busca, layout de 360/390/768 px, erros HTTP, queda de conexão, comprovante e impressão. O cenário novo rejeita uma resposta indevida da API que tente oferecer uma turnê editorial para reserva. Os oito arquivos de fotografia carregaram nas capturas de desktop e celular do artefato `interface`.
+
+### Benchmark da revisão de conformidade
+
+| Cenário | Pedidos | Tempo (ms) | Pedidos/s | Vendidos (201) | Ocupada (409) | Pagamento (502) |
+|---|---:|---:|---:|---:|---:|---:|
+| Padrão (`main.ts`), 26/11/2026 | 200 | 168 | 1191 | 93 | 100 | 7 |
+
+O servidor começou vazio, com os parâmetros originais: 80 ms de latência, 10% de falha e timeout de 500 ms. Restaram **7 poltronas** no evento 1, e os **outros dois eventos ficaram intactos**. As sete recusas são falhas simuladas previstas, não falhas dos testes. Tempo e distribuição variam por execução.
+
+As seções abaixo registram as validações históricas dos PRs #2 e #3; suas contagens não devem ser confundidas com a revisão de conformidade.
+
+## Histórico — catálogo e interface do PR #3
 
 O [catálogo](public/catalogo.json) reúne Lady Gaga, Bruno Mars, The Weeknd, Coldplay, Shakira e Linkin Park, com turnês pesquisadas em fontes oficiais e filtros Pop, R&B, Rock e Latino. Nomes, fontes, preços fictícios e capacidades vêm desse mesmo JSON na API e no cliente; a disponibilidade permanece sob controle da API. As [fontes das turnês](FONTES.md) registram a consulta de **26/11/2026**. A interface apresenta o contexto pesquisado e links para as agendas oficiais, sem inventar calendário futuro.
 
@@ -12,7 +53,7 @@ São **oito WebPs locais, totalizando 850.490 bytes**, com autoria, licenças e 
 
 **Resultado confirmado:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), do [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3), aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
 
-| Verificação atual | Resultado |
+| Verificação no PR #3 | Resultado |
 |---|---|
 | TypeScript e JavaScript | Aprovados no CI |
 | Testes oficiais e gate | 14 cenários aprovados, **16/16 pontos** |
@@ -82,11 +123,11 @@ A revisão das evidências também passou a visitar cada imagem antes da captura
 
 Cada cenário inicia o servidor e o domínio reais com estoque isolado e a mesma fábrica de catálogo usada por `src/main.ts`. A operadora injetada sempre aprova; falhas específicas são simuladas nos respectivos cenários. A suíte usa as fotos locais reais e substitui apenas fontes externas. O teste de resposta HTTP abre a seção técnica pela interface após fechar o comprovante.
 
-**Conferência manual atual:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
+**Conferência manual no PR #3:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
 
 **Evidência histórica:** o artefato `interface` do PR #2 contém capturas da versão anterior com imagens substitutas. Na inspeção manual daquela versão, duas reservas foram confirmadas; uma delas tinha três participantes, duas meias e uma inteira, totalizando R$ 220 com a taxa.
 
-## Benchmark atual — PR #3
+## Benchmark histórico — PR #3
 
 Na [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
 
@@ -151,7 +192,7 @@ O benchmark deve ser executado em um servidor recém-iniciado, em outro terminal
 
 ## Pendências fora do código
 
-O README ainda precisa do link do vídeo e da confirmação das contas GitHub e contribuições dos integrantes que estão marcados como pendentes. O histórico revisado identifica `Gaabllez` e `Mvsff`; não é adequado atribuir commits ou contribuições desconhecidos aos demais integrantes.
+O README ainda precisa do link do vídeo e da confirmação das contas GitHub e contribuições de Inácio e Rafael, que estão marcadas como pendentes. O histórico revisado identifica `Gaabllez` e `Mvsff`; não é adequado atribuir commits ou contribuições desconhecidos aos demais integrantes.
 
 O grupo deve gravar o vídeo com a versão final, mostrar `git log -1`, seguir o roteiro do enunciado, demonstrar temporariamente o erro de concorrência e desfazê-lo, conferir os links sem login e realizar a entrega no Blackboard. Essas etapas continuam necessárias para a entrega acadêmica.
 

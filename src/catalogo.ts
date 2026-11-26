@@ -35,6 +35,9 @@ export function validarCatalogo(valor: unknown) {
       throw new Error("Catálogo inválido: IDs devem ser inteiros positivos e únicos.");
     }
     ids.add(item.id);
+    if (typeof item.reservable !== "boolean") {
+      throw new Error("Catálogo inválido: reservable precisa indicar se a turnê participa do simulador.");
+    }
     if (typeof item.price !== "number" || !Number.isFinite(item.price) || item.price <= 0 ||
         typeof item.capacity !== "number" || !Number.isSafeInteger(item.capacity) || item.capacity < 1) {
       throw new Error("Catálogo inválido: preço fictício e capacidade precisam ser positivos.");
@@ -46,6 +49,7 @@ export function validarCatalogo(valor: unknown) {
     return {
       ...item,
       id: item.id,
+      reservable: item.reservable,
       artist: texto(item.artist, "artist"),
       tour: texto(item.tour, "tour"),
       category: texto(item.category, "category"),
@@ -58,9 +62,12 @@ export function validarCatalogo(valor: unknown) {
       capacity: item.capacity,
     };
   });
+  if (events.filter((evento) => evento.reservable).length !== 3) {
+    throw new Error("Catálogo inválido: o enunciado exige exatamente três eventos disponíveis para reserva.");
+  }
   const primeiro = events.find((evento) => evento.id === 1);
-  if (!primeiro || primeiro.capacity !== 100 || primeiro.price !== 100) {
-    throw new Error("Catálogo inválido: mantenha o evento 1 com 100 poltronas e preço fictício de R$ 100 para os testes do projeto.");
+  if (!primeiro || !primeiro.reservable || primeiro.capacity !== 100 || primeiro.price !== 100) {
+    throw new Error("Catálogo inválido: mantenha o evento 1 disponível para reserva, com 100 poltronas e preço fictício de R$ 100 para os testes do projeto.");
   }
   return { ...valor, verifiedAt, events };
 }
@@ -70,5 +77,9 @@ export function lerCatalogo() {
 }
 
 export function criarEventosDemo() {
-  return lerCatalogo().events.map((evento) => new Evento(evento.id, `${evento.artist} — ${evento.tour}`, evento.price, evento.capacity));
+  // Os demais artistas permanecem no catálogo editorial, sem estoque ou reservas.
+  // O Passo 6 do enunciado determina três eventos na bilheteria.
+  return lerCatalogo().events
+    .filter((evento) => evento.reservable)
+    .map((evento) => new Evento(evento.id, `${evento.artist} — ${evento.tour}`, evento.price, evento.capacity));
 }

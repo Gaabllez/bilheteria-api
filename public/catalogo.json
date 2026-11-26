@@ -5,6 +5,7 @@
   "events": [
     {
       "id": 1,
+      "reservable": true,
       "artist": "Lady Gaga",
       "tour": "The MAYHEM Ball",
       "category": "pop",
@@ -53,6 +54,7 @@
     },
     {
       "id": 2,
+      "reservable": true,
       "artist": "Bruno Mars",
       "tour": "The Romantic Tour",
       "category": "pop",
@@ -102,6 +104,7 @@
     },
     {
       "id": 3,
+      "reservable": true,
       "artist": "The Weeknd",
       "tour": "After Hours Til Dawn",
       "category": "rnb",
@@ -157,6 +160,7 @@
     },
     {
       "id": 4,
+      "reservable": false,
       "artist": "Coldplay",
       "tour": "Music Of The Spheres World Tour",
       "category": "rock",
@@ -206,6 +210,7 @@
     },
     {
       "id": 5,
+      "reservable": false,
       "artist": "Shakira",
       "tour": "Las Mujeres Ya No Lloran World Tour",
       "category": "latino",
@@ -248,6 +253,7 @@
     },
     {
       "id": 6,
+      "reservable": false,
       "artist": "Linkin Park",
       "tour": "From Zero World Tour",
       "category": "rock",
