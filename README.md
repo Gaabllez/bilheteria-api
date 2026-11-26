@@ -10,7 +10,7 @@ Projeto final de Paradigmas de Linguagens de Programação, baseado no [modelo d
 |---|---|---|---|
 | Gabriel Galvão Fredrich | 33632308 | Gaabllez | A confirmar |
 | Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar |
-| Marcus Vinícius Souza Fernandes Filho | 33204128 | A confirmar | A confirmar |
+| Marcus Vinícius Souza Fernandes Filho | 33204128 | Mvsff | Painel web responsivo e preservação do comprovante após atualização dos eventos |
 | Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | A confirmar |
 
 ## Executar
@@ -23,6 +23,8 @@ npm test
 npm run typecheck
 npm start
 ```
+
+Com o servidor ativo, abra http://localhost:3000 para usar o painel web (listagem de eventos, reservas e respostas HTTP). O painel é um complemento; a camada HTTP original do professor permanece intacta.
 
 Em outro terminal:
 
