@@ -487,6 +487,8 @@ test("nomes são texto seguro e impressão mantém aviso de comprovante fictíci
     assert.equal(await page.locator(".receipt-disclaimer").isVisible(), true);
     assert.match(await page.locator(".receipt-disclaimer").textContent(), /não é válido para entrada em eventos reais/);
     assert.equal(await page.locator(".receipt-actions").isHidden(), true);
+    assert.equal(await page.locator(".announcement").isHidden(), true);
+    assert.equal(await page.locator(".site-header").isHidden(), true);
     await page.screenshot({ path: resolve(artifacts, "comprovante-impressao.png"), fullPage: true });
     await page.emulateMedia({ media: "screen" });
     await page.locator("#close-receipt").click();

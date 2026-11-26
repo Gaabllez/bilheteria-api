@@ -3408,7 +3408,7 @@ dialog::backdrop {
   body:has(dialog[open]) {
     overflow:visible;
   }
-  body>* {
+  body:has(#receipt-dialog[open])>:not(#receipt-dialog) {
     display:none;
   }
   body>#receipt-dialog[open] {
