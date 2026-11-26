@@ -22,8 +22,8 @@ jobs:
         run: npm test
       - name: Exigir os 16 pontos oficiais
         run: node validacao/conferir-testes.mjs
-      - name: Regressões de API, concorrência e gate
-        run: node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs
+      - name: Regressões de API, concorrência, catálogo e gate
+        run: node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
       - name: Verificar JavaScript da interface
         run: node --check public/app.js
       - name: Benchmark HTTP

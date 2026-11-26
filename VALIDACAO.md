@@ -2,24 +2,30 @@
 
 Revisão realizada em **26/11/2026**, comparando o projeto com o enunciado e com [o modelo do professor](https://github.com/douglasmeneses/bilheteria-projeto-final/tree/b5fc6edd8b5e16a0615e2663b837261eb42875a6).
 
-A base revisada foi `8e49302` (interface integrada pelo PR #1). As correções funcionais estão em `a70cb49`; a revisão do teste móvel e das Actions está em `5b2a15a`. O [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2) reúne a revisão e sua documentação.
+A revisão anterior partiu de `8e49302` (interface integrada pelo PR #1). As correções funcionais estão em `a70cb49`; a revisão do teste móvel e das Actions está em `5b2a15a`. O [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2) reúne essa etapa e sua documentação. A nova interface preserva a contribuição de **Marcus (Mvsff)**, incluindo a resposta da reserva após atualizar os eventos.
 
-## Resultado medido
+## Atualização atual: catálogo e interface
 
-Fonte principal: [GitHub Actions, execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a7d5200297cdeb2e9eb8c2c85ec781b2f7`, Node.js **22.23.5**. Os jobs `validar` e `interface` terminaram com sucesso.
+O [catálogo](public/catalogo.json) reúne Lady Gaga, Bruno Mars, The Weeknd, Coldplay, Shakira e Linkin Park, com turnês pesquisadas em fontes oficiais e filtros Pop, R&B, Rock e Latino. Nomes, fontes, preços fictícios e capacidades vêm desse mesmo JSON na API e no cliente; a disponibilidade permanece sob controle da API. As [fontes das turnês](FONTES.md) registram a consulta de **26/11/2026**. A interface apresenta o contexto pesquisado e links para as agendas oficiais, sem inventar calendário futuro.
 
-| Camada | Evidência | Resultado |
-|---|---|---|
-| Instalação | `npm ci`, lockfile original | Aprovada |
-| Tipos | `npm run typecheck` | Aprovado |
-| Correção oficial | `npm test` e verificação do JSON original | 14 cenários aprovados, 16/16 pontos |
-| Backend e infraestrutura de teste | `backend.test.ts` e `infra.test.mjs` | 32 testes/subtestes, zero falhas |
-| Interface | `browser.test.mjs` no Chromium | 14 cenários, zero falhas |
-| Integridade acadêmica dos arquivos | `conferir-originais.mjs` | 10 arquivos fornecidos preservados |
-| Benchmark | 200 requisições concorrentes na API | Capacidade e estoque consistentes |
-| Dependências | `npm audit --audit-level=high` e auditoria do `npm ci` | Zero vulnerabilidades reportadas nessa data |
+São **oito WebPs locais, totalizando 850.490 bytes**, com autoria, licenças e contexto na [página de créditos](public/creditos.html), disponível em `/creditos.html`, e em [CREDITS.md](public/images/artists/CREDITS.md). A apresentação inclui destaque fotográfico, cards, busca por artista/turnê e detalhes com foto e agenda oficial. Preços, lugares, reservas e pagamentos continuam sendo uma simulação acadêmica.
 
-Os 32 testes/subtestes adicionais são **29 do backend e 3 do gate**. A quantidade inclui os subcasos parametrizados de entrada inválida e falha de pagamento. Não se confunde com os 16 pontos oficiais.
+**Resultado confirmado:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), do [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3), aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
+
+| Verificação atual | Resultado |
+|---|---|
+| TypeScript e JavaScript | Aprovados no CI |
+| Testes oficiais e gate | 14 cenários aprovados, **16/16 pontos** |
+| Backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas: 29 + 3 + 4 |
+| Integridade dos arquivos do professor | **10 arquivos preservados** |
+| Interface no Chromium | **16 cenários aprovados**, zero falhas |
+| Benchmark de 200 pedidos | Gate aprovado; capacidade e estoque consistentes |
+
+Os quatro testes de `catalogo.test.ts` verificam artistas/fontes/fotos locais, coerência entre JSON e API, estoques independentes e rejeição de configuração inválida. Também preservam o evento 1 com preço-base fictício de R$ 100 e 100 lugares, usado pelo benchmark. A contagem de 36 inclui subcasos parametrizados e não se confunde com os 16 pontos oficiais.
+
+## Histórico comprovado — PR #2
+
+A [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a7d5200297cdeb2e9eb8c2c85ec781b2f7`, aprovou os jobs `validar` e `interface` em Node.js **22.23.5**. A versão anterior passou na instalação com lockfile original, typecheck, 14 testes oficiais (16/16 pontos), 32 testes/subtestes adicionais, 14 cenários de interface, integridade dos 10 arquivos e benchmark. A auditoria não reportou vulnerabilidades nessa execução. Esses resultados pertencem à versão anterior ao catálogo real.
 
 ## Erros encontrados e corrigidos
 
@@ -41,7 +47,7 @@ Os 32 testes/subtestes adicionais são **29 do backend e 3 do gate**. A quantida
 
 A falha do executor foi reproduzida apontando-o para um diretório fonte inexistente: **0/16 pontos com código de saída 0**. O novo gate tem regressão específica para rejeitar esse caso, JSON ausente/truncado e erros do processo. O executor original não foi modificado.
 
-Na primeira execução da suíte de interface, 13 cenários passaram e o teste móvel parou ao aguardar visibilidade de um indicador deliberadamente oculto no cabeçalho móvel. A espera foi corrigida para verificar sua presença e estado. A nova execução passou nos 14 cenários. As Actions antigas também foram substituídas por versões oficiais que usam runtime Node 24; a aplicação continua sendo testada em Node 22, como exige o professor.
+No PR #2, a primeira execução da suíte de interface aprovou 13 cenários e o teste móvel parou ao aguardar visibilidade de um indicador oculto no cabeçalho móvel. A espera foi corrigida para verificar sua presença e estado; a repetição documentada aprovou os 14 cenários. As Actions antigas também foram substituídas por versões oficiais que usam runtime Node 24; a aplicação continua sendo testada em Node 22, como exige o professor.
 
 ## Cobertura do backend
 
@@ -53,42 +59,50 @@ Os códigos HTTP **400, 404, 409 e 502** permanecem conforme o contrato original
 
 ## Cobertura da interface
 
-Os 14 cenários automatizados verificam:
+Os **16 cenários aprovados no CI do PR #3** verificam:
 
-1. Catálogo real, filtros e busca sem acentos.
-2. Larguras de 360, 390 e 768 px, sem rolagem horizontal, e menu por toque/teclado.
-3. Idades inválidas, foco e ausência de POST quando há erro.
-4. Adição/remoção de participantes e bloqueio de poltronas duplicadas.
-5. Meia por estudante, PcD e idade a partir de 60, sem acumular descontos, e taxa de 10%.
-6. Reserva pela API real, bloqueio durante envio, prevenção de duplo envio, comprovante preservado e nova compra.
-7. Tratamento do conflito 409.
-8. Tratamento de pagamento recusado 502.
-9. Falha na listagem, remoção do catálogo antigo e reconexão.
-10. Catálogo vazio, esgotado ou com formato inválido.
-11. POST sem resposta, timeout e início explícito de outro pedido.
-12. Interrupção de conexão durante POST.
-13. Resposta 201 sem comprovante válido.
-14. Conteúdo com HTML tratado como texto e impressão com aviso de demonstração.
+1. Seis artistas, busca por artista/turnê sem acentos e filtros musicais.
+2. Detalhes das seis turnês, links oficiais e escolha correta do evento para simular.
+3. Larguras de 360, 390 e 768 px, sem rolagem horizontal, e menu por toque/teclado.
+4. Idades inválidas, foco e ausência de POST quando há erro.
+5. Adição/remoção de participantes e bloqueio de poltronas duplicadas.
+6. Meia por estudante, PcD e idade a partir de 60, sem acumular descontos, e taxa de 10%.
+7. Reserva pela API real, bloqueio durante envio, prevenção de duplo envio, comprovante preservado e nova compra.
+8. Tratamento do conflito 409.
+9. Tratamento de pagamento recusado 502.
+10. Falha na listagem, remoção do catálogo antigo e reconexão.
+11. Recuperação pelo botão Atualizar após falha inicial de `catalogo.json`.
+12. Catálogo vazio, esgotado ou com formato inválido.
+13. POST sem resposta, timeout e início explícito de outro pedido.
+14. Interrupção de conexão durante POST.
+15. Resposta 201 sem comprovante válido.
+16. Conteúdo com HTML tratado como texto e impressão com aviso de demonstração.
 
-Cada cenário inicia uma instância isolada do servidor e domínio reais. A operadora injetada sempre aprova; erros específicos são simulados apenas nos testes que precisam deles. Imagens e fontes externas são substituídas para estabilizar a automação. A inspeção visual no navegador utilizou os recursos reais, que carregaram corretamente, e confirmou duas reservas na API demonstrativa. Uma delas continha três participantes, duas meias e uma inteira: subtotal de R$ 200, taxa de R$ 20 e comprovante de R$ 220.
+A revisão das evidências também passou a visitar cada imagem antes da captura completa, conferindo o carregamento dos oito WebPs e retornando a página ao topo. O modo de impressão ganhou um tema claro próprio; o teste exige fundo branco, texto preto, ausência da navegação e preservação do aviso de simulação. A primeira comprovação do tema claro está na [execução 45753389715](https://github.com/Gaabllez/bilheteria-api/actions/runs/45753389715), commit `32782b4`, com 16 cenários aprovados. As execuções posteriores do PR registram o refinamento final dos seletores de impressão.
 
-As capturas automáticas estão no artefato `interface` da execução vinculada. Elas usam imagens substitutas e servem como evidência de layout e comportamento, não como fotografias finais do catálogo. A automação cobre Chromium; não foi realizada uma matriz de navegadores Safari e Firefox.
+Cada cenário inicia o servidor e o domínio reais com estoque isolado e a mesma fábrica de catálogo usada por `src/main.ts`. A operadora injetada sempre aprova; falhas específicas são simuladas nos respectivos cenários. A suíte usa as fotos locais reais e substitui apenas fontes externas. O teste de resposta HTTP abre a seção técnica pela interface após fechar o comprovante.
 
-## Benchmark
+**Conferência manual atual:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
 
-Na execução documentada, o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
+**Evidência histórica:** o artefato `interface` do PR #2 contém capturas da versão anterior com imagens substitutas. Na inspeção manual daquela versão, duas reservas foram confirmadas; uma delas tinha três participantes, duas meias e uma inteira, totalizando R$ 220 com a taxa.
+
+## Benchmark atual — PR #3
+
+Na [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
 
 | Medida | Resultado |
 |---|---:|
 | Pedidos | 200 |
-| Tempo medido | 246 ms |
-| Taxa observada | 814 pedidos/s |
-| HTTP 201 — reserva confirmada | 90 |
+| Tempo medido | 169 ms |
+| Taxa observada | 1181 pedidos/s |
+| HTTP 201 — reserva confirmada | 85 |
 | HTTP 409 — poltrona ocupada | 100 |
-| HTTP 502 — pagamento simulado recusado | 10 |
-| Lugares restantes no evento 1 | 10 |
+| HTTP 502 — pagamento simulado recusado | 15 |
+| Lugares restantes no evento 1 | 15 |
 
-`conferir-benchmark.mjs` verifica que os 200 pedidos foram contabilizados, não há status inesperado, a capacidade não foi excedida e o estoque final corresponde às reservas aprovadas. Os outros eventos devem continuar intactos. As 10 recusas são parte da simulação do professor, e não dez defeitos da aplicação. Os números variam entre execuções; não representam uma garantia de capacidade em produção.
+`conferir-benchmark.mjs` aprovou a contabilização dos 200 pedidos, os status esperados, a capacidade e o estoque final correspondente às reservas confirmadas. Os outros **cinco eventos permaneceram intactos**. As 15 recusas fazem parte da operadora simulada do professor. Os números variam entre execuções; não representam uma garantia de capacidade em produção.
+
+**Histórico do PR #2:** a execução 45749110996 registrou 200 pedidos em 246 ms (814 pedidos/s), 90 confirmações, 100 conflitos, 10 recusas e 10 lugares restantes. O tempo de execução não deve ser usado como comparação de desempenho entre versões.
 
 ## Arquivos preservados
 
@@ -105,12 +119,13 @@ npm ci
 npm run typecheck
 npm test
 node validacao/conferir-testes.mjs
-node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs
+node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
 node validacao/conferir-originais.mjs
 node --check public/app.js
+node --check validacao/browser.test.mjs
 ```
 
-No ambiente restrito da revisão local, a CLI do `tsx` não pôde criar seu canal IPC. O mesmo executor original rodou com `node --import tsx testes/executar.ts testes/projeto.ts src --legivel`. No GitHub Actions, o comando normal **`npm test` também passou** em Node 22.
+`npm start` executa o TypeScript com `tsx` e serve `public/`; não existe etapa de build separada nem alteração necessária em `package.json`. Na revisão local anterior, a restrição ao IPC da CLI do `tsx` foi contornada com `node --import tsx testes/executar.ts testes/projeto.ts src --legivel`. O comando normal `npm test` passou no CI do PR #3 em Node 22.23.5.
 
 Para os testes de interface, o CI instala `playwright@1.62.1` em uma pasta temporária. Em um ambiente de desenvolvimento comum, pode-se repetir sem editar o manifesto do professor:
 

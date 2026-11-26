@@ -4,6 +4,7 @@ import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { iniciarServidorUI } from "./servidor-ui.ts";
+import { criarEventosDemo, lerCatalogo } from "../src/catalogo.ts";
 
 // O CI instala Playwright em um prefixo temporário para preservar package.json
 // e package-lock.json fornecidos pelo professor. Não execute esta suíte no
@@ -22,11 +23,8 @@ before(async () => {
 after(async () => { await browser?.close(); });
 
 const cleanText = (value) => value.replace(/\s+/g, " ").trim();
-const events = [
-  { id: 1, nome: "Show", preco: 100, capacidade: 100, disponivel: 100 },
-  { id: 2, nome: "Teatro", preco: 80, capacidade: 60, disponivel: 60 },
-  { id: 3, nome: "Festival", preco: 150, capacidade: 200, disponivel: 200 },
-];
+const catalog = lerCatalogo();
+const events = criarEventosDemo().map((evento) => evento.info());
 
 async function fixture(t, run, options = {}) {
   const server = await iniciarServidorUI();
@@ -36,15 +34,10 @@ async function fixture(t, run, options = {}) {
     reducedMotion: "reduce",
     ...options,
   });
-  // Estes são testes de interação, não uma validação de serviços externos.
-  // Imagens e fontes reais são verificadas separadamente no preview com CUA.
+  // As fotografias dos artistas são arquivos locais reais. Apenas fontes
+  // externas são substituídas para os testes não dependerem de terceiros.
   await context.route("https://fonts.googleapis.com/**", (route) => route.fulfill({
     status: 200, contentType: "text/css", body: "",
-  }));
-  await context.route("https://images.unsplash.com/**", (route) => route.fulfill({
-    status: 200,
-    contentType: "image/svg+xml",
-    body: '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="1200" height="800" fill="#242a39"/></svg>',
   }));
   const page = await context.newPage();
   page.setDefaultTimeout(7000);
@@ -81,32 +74,96 @@ async function terminoDoPedido(page) {
   await page.locator('#reservation-form[aria-busy="false"]').waitFor();
 }
 
+async function abrirRespostaAPI(page) {
+  const details = page.locator("details.api-details");
+  if (await details.getAttribute("open") === null) await details.locator("summary").click();
+  await page.locator("#response-body").waitFor({ state: "visible" });
+  await page.locator("#response-meta").waitFor({ state: "visible" });
+}
+
 async function preco(page, selector, esperado) {
   assert.equal(cleanText(await page.locator(selector).textContent()), esperado);
+}
+
+async function aguardarPintura(page) {
+  await page.evaluate(() => new Promise((resolveFrame) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolveFrame()));
+  }));
+}
+
+async function prepararCapturaCompleta(page) {
+  // A captura fullPage não percorre a página: visitamos as fotos para exercitar
+  // o lazy loading real, sem alterar o atributo loading ou forçar downloads.
+  const images = page.locator("main img");
+  for (let index = 0; index < await images.count(); index += 1) {
+    await images.nth(index).scrollIntoViewIfNeeded();
+    await page.waitForFunction((imageIndex) => {
+      const image = document.querySelectorAll("main img")[imageIndex];
+      return image?.complete && image.naturalWidth > 0;
+    }, index, { timeout: 5000 });
+  }
+  const loadedSources = await images.evaluateAll((photos) => photos.map((photo) => new URL(photo.currentSrc || photo.src).pathname));
+  assert.deepEqual(new Set(loadedSources), new Set([
+    ...catalog.events.map((event) => event.image),
+    "/images/artists/hero-gaga.webp",
+    "/images/artists/hero-coldplay.webp",
+  ]), "Os oito arquivos de fotografia devem carregar na página principal.");
+  await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
+  await aguardarPintura(page);
 }
 
 test("catálogo real, busca sem acentos e filtros selecionam o evento", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     await abrir(page, server);
-    assert.equal(await page.title(), "Bilheteria. — Viva o que importa");
-    assert.equal(await page.locator(".event-card").count(), 3);
-    await page.locator('[data-filter="teatro"]').click();
-    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Teatro"]);
-    assert.equal(await page.locator('[data-filter="teatro"]').getAttribute("aria-pressed"), "true");
-    await page.locator(".event-book").click();
-    assert.equal(await page.locator("#event-select").inputValue(), "2");
-    await preco(page, "#summary-total", "R$ 88,00");
+    assert.match(await page.title(), /Bilheteria/i);
+    assert.equal(await page.locator(".event-card").count(), 6);
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
+    await page.locator('[data-filter="rock"]').click();
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Coldplay", "Linkin Park"]);
+    assert.equal(await page.locator('[data-filter="rock"]').getAttribute("aria-pressed"), "true");
+    await page.locator(".event-book").first().click();
+    assert.equal(await page.locator("#event-select").inputValue(), "4");
+    await preco(page, "#summary-total", "R$ 132,00");
     await page.locator('[data-filter="todos"]').click();
-    await page.locator("#search-events").fill("MUSICA");
-    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Show", "Festival"]);
+    await page.locator("#search-events").fill("GÁGA");
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Lady Gaga"]);
+    await page.locator("#search-events").fill("The Romantic");
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Bruno Mars"]);
     await page.locator("#search-events").fill("evento inexistente");
     assert.equal(await page.locator(".event-card").count(), 0);
     assert.match(await page.locator("#events-grid").textContent(), /Nenhum evento corresponde/);
     await page.locator("#search-events").fill("");
-    await page.locator('[data-filter="festival"]').click();
-    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Festival"]);
+    await page.locator('[data-filter="latino"]').click();
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Shakira"]);
     await page.locator('[data-filter="todos"]').click();
+    await prepararCapturaCompleta(page);
     await page.screenshot({ path: resolve(artifacts, "desktop-catalogo.png"), fullPage: true });
+  });
+});
+
+test("detalhes mostram a turnê e o link oficial e iniciam a simulação correta", { timeout: 30000 }, async (t) => {
+  await fixture(t, async ({ page, server }) => {
+    await abrir(page, server);
+    for (const [index, event] of catalog.events.entries()) {
+      await page.locator(".event-details").nth(index).click();
+      await page.locator("#event-dialog[open]").waitFor();
+      assert.equal(await page.locator("#event-dialog-title").textContent(), event.artist);
+      assert.equal(await page.locator("#event-dialog-tour").textContent(), event.tour);
+      assert.equal(await page.locator("#event-official-link").getAttribute("href"), event.officialUrl);
+      assert.equal(await page.locator("#event-official-link").getAttribute("target"), "_blank");
+      assert.match(await page.locator("#event-official-link").getAttribute("rel"), /noopener/);
+      assert.match(await page.locator("#event-dialog").textContent(), /simulad|simula[çc][ãa]o/i);
+      await page.locator("#close-event").click();
+      assert.equal(await page.locator("#event-dialog").isVisible(), false);
+    }
+    await page.locator(".event-details").nth(2).click();
+    await page.locator("#event-reserve").click();
+    assert.equal(await page.locator("#event-dialog").isVisible(), false);
+    assert.equal(await page.locator("#event-select").inputValue(), "3");
+    await preco(page, "#summary-total", "R$ 176,00");
+    await page.locator("#featured-tour").click();
+    await page.locator("#event-dialog[open]").waitFor();
+    assert.equal(await page.locator("#event-dialog-title").textContent(), "Lady Gaga");
   });
 });
 
@@ -131,6 +188,7 @@ test("layout móvel não transborda e menu funciona por toque e Escape", { timeo
     await page.locator("#mobile-toggle").click();
     await page.locator('#mobile-menu a[href="#reserva"]').click();
     assert.equal(await page.locator("#mobile-menu").isHidden(), true);
+    await prepararCapturaCompleta(page);
     await page.screenshot({ path: resolve(artifacts, "mobile-390.png"), fullPage: true });
   }, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 });
@@ -229,6 +287,9 @@ test("reserva usa API real, bloqueia edição durante envio e preserva POST apó
       assert.equal(posts, 1, "Submissões repetidas não devem criar outro pedido em andamento.");
       await preco(page, "#receipt-total", "R$ 165,00");
       assert.match(await page.locator("#receipt-items").textContent(), /Ana de Teste.*Poltrona 1/);
+      await page.locator("#close-receipt").click();
+      assert.equal(await page.locator("#events-heading").evaluate((heading) => heading === document.activeElement), true);
+      await abrirRespostaAPI(page);
       const receipt = JSON.parse(await page.locator("#response-body").textContent());
       assert.equal(receipt.reservaId, 1);
       assert.equal(receipt.total, 165);
@@ -238,12 +299,12 @@ test("reserva usa API real, bloqueia edição durante envio e preserva POST apó
       assert.equal(await page.locator(".ticket-card").count(), 1);
       assert.equal(await page.locator('[name="nome"]').inputValue(), "");
       assert.equal(await page.locator('[name="poltrona"]').inputValue(), "3");
-      await page.locator("#close-receipt").click();
-      assert.equal(await page.locator("#events-heading").evaluate((heading) => heading === document.activeElement), true);
       await preencher(page, { nome: "Nova compra" });
       await page.locator("#submit-reservation").click();
       await page.locator("#receipt-dialog[open]").waitFor();
       await terminoDoPedido(page);
+      await page.locator("#close-receipt").click();
+      await abrirRespostaAPI(page);
       const second = JSON.parse(await page.locator("#response-body").textContent());
       assert.equal(second.reservaId, 2);
       assert.equal(second.ingressos[0].poltrona, 3);
@@ -290,15 +351,41 @@ test("falha no catálogo limpa eventos antigos, bloqueia reserva e recupera ao a
     assert.equal(await page.locator("#event-select").inputValue(), "");
     assert.equal(await page.locator("#event-select").isDisabled(), true);
     assert.equal(await page.locator("#submit-reservation").isDisabled(), true);
-    await page.locator("#search-events").fill("Show");
-    await page.locator('[data-filter="show"]').click();
+    await page.locator("#search-events").fill("Gaga");
+    await page.locator('[data-filter="pop"]').click();
     assert.equal(await page.locator(".event-card").count(), 0, "Filtros não podem restaurar catálogo obsoleto.");
     await page.unroute("**/eventos");
     await page.locator("#refresh-events").click();
     await page.locator("#connection-label.online").waitFor();
     await page.locator("#submit-reservation:not([disabled])").waitFor();
-    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Show"]);
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Lady Gaga"]);
     assert.equal(await page.locator("#event-select").isEnabled(), true);
+  });
+});
+
+test("falha inicial dos metadados permite recuperar o catálogo pelo botão Atualizar", { timeout: 30000 }, async (t) => {
+  await fixture(t, async ({ page, server }) => {
+    let metadataRequests = 0;
+    let eventRequests = 0;
+    page.on("request", (request) => {
+      if (request.url().endsWith("/catalogo.json")) metadataRequests += 1;
+      if (request.url().endsWith("/eventos")) eventRequests += 1;
+    });
+    await page.route("**/catalogo.json", (route) => route.abort("failed"));
+    await page.goto(server.url, { waitUntil: "domcontentloaded" });
+    await page.locator("#connection-label.offline").waitFor({ state: "attached" });
+    await page.locator("#refresh-events:not([disabled])").waitFor();
+    assert.equal(await page.locator(".event-card").count(), 0);
+    assert.equal(await page.locator("#submit-reservation").isDisabled(), true);
+    assert.equal(eventRequests, 0, "As reservas não devem ser oferecidas sem carregar o catálogo editorial.");
+    await page.unroute("**/catalogo.json");
+    await page.locator("#refresh-events").click();
+    await page.locator("#connection-label.online").waitFor({ state: "attached" });
+    await page.locator("#submit-reservation:not([disabled])").waitFor();
+    assert.ok(metadataRequests >= 2, "Atualizar deve buscar novamente os metadados que falharam.");
+    assert.ok(eventRequests >= 1);
+    assert.equal(await page.locator(".event-card").count(), 6);
+    assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
   });
 });
 
@@ -365,11 +452,16 @@ for (const failure of ["conexao", "comprovante"]) {
 test("nomes são texto seguro e impressão mantém aviso de comprovante fictício", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     const payload = '<img src=x onerror="window.injetado=true">';
-    await page.route("**/eventos", (route) => route.fulfill({
-      status: 200, contentType: "application/json", body: JSON.stringify([{ ...events[0], nome: payload }]),
+    await page.route("**/catalogo.json", (route) => route.fulfill({
+      status: 200, contentType: "application/json", body: JSON.stringify({ ...catalog, events: [{ ...catalog.events[0], artist: payload }, ...catalog.events.slice(1)] }),
     }));
+    await page.route("**/eventos", async (route) => {
+      const response = await route.fetch();
+      const lista = await response.json();
+      await route.fulfill({ response, contentType: "application/json", body: JSON.stringify(lista.map((event) => event.id === 1 ? { ...event, nome: `${payload} — ${catalog.events[0].tour}` } : event)) });
+    });
     await abrir(page, server);
-    assert.equal(await page.locator(".event-card h3").textContent(), payload);
+    assert.equal(await page.locator(".event-card h3").first().textContent(), payload);
     assert.equal(await page.locator(".event-card h3 img").count(), 0);
     await preencher(page, { nome: payload });
     await page.locator("#submit-reservation").click();
@@ -379,9 +471,37 @@ test("nomes são texto seguro e impressão mantém aviso de comprovante fictíci
     assert.equal(await page.locator("#receipt-items img").count(), 0);
     assert.equal(await page.evaluate(() => window.injetado), undefined);
     await page.emulateMedia({ media: "print" });
+    assert.equal(await page.evaluate(() => matchMedia("print").matches), true, "O navegador precisa aplicar a mídia de impressão.");
+    await aguardarPintura(page);
+    await page.waitForFunction(() => {
+      const body = getComputedStyle(document.body);
+      const dialog = getComputedStyle(document.querySelector("#receipt-dialog"));
+      return body.backgroundColor === "rgb(255, 255, 255)" && dialog.backgroundColor === "rgb(255, 255, 255)";
+    }, undefined, { timeout: 3000 }).catch(async (error) => {
+      const diagnostics = await page.evaluate(() => ({
+        print: matchMedia("print").matches,
+        theme: getComputedStyle(document.documentElement).getPropertyValue("--bg"),
+        body: getComputedStyle(document.body).backgroundColor,
+        rules: Array.from(document.styleSheets).filter((sheet) => sheet.href?.endsWith("/styles.css")).flatMap((sheet) => Array.from(sheet.cssRules)).filter((rule) => rule.conditionText === "print").map((rule) => rule.cssText),
+      }));
+      throw new Error(`O tema impresso não foi aplicado: ${JSON.stringify(diagnostics)}`, { cause: error });
+    });
+    const printStyles = await page.evaluate(() => {
+      const body = getComputedStyle(document.body);
+      const dialog = getComputedStyle(document.querySelector("#receipt-dialog"));
+      return { bodyBackground: body.backgroundColor, bodyText: body.color, dialogBackground: dialog.backgroundColor, dialogText: dialog.color };
+    });
+    assert.deepEqual(printStyles, {
+      bodyBackground: "rgb(255, 255, 255)",
+      bodyText: "rgb(0, 0, 0)",
+      dialogBackground: "rgb(255, 255, 255)",
+      dialogText: "rgb(0, 0, 0)",
+    }, "A impressão deve aplicar fundo branco e texto preto ao comprovante.");
     assert.equal(await page.locator(".receipt-disclaimer").isVisible(), true);
     assert.match(await page.locator(".receipt-disclaimer").textContent(), /não é válido para entrada em eventos reais/);
     assert.equal(await page.locator(".receipt-actions").isHidden(), true);
+    assert.equal(await page.locator(".announcement").isHidden(), true);
+    assert.equal(await page.locator(".site-header").isHidden(), true);
     await page.screenshot({ path: resolve(artifacts, "comprovante-impressao.png"), fullPage: true });
     await page.emulateMedia({ media: "screen" });
     await page.locator("#close-receipt").click();

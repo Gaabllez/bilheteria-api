@@ -1,0 +1,319 @@
+{
+  "verifiedAt": "2026-11-26",
+  "catalogType": "editorial",
+  "purpose": "Catálogo de artistas e turnês reais para projeto acadêmico de bilheteria, com reservas e pagamentos exclusivamente simulados.",
+  "events": [
+    {
+      "id": 1,
+      "artist": "Lady Gaga",
+      "tour": "The MAYHEM Ball",
+      "category": "pop",
+      "genre": "Pop",
+      "year": "2025–2026",
+      "description": "Pop, performance e o universo de MAYHEM em uma turnê de identidade teatral.",
+      "image": "/images/artists/gaga.webp",
+      "imageAlt": "Lady Gaga no telão do palco durante The Mayhem Ball em Londres, em setembro de 2025.",
+      "objectPosition": "50% 50%",
+      "accent": "#ff647c",
+      "officialUrl": "https://www.ladygaga.com/us-en/live/",
+      "sourceUrl": "https://news.livenationentertainment.com/news/lady-gaga-mayhem-ball-tour-2026",
+      "status": "Esta seleção apresenta a edição 2025–2026. As datas consultadas já passaram; veja a agenda oficial para atualizações.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Lady Gaga",
+          "title": "Live",
+          "url": "https://www.ladygaga.com/us-en/live/",
+          "supports": "Nome da turnê e lista oficial de apresentações 2025–2026, até 13/04/2026."
+        },
+        {
+          "publisher": "Live Nation",
+          "title": "Lady Gaga Expands Sold-Out The MAYHEM Ball Tour with New North American Dates Beginning February 2026",
+          "url": "https://news.livenationentertainment.com/news/lady-gaga-mayhem-ball-tour-2026",
+          "supports": "Confirmação da turnê e da etapa norte-americana de 2026."
+        }
+      ],
+      "credit": {
+        "author": "Amy Horrill",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lady_Gaga_-_The_Mayhem_Ball_in_London.jpg",
+        "title": "Lady Gaga - The Mayhem Ball in London.jpg",
+        "date": "2025-09-30 19:22",
+        "description": "Foto de Amy Horrill do show The Mayhem Ball, O2 Arena, Londres, 30 de setembro de 2025. O recorte destaca a imagem ao vivo de Lady Gaga no telão.",
+        "alt": "Lady Gaga no telão do palco durante The Mayhem Ball em Londres, em setembro de 2025.",
+        "modifications": "Recorte de enquadramento; redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 600,
+        "bytes": 54642,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 2,
+      "artist": "Bruno Mars",
+      "tour": "The Romantic Tour",
+      "category": "pop",
+      "genre": "Pop / Soul",
+      "year": "Edição 2026",
+      "description": "Pop, soul e funk encontram o universo de The Romantic em uma turnê de estádios.",
+      "image": "/images/artists/bruno-mars.webp",
+      "imageAlt": "Bruno Mars se apresentando no Singapore National Stadium, em abril de 2024.",
+      "objectPosition": "100% 45%",
+      "accent": "#f0bd76",
+      "officialUrl": "https://www.brunomars.com/theromantictour",
+      "sourceUrl": "https://news.livenationentertainment.com/news/bruno-mars-announces-the-romantic-tour-first-global-headline-tour-in-nearly-a-decade-and-first-global-stadium-outing",
+      "status": "A edição de 2026 foi anunciada em estádios. Consulte a agenda oficial para acompanhar novas datas e informações.",
+      "price": 140,
+      "capacity": 120,
+      "sources": [
+        {
+          "publisher": "Bruno Mars",
+          "title": "The Romantic Tour",
+          "url": "https://www.brunomars.com/theromantictour",
+          "supports": "Nome oficial da turnê. A página inclui produtos e ações promocionais que não devem ser confundidos com shows."
+        },
+        {
+          "publisher": "Live Nation",
+          "title": "Bruno Mars Announces The Romantic Tour, First Global Headline Tour in Nearly a Decade and First Global Stadium Outing",
+          "url": "https://news.livenationentertainment.com/news/bruno-mars-announces-the-romantic-tour-first-global-headline-tour-in-nearly-a-decade-and-first-global-stadium-outing",
+          "publishedAt": "2026-01-08",
+          "supports": "Nome, proposta de estádios e calendário inicialmente anunciado de 10/04/2026 a 14/10/2026."
+        }
+      ],
+      "credit": {
+        "author": "Pangalau",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bruno_Mars_Concert_at_Singapore_52.jpg",
+        "title": "Bruno Mars Concert at Singapore 52.jpg",
+        "date": "2024-04-03 22:00:44",
+        "description": "Foto de arquivo do show de Bruno Mars em Singapura, 3 de abril de 2024. Não retrata a The Romantic Tour de 2026.",
+        "alt": "Bruno Mars se apresentando no Singapore National Stadium, em abril de 2024.",
+        "modifications": "Recorte de enquadramento; redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 600,
+        "bytes": 20746,
+        "objectPosition": "65% 45%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 3,
+      "artist": "The Weeknd",
+      "tour": "After Hours Til Dawn",
+      "category": "rnb",
+      "genre": "R&B / Pop",
+      "year": "Edição 2026",
+      "description": "R&B, pop e o universo de After Hours, Dawn FM e Hurry Up Tomorrow em uma jornada pelos estádios.",
+      "image": "/images/artists/the-weeknd.webp",
+      "imageAlt": "The Weeknd cantando no Festival d’été de Québec, em julho de 2018.",
+      "objectPosition": "50% 35%",
+      "accent": "#bd9aff",
+      "officialUrl": "https://www.theweeknd.com/tour/",
+      "sourceUrl": "https://www.universalmusic.com.br/2025/09/05/the-weeknd-anuncia-a-turne-after-hours-til-dawn-no-brasil-em-2026-com-participacao-de-anitta/",
+      "status": "As datas brasileiras de 2026 consultadas já passaram. A agenda oficial não exibia próximos eventos na data da pesquisa.",
+      "price": 160,
+      "capacity": 150,
+      "sources": [
+        {
+          "publisher": "The Weeknd",
+          "title": "Tour",
+          "url": "https://www.theweeknd.com/tour/",
+          "supports": "Agenda atual consultada: No upcoming events."
+        },
+        {
+          "publisher": "Universal Music Brasil",
+          "title": "The Weeknd anuncia a turnê After Hours Til Dawn no Brasil, em 2026, com participação de Anitta",
+          "url": "https://www.universalmusic.com.br/2025/09/05/the-weeknd-anuncia-a-turne-after-hours-til-dawn-no-brasil-em-2026-com-participacao-de-anitta/",
+          "publishedAt": "2025-09-05",
+          "supports": "Nome da turnê e datas/cidades brasileiras anunciadas para 2026."
+        },
+        {
+          "publisher": "Ticketmaster Brasil",
+          "title": "The Weeknd: After Hours Til Dawn — Rio de Janeiro",
+          "url": "https://www.ticketmaster.com.br/event/the-weeknd-rj",
+          "supports": "Nome completo da turnê, trilogia de álbuns e locais das datas brasileiras. Conteúdo recuperado pelo índice; a página de venda pode já não estar disponível e não comprova disponibilidade atual."
+        }
+      ],
+      "credit": {
+        "author": "Nicolas Padovani",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:FEQ_July_2018_The_Weeknd_(44778856382)_(cropped).jpg",
+        "title": "FEQ July 2018 The Weeknd (44778856382) (cropped).jpg",
+        "date": "2018-07-05 21:55",
+        "description": "Foto de arquivo de apresentação de The Weeknd em julho de 2018. Não retrata a After Hours Til Dawn Tour.",
+        "alt": "The Weeknd cantando no Festival d’été de Québec, em julho de 2018.",
+        "modifications": "Recorte de enquadramento; redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 600,
+        "bytes": 45256,
+        "objectPosition": "50% 35%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 4,
+      "artist": "Coldplay",
+      "tour": "Music Of The Spheres World Tour",
+      "category": "rock",
+      "genre": "Pop rock",
+      "year": "Turnê iniciada em 2022",
+      "description": "A era Music Of The Spheres em uma jornada de pop rock pelos estádios.",
+      "image": "/images/artists/coldplay.webp",
+      "imageAlt": "Integrantes do Coldplay no palco do Glastonbury Festival, em junho de 2024.",
+      "objectPosition": "50% 55%",
+      "accent": "#92b5ff",
+      "officialUrl": "https://www.coldplay.com/tour/",
+      "sourceUrl": "https://www.coldplay.com/music-of-the-spheres-world-tour-announced/",
+      "status": "Turnê anunciada com início em 2022. A agenda oficial não exibia novas datas na data da pesquisa.",
+      "price": 120,
+      "capacity": 180,
+      "sources": [
+        {
+          "publisher": "Coldplay",
+          "title": "Tour",
+          "url": "https://www.coldplay.com/tour/",
+          "supports": "Agenda atual consultada sem datas programadas."
+        },
+        {
+          "publisher": "Coldplay",
+          "title": "Music Of The Spheres World Tour announced",
+          "url": "https://www.coldplay.com/music-of-the-spheres-world-tour-announced/",
+          "publishedAt": "2021-10-14",
+          "supports": "Nome oficial e início anunciado em 18/03/2022 na Costa Rica."
+        }
+      ],
+      "credit": {
+        "author": "Raph_PH",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Coldplay_Glasto24_290624_(137)_(53837997949).jpg",
+        "title": "Coldplay Glasto24 290624 (137) (53837997949).jpg",
+        "date": "2024-06-29 22:43",
+        "description": "Coldplay no Glastonbury Festival, em 29 de junho de 2024. Não é foto de uma data anunciada no catálogo.",
+        "alt": "Integrantes do Coldplay no palco do Glastonbury Festival, em junho de 2024.",
+        "modifications": "redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 518,
+        "bytes": 87310,
+        "objectPosition": "50% 55%"
+      },
+      "dialogImageFit": "contain"
+    },
+    {
+      "id": 5,
+      "artist": "Shakira",
+      "tour": "Las Mujeres Ya No Lloran World Tour",
+      "category": "latino",
+      "genre": "Pop latino",
+      "year": "Registros de 2026",
+      "description": "Pop latino e os ritmos que atravessam Las Mujeres Ya No Lloran em uma turnê de alcance mundial.",
+      "image": "/images/artists/shakira.webp",
+      "imageAlt": "Shakira durante a Las Mujeres Ya No Lloran World Tour em Medellín, em abril de 2025.",
+      "objectPosition": "50% 40%",
+      "accent": "#ffba94",
+      "officialUrl": "https://www.shakira.com/tour-hub/",
+      "sourceUrl": "https://www.shakira.com/tour-hub/",
+      "status": "O hub oficial reúne registros da turnê em 2026. Consulte a agenda oficial para informações sobre novas apresentações.",
+      "price": 110,
+      "capacity": 120,
+      "sources": [
+        {
+          "publisher": "Shakira",
+          "title": "Las Mujeres Ya No Lloran World Tour — Tour Hub",
+          "url": "https://www.shakira.com/tour-hub/",
+          "supports": "Nome oficial e registros retrospectivos de 2026. Não usar datas de snippets como disponibilidade confirmada atual."
+        }
+      ],
+      "credit": {
+        "author": "J.ébey",
+        "license": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Shakira_crooped_SHARIKA_MEDELLIN_13_04_2025.jpg",
+        "title": "Shakira crooped SHARIKA MEDELLIN 13 04 2025.jpg",
+        "date": "2025-04-13",
+        "description": "Show de Shakira no Estadio Atanasio Girardot, Medellín, Colômbia, em 13 de abril de 2025.",
+        "alt": "Shakira durante a Las Mujeres Ya No Lloran World Tour em Medellín, em abril de 2025.",
+        "modifications": "Recorte de enquadramento; redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 600,
+        "bytes": 129340,
+        "objectPosition": "50% 40%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 6,
+      "artist": "Linkin Park",
+      "tour": "From Zero World Tour",
+      "category": "rock",
+      "genre": "Rock alternativo",
+      "year": "2024–2026",
+      "description": "A fase From Zero em um encontro de rock alternativo e energia de arena.",
+      "image": "/images/artists/linkin-park.webp",
+      "imageAlt": "Integrantes do Linkin Park em fotografia promocional da formação de 2024.",
+      "objectPosition": "50% 35%",
+      "accent": "#8ee8c8",
+      "officialUrl": "https://www.linkinpark.com/tour",
+      "sourceUrl": "https://news.livenationentertainment.com/news/linkin-park-roar-into-2025-with-50-new-shows-on-from-zero-world-tour",
+      "status": "A seleção apresenta a fase 2024–2026. A agenda oficial não exibia próximos shows na data da pesquisa.",
+      "price": 130,
+      "capacity": 140,
+      "sources": [
+        {
+          "publisher": "Linkin Park",
+          "title": "Tour",
+          "url": "https://www.linkinpark.com/tour",
+          "supports": "Agenda atual consultada sem shows futuros."
+        },
+        {
+          "publisher": "Live Nation",
+          "title": "Linkin Park Roar Into 2025 with 50 New Shows on From Zero World Tour",
+          "url": "https://news.livenationentertainment.com/news/linkin-park-roar-into-2025-with-50-new-shows-on-from-zero-world-tour",
+          "publishedAt": "2024-11-14",
+          "supports": "Nome da turnê, início da fase em 2024 e expansão para 2025. O calendário inicial não deve ser tratado como agenda atual."
+        },
+        {
+          "publisher": "Linkin Park",
+          "title": "Europe Tour 2026, Part 3 — LPTV FROM ZERO: Episode 49",
+          "url": "https://www.youtube.com/watch?v=-nPjPME1nrI",
+          "publishedAt": "2026-09-05",
+          "supports": "Vídeo no canal oficial descreve o encerramento da turnê em Zurique após dois anos."
+        },
+        {
+          "publisher": "Live Nation",
+          "title": "Linkin Park — Artist",
+          "url": "https://www.livenation.com/artist/K8vZ9171if7/linkin-park-events",
+          "supports": "Registro de apresentação em 30/06/2026 no Letzigrund, Zurique, descrita como final da turnê."
+        },
+        {
+          "publisher": "Linkin Park Store",
+          "title": "FROM ZERO WORLD TOUR: Tour Posters (2024–2026)",
+          "url": "https://store.linkinpark.com/",
+          "supports": "Título de produto oficial identifica o período 2024–2026."
+        }
+      ],
+      "credit": {
+        "author": "James Minchin III",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg",
+        "title": "Lead Press Photo - James Minchin III.jpg",
+        "date": "2024-05-28 13:54:41",
+        "description": "Fotografia promocional da formação de Linkin Park em 2024, para a era From Zero. Não é fotografia de uma apresentação.",
+        "alt": "Integrantes do Linkin Park em fotografia promocional da formação de 2024.",
+        "modifications": "redimensionamento proporcional e conversão/compressão WebP. Sem geração ou alteração de pessoas.",
+        "width": 800,
+        "height": 600,
+        "bytes": 64450,
+        "objectPosition": "50% 35%",
+        "rightsNote": "O campo Artist do Commons também identifica CeriRoberts como representante da Warner Records; fotografia de James Minchin III."
+      },
+      "dialogImageFit": "contain"
+    }
+  ]
+}
