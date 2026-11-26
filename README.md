@@ -39,7 +39,7 @@ curl -i http://localhost:3000/eventos
 curl -i -X POST http://localhost:3000/reservas -H 'Content-Type: application/json' -d '{"eventoId":1,"ingressos":[{"nome":"Ana","idade":20,"estudante":true,"pcd":false,"poltrona":7}]}'
 ```
 
-`GET /eventos` lista os três eventos e a disponibilidade. Quando aprovada, a reserva retorna **201** com o comprovante; nesse exemplo, a meia-entrada de R$ 50 mais a taxa de 10% totaliza **R$ 55**. A operadora pode recusar o pagamento com **502**; após uma reserva aprovada, repetir a mesma poltrona retorna **409**. Há [comandos equivalentes para PowerShell](docs/ROTEIRO_VIDEO.md#2-projeto-rodando).
+`GET /eventos` lista os três eventos do enunciado. Para consultar os 14 shows da interface, use `GET /catalogo/eventos`; as reservas da interface são enviadas a `POST /catalogo/reservas`. Quando aprovada, a reserva retorna **201** com o comprovante; nesse exemplo, a meia-entrada de R$ 50 mais a taxa de 10% totaliza **R$ 55**. A operadora pode recusar o pagamento com **502**; após uma reserva aprovada, repetir a mesma poltrona retorna **409**. Há [comandos equivalentes para PowerShell](docs/ROTEIRO_VIDEO.md#2-projeto-rodando).
 
 ### Executar o benchmark
 
@@ -117,17 +117,17 @@ O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos 
 | Lady Gaga | The MAYHEM Ball | Evento 1, reserva simulada |
 | Bruno Mars | The Romantic Tour | Evento 2, reserva simulada |
 | The Weeknd | After Hours Til Dawn | Evento 3, reserva simulada |
-| Coldplay | Music Of The Spheres World Tour | Consulta editorial, sem reserva |
-| Shakira | Las Mujeres Ya No Lloran World Tour | Consulta editorial, sem reserva |
-| Linkin Park | From Zero World Tour | Consulta editorial, sem reserva |
-| Adele | Adele Live 2016 | Consulta editorial, sem reserva |
-| Dua Lipa | Radical Optimism Tour | Consulta editorial, sem reserva |
-| Billie Eilish | Hit Me Hard and Soft: The Tour | Consulta editorial, sem reserva |
-| Taylor Swift | The Eras Tour | Consulta editorial, sem reserva |
-| Beyoncé | Renaissance World Tour | Consulta editorial, sem reserva |
-| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |
-| O Fantasma da Ópera | Musical teatral | Consulta editorial, sem reserva |
-| Wicked | Musical teatral | Consulta editorial, sem reserva |
+| Coldplay | Music Of The Spheres World Tour | Reserva simulada no catálogo expandido |
+| Shakira | Las Mujeres Ya No Lloran World Tour | Reserva simulada no catálogo expandido |
+| Linkin Park | From Zero World Tour | Reserva simulada no catálogo expandido |
+| Adele | Adele Live 2016 | Reserva simulada no catálogo expandido |
+| Dua Lipa | Radical Optimism Tour | Reserva simulada no catálogo expandido |
+| Billie Eilish | Hit Me Hard and Soft: The Tour | Reserva simulada no catálogo expandido |
+| Taylor Swift | The Eras Tour | Reserva simulada no catálogo expandido |
+| Beyoncé | Renaissance World Tour | Reserva simulada no catálogo expandido |
+| Ed Sheeran | Mathematics Tour | Reserva simulada no catálogo expandido |
+| O Fantasma da Ópera | Musical teatral | Reserva simulada no catálogo expandido |
+| Wicked | Musical teatral | Reserva simulada no catálogo expandido |
 
 O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Todos os itens do catálogo possuem preço e capacidade fictícios para a simulação; não há venda de ingressos reais. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
 
