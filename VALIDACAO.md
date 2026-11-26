@@ -37,7 +37,7 @@ Na versão validada daquele commit, a suíte de interface confirmou seis cards e
 
 ### Atualização posterior: filtros e catálogo teatral (26/11/2026)
 
-Depois da validação do commit `153b8d7`, Inácio (`nettoinacio`) integrou dois registros editoriais — **O Fantasma da Ópera** (ID 107) e **Wicked** (ID 108) — e os filtros de categoria **Artistas** e **Teatro**, preservando os filtros musicais e os três eventos reserváveis. Os testes de catálogo agora esperam 14 registros (12 artistas/turnês e dois musicais teatrais), com somente IDs 1, 2 e 3 reserváveis. O filtro geral da interface foi corrigido para “Todos os eventos”, pois também inclui teatro.
+Depois da validação do commit `153b8d7`, Inácio (`nettoinacio`) integrou dois registros editoriais — **O Fantasma da Ópera** (ID 107) e **Wicked** (ID 108) — e os filtros de categoria **Artistas** e **Teatro**, preservando os filtros musicais e os três eventos reserváveis. Os anos vagos `2016–2017` e `2024–2025` foram substituídos por referências históricas verificáveis: “Desde 1986 (Londres)” e “Desde 2003 (Broadway)”, com fontes oficiais e testes de regressão. Os testes de catálogo agora esperam 14 registros (12 artistas/turnês e dois musicais teatrais), com somente IDs 1, 2 e 3 reserváveis. O filtro geral da interface foi corrigido para “Todos os eventos”, pois também inclui teatro.
 
 **Atenção:** a validação verde citada acima é de uma revisão anterior a essas alterações. Ao consultar o commit mais recente do código teatral, o GitHub não retornou status de verificação associados; portanto, não afirmo que os novos filtros e registros já passaram pelo CI. Antes da entrega, execute `npm test`, `npm run typecheck` e a suíte de interface/Actions sobre a versão atual e registre o resultado real.
 
