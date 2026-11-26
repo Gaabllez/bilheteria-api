@@ -6,7 +6,7 @@ import { criarBilheteria } from "../src/bilheteria.ts";
 import { NaoEncontradoErro } from "../src/dominio.ts";
 import { iniciarServidorUI } from "./servidor-ui.ts";
 
-test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetáculos teatrais, fontes HTTPS, fotos locais e referência de data", () => {
+test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetáculos teatrais, fontes HTTPS, imagens licenciadas e referência de data", () => {
   const catalogo = lerCatalogo();
   assert.equal(catalogo.events.length, 14);
   assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 14);
@@ -25,7 +25,14 @@ test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetácu
   for (const evento of catalogo.events) {
     assert.equal(new URL(evento.officialUrl).protocol, "https:");
     assert.equal(new URL(evento.sourceUrl).protocol, "https:");
-    assert.ok(statSync(new URL(`../public${evento.image}`, import.meta.url)).size > 1000, `Foto local ausente ou vazia para ${evento.artist}`);
+    if (evento.image.startsWith("/images/")) {
+      assert.ok(statSync(new URL(`../public${evento.image}`, import.meta.url)).size > 1000, `Imagem local ausente ou vazia para ${evento.artist}`);
+    } else {
+      const imagem = new URL(evento.image);
+      assert.equal(imagem.protocol, "https:");
+      assert.equal(imagem.hostname, "commons.wikimedia.org");
+      assert.ok(imagem.pathname.startsWith("/wiki/Special:FilePath/"));
+    }
     assert.ok(evento.imageAlt.includes(evento.artist), `O texto alternativo precisa identificar ${evento.artist}`);
   }
 });
