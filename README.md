@@ -110,7 +110,7 @@ O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, 
 
 ## Catálogo e interface
 
-O site mantém 12 registros de turnês de nove artistas, com busca, filtros, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
+O site mantém 12 registros de turnês de 12 artistas, com busca, filtros, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
 
 | Artista | Turnê | Uso no projeto |
 |---|---|---|

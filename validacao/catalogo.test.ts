@@ -6,10 +6,10 @@ import { criarBilheteria } from "../src/bilheteria.ts";
 import { NaoEncontradoErro } from "../src/dominio.ts";
 import { iniciarServidorUI } from "./servidor-ui.ts";
 
-test("catálogo reúne 12 turnês de nove artistas, fontes HTTPS, fotos locais e referência de data", () => {
+test("catálogo reúne 12 turnês de 12 artistas, fontes HTTPS, fotos locais e referência de data", () => {
   const catalogo = lerCatalogo();
   assert.equal(catalogo.events.length, 12);
-  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 9);
+  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 12);
   assert.deepEqual(catalogo.events.filter((evento) => evento.reservable).map((evento) => evento.id), [1, 2, 3]);
   assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.equal(catalogo.verifiedAt, "2026-11-26");
