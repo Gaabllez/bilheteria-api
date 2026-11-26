@@ -121,7 +121,7 @@ As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaq
 - Falhas na listagem eliminam dados antigos e bloqueiam o envio até a reconexão.
 - Requisições têm prazo de 10 segundos. Se a resposta do POST se perder, a tela informa resultado desconhecido e exige iniciar outro pedido explicitamente; não repete a reserva automaticamente.
 - O recibo do POST permanece na área técnica após atualizar o catálogo, preservando a correção inicial do Marcus.
-- A impressão mantém o aviso de comprovante fictício, e um recibo fechado não aparece numa impressão comum da página.
+- A impressão usa fundo branco e texto preto, preserva o aviso de comprovante fictício e omite a navegação. Um recibo fechado não aparece numa impressão comum da página.
 - Rótulos, campos, foco de teclado e menu móvel foram revisados; a busca encontra palavras com ou sem acento.
 
 A suíte aprovada no PR #3 inclui detalhes das turnês e recuperação após falha inicial do catálogo. Usa as fotografias locais reais e substitui apenas fontes externas. Na conferência manual, as seis fotos dos cards carregaram e uma reserva de Bruno Mars confirmou o comprovante **#1**, com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**.

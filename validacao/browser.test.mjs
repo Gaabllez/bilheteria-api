@@ -473,6 +473,19 @@ test("nomes são texto seguro e impressão mantém aviso de comprovante fictíci
     await page.emulateMedia({ media: "print" });
     assert.equal(await page.evaluate(() => matchMedia("print").matches), true, "O navegador precisa aplicar a mídia de impressão.");
     await aguardarPintura(page);
+    await page.waitForFunction(() => {
+      const body = getComputedStyle(document.body);
+      const dialog = getComputedStyle(document.querySelector("#receipt-dialog"));
+      return body.backgroundColor === "rgb(255, 255, 255)" && dialog.backgroundColor === "rgb(255, 255, 255)";
+    }, undefined, { timeout: 3000 }).catch(async (error) => {
+      const diagnostics = await page.evaluate(() => ({
+        print: matchMedia("print").matches,
+        theme: getComputedStyle(document.documentElement).getPropertyValue("--bg"),
+        body: getComputedStyle(document.body).backgroundColor,
+        rules: Array.from(document.styleSheets).filter((sheet) => sheet.href?.endsWith("/styles.css")).flatMap((sheet) => Array.from(sheet.cssRules)).filter((rule) => rule.conditionText === "print").map((rule) => rule.cssText),
+      }));
+      throw new Error(`O tema impresso não foi aplicado: ${JSON.stringify(diagnostics)}`, { cause: error });
+    });
     const printStyles = await page.evaluate(() => {
       const body = getComputedStyle(document.body);
       const dialog = getComputedStyle(document.querySelector("#receipt-dialog"));

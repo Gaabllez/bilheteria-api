@@ -78,6 +78,8 @@ Os **16 cenários aprovados no CI do PR #3** verificam:
 15. Resposta 201 sem comprovante válido.
 16. Conteúdo com HTML tratado como texto e impressão com aviso de demonstração.
 
+A revisão das evidências também passou a visitar cada imagem antes da captura completa, conferindo o carregamento dos oito WebPs e retornando a página ao topo. O modo de impressão ganhou um tema claro próprio; o teste exige fundo branco, texto preto, ausência da navegação e preservação do aviso de simulação. A primeira comprovação do tema claro está na [execução 45753389715](https://github.com/Gaabllez/bilheteria-api/actions/runs/45753389715), commit `32782b4`, com 16 cenários aprovados. As execuções posteriores do PR registram o refinamento final dos seletores de impressão.
+
 Cada cenário inicia o servidor e o domínio reais com estoque isolado e a mesma fábrica de catálogo usada por `src/main.ts`. A operadora injetada sempre aprova; falhas específicas são simuladas nos respectivos cenários. A suíte usa as fotos locais reais e substitui apenas fontes externas. O teste de resposta HTTP abre a seção técnica pela interface após fechar o comprovante.
 
 **Conferência manual atual:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
