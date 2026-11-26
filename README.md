@@ -11,9 +11,18 @@ Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [mode
 | Gabriel Galvão Fredrich | 33632308 | [Gaabllez](https://github.com/Gaabllez) | API, integração, validação automatizada, catálogo e aprimoramentos da interface |
 | Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar pelo integrante |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | [Mvsff](https://github.com/Mvsff) | Painel web responsivo e preservação da resposta da reserva após a atualização dos eventos |
-| Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Expansão do catálogo com novos artistas e turnês, atualização da documentação e revisão dos registros editoriais |
+| Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Ampliação do catálogo de 6 para 12 artistas/turnês; inclusão de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran; criação da arte vetorial editorial; atualização do catálogo, interface, README e testes; correção dos IDs e dos testes após os checks de CI |
 
 As contribuições de Gabriel, Marcus e Rafael estão registradas na tabela. A conta e a contribuição de Inácio ainda precisam ser confirmadas.
+
+### Contribuição de Rafael Olívio Ribeiro Campos (@rafaeloliviooo)
+
+- Expandiu o catálogo editorial de 6 para 12 artistas e turnês, mantendo apenas os três eventos exigidos pelo enunciado como reserváveis.
+- Adicionou os registros editoriais de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran, com links oficiais e indicação de que não representam disponibilidade atual de ingressos.
+- Criou a arte vetorial abstrata original usada nos novos registros, com créditos/licença e texto alternativo, e ajustou a validação de imagens para aceitar SVG.
+- Atualizou a lista de artistas na interface, o catálogo JSON, a documentação e os testes para refletir os 12 registros.
+- Corrigiu os IDs dos novos registros para evitar conflito com os IDs do catálogo original e atualizou os testes de catálogo e navegador que ainda esperavam seis cartões.
+- Registrou seu usuário GitHub e essas atividades nesta seção de integrantes.
 
 ## Executar
 
@@ -83,7 +92,7 @@ Ao final, o evento 1 tinha **7 poltronas disponíveis**, compatíveis com as 93 
 
 ## Validação
 
-A mesma [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771) aprovou os jobs de backend e interface para o commit identificado acima:
+A execução de validação do commit de correção [11552f3](https://github.com/Gaabllez/bilheteria-api/commit/11552f3aacf3075b24e1b7536c55bd51265d25ef) concluiu com **success** nos dois checks (`validar` e `interface`): [ver GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45866704404). A mesma [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771) aprovou os jobs de backend e interface para o commit identificado acima:
 
 | Verificação | Resultado |
 |---|---|
@@ -137,7 +146,7 @@ O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) reúne as **oito partes obrigatóri
 
 Ainda depende do grupo:
 
-- Confirmar as contas e contribuições de Inácio e Rafael e verificar os commits próprios de cada integrante.
+- Confirmar a conta e a contribuição de Inácio e verificar os commits próprios de cada integrante.
 - Gravar e publicar o vídeo com o código da entrega, testar o acesso sem login e colocar o link verdadeiro no início deste README.
 - Confirmar o nome cadastrado do grupo e o prazo da turma no Blackboard e realizar o envio com os links, nomes completos e RGMs.
 
