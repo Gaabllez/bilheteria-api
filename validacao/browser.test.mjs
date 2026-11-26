@@ -65,7 +65,8 @@ async function fixture(t, run, options = {}) {
 
 async function abrir(page, server) {
   await page.goto(server.url, { waitUntil: "domcontentloaded" });
-  await page.locator("#connection-label.online").waitFor();
+  // O cabeçalho oculta este indicador no celular; a classe confirma o GET.
+  await page.locator("#connection-label.online").waitFor({ state: "attached" });
   await page.locator("#submit-reservation:not([disabled])").waitFor();
 }
 
