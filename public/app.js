@@ -16,7 +16,7 @@ const showResponse = (status, duration, data, isError = false) => {
   $("#response-state").className = "response-live " + (status === null ? "" : (isError ? "error" : "success"));
   $("#response-body").textContent = data === null ? "// Nenhuma resposta recebida." : JSON.stringify(data, null, 2);
 };
-const request = async (path, options = {}) => {
+const request = async (path, options = {}, displayResponse = true) => {
   const started = performance.now();
   try {
     const response = await fetch(path, options);
@@ -24,13 +24,13 @@ const request = async (path, options = {}) => {
     let data;
     try { data = text ? JSON.parse(text) : null; } catch { data = text; }
     const duration = Math.round(performance.now() - started);
-    showResponse(response.status, duration, data, !response.ok);
+    if (displayResponse) showResponse(response.status, duration, data, !response.ok);
     if (!response.ok) throw new Error(data && data.mensagem ? data.mensagem : "A requisição retornou HTTP " + response.status);
     return data;
   } catch (error) {
     if (error instanceof TypeError) {
       setConnection(false, "Não foi possível conectar ao servidor.");
-      showResponse(null, Math.round(performance.now() - started), { erro: "Não foi possível conectar à API. Verifique se o servidor está ativo em localhost:3000." }, true);
+      if (displayResponse) showResponse(null, Math.round(performance.now() - started), { erro: "Não foi possível conectar à API. Verifique se o servidor está ativo em localhost:3000." }, true);
     }
     throw error;
   }
@@ -137,10 +137,10 @@ const renderEvents = () => {
   if (state.events.some((event) => String(event.id) === previous)) select.value = previous;
   updateTicketIndexes();
 };
-const loadEvents = async () => {
+const loadEvents = async (displayResponse = true) => {
   $("#refresh-events").disabled = true;
   try {
-    const data = await request("/eventos");
+    const data = await request("/eventos", {}, displayResponse);
     if (!Array.isArray(data)) throw new Error("Formato inesperado na resposta de /eventos");
     state.events = data;
     renderEvents();
@@ -189,7 +189,7 @@ $("#reservation-form").addEventListener("submit", async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ eventoId: selected.id, ingressos: tickets })
     });
-    await loadEvents();
+    await loadEvents(false);
   } catch {
     // O painel de resposta contém o status HTTP e a mensagem devolvida pelo servidor.
   } finally {
