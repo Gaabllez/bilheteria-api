@@ -14,6 +14,14 @@ test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetácu
   assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 101, 102, 103, 104, 105, 106, 107, 108]);
   assert.equal(catalogo.verifiedAt, "2026-11-26");
   assert.deepEqual(new Set(catalogo.events.map((evento) => evento.category)), new Set(["pop", "rnb", "rock", "latino", "theatre"]));
+  const phantom = catalogo.events.find((evento) => evento.id === 107)!;
+  const wicked = catalogo.events.find((evento) => evento.id === 108)!;
+  assert.equal(phantom.year, "Desde 1986 (Londres)");
+  assert.match(phantom.sources[0].supports, /1986/);
+  assert.equal(wicked.year, "Desde 2003 (Broadway)");
+  assert.match(wicked.sources[0].supports, /2003/);
+  assert.equal(phantom.reservable, false);
+  assert.equal(wicked.reservable, false);
   for (const evento of catalogo.events) {
     assert.equal(new URL(evento.officialUrl).protocol, "https:");
     assert.equal(new URL(evento.sourceUrl).protocol, "https:");
