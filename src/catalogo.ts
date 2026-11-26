@@ -43,8 +43,18 @@ export function validarCatalogo(valor: unknown) {
       throw new Error("Catálogo inválido: preço fictício e capacidade precisam ser positivos.");
     }
     const image = texto(item.image, "image");
-    if (!image.startsWith("/images/") || image.includes("..") || image.includes("\\")) {
-      throw new Error("Catálogo inválido: a imagem deve ser um arquivo local em /images/.");
+    const imagemLocal = image.startsWith("/images/") && !image.includes("..") && !image.includes("\\");
+    const imagemCommons = (() => {
+      try {
+        const url = new URL(image);
+        return url.protocol === "https:" && url.hostname === "commons.wikimedia.org" &&
+          url.pathname.startsWith("/wiki/Special:FilePath/") && !url.username && !url.password;
+      } catch {
+        return false;
+      }
+    })();
+    if (!imagemLocal && !imagemCommons) {
+      throw new Error("Catálogo inválido: use um arquivo local em /images/ ou uma imagem HTTPS do Wikimedia Commons.");
     }
     return {
       ...item,
