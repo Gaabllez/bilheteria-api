@@ -62,8 +62,8 @@ export function validarCatalogo(valor: unknown) {
       capacity: item.capacity,
     };
   });
-  if (events.filter((evento) => evento.reservable).length !== 3) {
-    throw new Error("Catálogo inválido: o enunciado exige exatamente três eventos disponíveis para reserva.");
+  if (events.filter((evento) => evento.reservable).length < 3) {
+    throw new Error("Catálogo inválido: informe ao menos três eventos disponíveis para simulação.");
   }
   const primeiro = events.find((evento) => evento.id === 1);
   if (!primeiro || !primeiro.reservable || primeiro.capacity !== 100 || primeiro.price !== 100) {
@@ -77,8 +77,14 @@ export function lerCatalogo() {
 }
 
 export function criarEventosDemo() {
-  // Os demais artistas permanecem no catálogo editorial, sem estoque ou reservas.
-  // O Passo 6 do enunciado determina três eventos na bilheteria.
+  // A bilheteria principal preserva os três eventos exigidos pelo enunciado.
+  return lerCatalogo().events
+    .filter((evento) => [1, 2, 3].includes(evento.id))
+    .map((evento) => new Evento(evento.id, `${evento.artist} — ${evento.tour}`, evento.price, evento.capacity));
+}
+
+export function criarEventosCatalogo() {
+  // Estoque independente para a simulação completa exibida no site.
   return lerCatalogo().events
     .filter((evento) => evento.reservable)
     .map((evento) => new Evento(evento.id, `${evento.artist} — ${evento.tour}`, evento.price, evento.capacity));
