@@ -10,4 +10,8 @@ const pagar = criarPagamentoFalso({ latenciaMs: 80, taxaDeFalha: 0.1 });
 const bilheteria = criarBilheteria({ eventos, pagar, limitePagamentoMs: 500 });
 const app = criarServidor(bilheteria);
 app.use(express.static(resolve(dirname(fileURLToPath(import.meta.url)), "../public")));
-app.listen(3000, () => console.log("Bilheteria em http://localhost:3000"));
+const porta = Number(process.env.PORT ?? 3000);
+if (!Number.isInteger(porta) || porta < 1 || porta > 65535) {
+  throw new Error("PORT deve ser um número inteiro entre 1 e 65535.");
+}
+app.listen(porta, () => console.log(`Bilheteria em http://localhost:${porta}`));

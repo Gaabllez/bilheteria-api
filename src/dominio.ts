@@ -12,7 +12,7 @@ export class Evento {
   get disponivel(): number { return this.capacidade - this.#vendidas.length; }
   reservar(poltronas: number[]): void {
     if (!Array.isArray(poltronas) || !poltronas.length || new Set(poltronas).size !== poltronas.length ||
-        poltronas.some(p => !Number.isInteger(p) || p < 1 || p > this.capacidade)) {
+        Array.from(poltronas).some(p => !Number.isInteger(p) || p < 1 || p > this.capacidade)) {
       throw new DadosInvalidosErro("Poltronas inválidas");
     }
     if (poltronas.some(p => this.#vendidas.includes(p))) throw new PoltronaOcupadaErro("Poltrona ocupada");
@@ -20,7 +20,7 @@ export class Evento {
   }
   liberar(poltronas: number[]): void {
     if (!Array.isArray(poltronas) || new Set(poltronas).size !== poltronas.length ||
-        poltronas.some(p => !this.#vendidas.includes(p))) throw new DadosInvalidosErro("Poltrona não reservada");
+        Array.from(poltronas).some(p => !this.#vendidas.includes(p))) throw new DadosInvalidosErro("Poltrona não reservada");
     this.#vendidas = this.#vendidas.filter(p => !poltronas.includes(p));
   }
   info(): EventoInfo {

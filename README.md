@@ -18,13 +18,13 @@ Projeto final de Paradigmas de Linguagens de Programação, baseado no [modelo d
 Node.js 22 ou superior.
 
 ```bash
-npm install
+npm ci
 npm test
 npm run typecheck
 npm start
 ```
 
-Com o servidor ativo, abra http://localhost:3000 para usar o painel web (listagem de eventos, reservas e respostas HTTP). O painel é um complemento; a camada HTTP original do professor permanece intacta.
+Com o servidor ativo, abra [http://localhost:3000](http://localhost:3000) para usar o catálogo e reservar ingressos de demonstração. A camada HTTP original do professor permanece intacta. A porta padrão é 3000; `PORT` permite outra porta quando o ambiente precisar.
 
 Em outro terminal:
 
@@ -47,8 +47,11 @@ npm run bench
 | Cenário | Pedidos | Tempo (ms) | Vendidos | Poltrona ocupada | Falha de pagamento |
 |---|---:|---:|---:|---:|---:|
 | Padrão (GitHub Actions, 26/11/2026) | 200 | 168 | 88 | 100 | 12 |
+| Revisão completa (GitHub Actions, 26/11/2026) | 200 | 246 | 90 | 100 | 10 |
 
 **Resultado medido:** [execução #5 no GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), no Ubuntu com Node.js 22. Foram 200 pedidos em 168 ms (1194 pedidos/s). Os resultados variam devido à falha aleatória de 10% da operadora simulada. Reinicie o servidor antes de repetir o benchmark.
+
+**Revisão completa:** [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a`, em Node.js 22.23.5: 200 pedidos em 246 ms (814 pedidos/s), com 90 reservas, 100 conflitos e 10 recusas simuladas. O verificador confirmou as 10 poltronas restantes e que os outros eventos não foram alterados. O tempo de execução varia entre máquinas; não é uma comparação de desempenho entre versões.
 
 ## Histórico de atualizações e validação
 
@@ -57,10 +60,27 @@ npm run bench
 - `9abc09e` (Mvsff): painel web responsivo com listagem de eventos, formulário e respostas HTTP.
 - `98fa503` (Mvsff): preservação da resposta da reserva ao atualizar eventos.
 - `0635c27`: integração do painel pelo main.ts e restauração do servidor original.
+- `8e49302` / [PR #1](https://github.com/Gaabllez/bilheteria-api/pull/1): catálogo e experiência visual de bilheteria.
+- `a70cb49`: validação de entrada da API, correções de formulário/conexão/comprovante e novas regressões.
+- `5b2a15a` / [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2): teste móvel corrigido e Actions atualizadas para runtime suportado.
 
 ### Estado da validação
 
-Os dez arquivos protegidos foram comparados com o modelo do professor e possuem SHA idêntico. Na [execução do GitHub Actions de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), `npm ci`, `npm run typecheck`, `npm test` (**16 de 16 pontos, 100%**) e `npm run bench` foram concluídos com sucesso. Essa validação cobre o backend e as requisições HTTP, mas não substitui inspeção visual e testes de interação no navegador.
+Na [validação completa de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), os dois jobs (`validar` e `interface`) passaram em Node.js 22.23.5:
+
+| Verificação | Resultado |
+|---|---|
+| Instalação com lockfile e TypeScript | Aprovados |
+| Testes originais do professor | 14 cenários, **16/16 pontos** |
+| Regressões de backend e do gate | **32 testes/subtestes aprovados** (29 do backend + 3 do gate) |
+| Interface no Chromium | **14 cenários aprovados**, desktop e larguras móveis de 360, 390 e 768 px |
+| Arquivos fornecidos pelo professor | **10 preservados**, verificados por hash |
+| Benchmark de 200 pedidos | Sem exceder capacidade; contagem e estoque consistentes |
+| Auditoria de dependências | Zero vulnerabilidades reportadas na revisão |
+
+O executor original retorna código zero mesmo quando um teste falha. Por isso, `validacao/conferir-testes.mjs` exige os **16 pontos e todos os cenários aprovados**. Os arquivos originais em `testes/` não foram alterados. As regressões novas ficam em `validacao/`.
+
+O [relatório de validação](VALIDACAO.md) registra erros reproduzidos, correções, comandos, evidências e limites dos testes.
 
 ## Nova experiência web: bilheteria para público
 
@@ -77,6 +97,30 @@ A interface demonstrativa de **Marcus (Mvsff)** foi preservada e aprimorada em `
 
 **Atenção:** evento, imagens e pagamentos são **demonstrativos**; o sistema não vende ingressos reais, não seleciona assentos disponíveis individualmente e não processa pagamentos de verdade. Execute `npm start` e abra [http://localhost:3000](http://localhost:3000).
 
-### Verificação estática do front-end
+### Correções funcionais e validação da interface
 
-O JavaScript passou em verificação sintática, os seletores de IDs usados pelo script estão presentes no HTML e as chaves do CSS estão balanceadas. A validação automática do professor continua sendo executada pelo GitHub Actions; a interface também deve ser inspecionada no navegador em desktop e celular.
+- Idade em branco, valores inválidos e poltronas duplicadas são recusados com mensagem persistente e foco no campo.
+- Adicionar uma pessoa após remover outra sugere uma poltrona diferente; após uma compra, o formulário é limpo e evita os lugares já confirmados nesta sessão.
+- Durante o envio, os controles ficam bloqueados para impedir alterações e pedidos simultâneos.
+- Falhas na listagem eliminam dados antigos e bloqueiam o envio até a reconexão.
+- Requisições têm prazo de 10 segundos. Se a resposta do POST se perder, a tela informa resultado desconhecido e exige iniciar outro pedido explicitamente; não repete a reserva automaticamente.
+- O recibo do POST permanece na área técnica após atualizar o catálogo, preservando a correção inicial do Marcus.
+- A impressão mantém o aviso de comprovante fictício, e um recibo fechado não aparece numa impressão comum da página.
+- Rótulos, campos, foco de teclado e menu móvel foram revisados; a busca encontra palavras com ou sem acento.
+
+Além da automação, a interface foi inspecionada no navegador com imagens reais. Foram realizadas duas reservas na API de demonstração, incluindo três participantes, meia por estudante/idade, subtotal, taxa, comprovante e atualização da disponibilidade. A suíte automatizada substitui imagens e fontes externas para testar os fluxos sem depender desses serviços.
+
+### Repetir as validações adicionais
+
+```bash
+node validacao/conferir-originais.mjs
+node validacao/conferir-testes.mjs
+node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs
+node --check public/app.js
+```
+
+O workflow executa também os testes de navegador e salva evidências em seus artefatos. O [relatório](VALIDACAO.md) explica como rodá-los separadamente, sem modificar as dependências do professor.
+
+## Pendências para a entrega acadêmica
+
+O código e os testes não substituem as etapas de entrega do enunciado. Ainda é necessário informar o link do vídeo, confirmar o GitHub e a contribuição de todos os integrantes e verificar os commits próprios de cada pessoa. Na revisão do histórico, foram identificados commits das contas `Gaabllez` e `Mvsff`; a contribuição das demais contas precisa ser confirmada pelo grupo. O README mantém os campos desconhecidos como pendentes.
