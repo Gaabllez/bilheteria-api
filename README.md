@@ -11,25 +11,9 @@ Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [mode
 | Gabriel Galvão Fredrich | 33632308 | [Gaabllez](https://github.com/Gaabllez) | API, integração, validação automatizada, catálogo e aprimoramentos da interface |
 | Inácio Assis dos Santos Netto | 32830980 | [nettoinacio](https://github.com/nettoinacio) | Ampliação do catálogo e da navegação com categorias de artistas e teatro; inclusão de registros editoriais de espetáculos teatrais; atualização da interface, documentação e testes. |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | [Mvsff](https://github.com/Mvsff) | Painel web responsivo e preservação da resposta da reserva após a atualização dos eventos |
-| Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Ampliação do catálogo de 6 para 12 artistas/turnês; inclusão de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran; criação da arte vetorial editorial; atualização do catálogo, interface, README e testes; correção dos IDs e dos testes após os checks de CI |
+| Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Planejamento e revisão da expansão do catálogo de 6 para 12 artistas/turnês; inclusão de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran; definição da arte vetorial editorial; atualização do catálogo, interface, documentação e testes; correção dos IDs e das regressões identificadas no CI |
 
 As contribuições dos quatro integrantes estão registradas na tabela.
-
-### Contribuição de Inácio Assis dos Santos Netto (@nettoinacio)
-
-- Ampliou a navegação do catálogo com filtros específicos para artistas e espetáculos teatrais, preservando os filtros por estilo musical.
-- Incluiu registros editoriais para O Fantasma da Ópera e Wicked, sem habilitar reservas ou alterar os três eventos exigidos pelo enunciado.
-- Atualizou a validação do catálogo, os textos da interface e os testes automatizados para contemplar os novos tipos de conteúdo.
-- Registrou seu usuário GitHub e a contribuição nesta seção de integrantes.
-
-### Contribuição de Rafael Olívio Ribeiro Campos (@rafaeloliviooo)
-
-- Expandiu o catálogo editorial de 6 para 12 artistas e turnês, mantendo apenas os três eventos exigidos pelo enunciado como reserváveis.
-- Adicionou os registros editoriais de Adele, Dua Lipa, Billie Eilish, Taylor Swift, Beyoncé e Ed Sheeran, com links oficiais e indicação de que não representam disponibilidade atual de ingressos.
-- Criou a arte vetorial abstrata original usada nos novos registros, com créditos/licença e texto alternativo, e ajustou a validação de imagens para aceitar SVG.
-- Atualizou a lista de artistas na interface, o catálogo JSON, a documentação e os testes para refletir os 12 registros.
-- Corrigiu os IDs dos novos registros para evitar conflito com os IDs do catálogo original e atualizou os testes de catálogo e navegador que ainda esperavam seis cartões.
-- Registrou seu usuário GitHub e essas atividades nesta seção de integrantes.
 
 ## Executar
 
