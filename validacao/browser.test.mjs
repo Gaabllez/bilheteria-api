@@ -85,6 +85,33 @@ async function preco(page, selector, esperado) {
   assert.equal(cleanText(await page.locator(selector).textContent()), esperado);
 }
 
+async function aguardarPintura(page) {
+  await page.evaluate(() => new Promise((resolveFrame) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolveFrame()));
+  }));
+}
+
+async function prepararCapturaCompleta(page) {
+  // A captura fullPage não percorre a página: visitamos as fotos para exercitar
+  // o lazy loading real, sem alterar o atributo loading ou forçar downloads.
+  const images = page.locator("main img");
+  for (let index = 0; index < await images.count(); index += 1) {
+    await images.nth(index).scrollIntoViewIfNeeded();
+    await page.waitForFunction((imageIndex) => {
+      const image = document.querySelectorAll("main img")[imageIndex];
+      return image?.complete && image.naturalWidth > 0;
+    }, index, { timeout: 5000 });
+  }
+  const loadedSources = await images.evaluateAll((photos) => photos.map((photo) => new URL(photo.currentSrc || photo.src).pathname));
+  assert.deepEqual(new Set(loadedSources), new Set([
+    ...catalog.events.map((event) => event.image),
+    "/images/artists/hero-gaga.webp",
+    "/images/artists/hero-coldplay.webp",
+  ]), "Os oito arquivos de fotografia devem carregar na página principal.");
+  await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
+  await aguardarPintura(page);
+}
+
 test("catálogo real, busca sem acentos e filtros selecionam o evento", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     await abrir(page, server);
@@ -109,6 +136,7 @@ test("catálogo real, busca sem acentos e filtros selecionam o evento", { timeou
     await page.locator('[data-filter="latino"]').click();
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), ["Shakira"]);
     await page.locator('[data-filter="todos"]').click();
+    await prepararCapturaCompleta(page);
     await page.screenshot({ path: resolve(artifacts, "desktop-catalogo.png"), fullPage: true });
   });
 });
@@ -160,6 +188,7 @@ test("layout móvel não transborda e menu funciona por toque e Escape", { timeo
     await page.locator("#mobile-toggle").click();
     await page.locator('#mobile-menu a[href="#reserva"]').click();
     assert.equal(await page.locator("#mobile-menu").isHidden(), true);
+    await prepararCapturaCompleta(page);
     await page.screenshot({ path: resolve(artifacts, "mobile-390.png"), fullPage: true });
   }, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 });
@@ -442,6 +471,18 @@ test("nomes são texto seguro e impressão mantém aviso de comprovante fictíci
     assert.equal(await page.locator("#receipt-items img").count(), 0);
     assert.equal(await page.evaluate(() => window.injetado), undefined);
     await page.emulateMedia({ media: "print" });
+    await aguardarPintura(page);
+    const printStyles = await page.evaluate(() => {
+      const body = getComputedStyle(document.body);
+      const dialog = getComputedStyle(document.querySelector("#receipt-dialog"));
+      return { bodyBackground: body.backgroundColor, bodyText: body.color, dialogBackground: dialog.backgroundColor, dialogText: dialog.color };
+    });
+    assert.deepEqual(printStyles, {
+      bodyBackground: "rgb(255, 255, 255)",
+      bodyText: "rgb(0, 0, 0)",
+      dialogBackground: "rgb(255, 255, 255)",
+      dialogText: "rgb(0, 0, 0)",
+    }, "A impressão deve aplicar fundo branco e texto preto ao comprovante.");
     assert.equal(await page.locator(".receipt-disclaimer").isVisible(), true);
     assert.match(await page.locator(".receipt-disclaimer").textContent(), /não é válido para entrada em eventos reais/);
     assert.equal(await page.locator(".receipt-actions").isHidden(), true);

@@ -44,16 +44,19 @@ npm run bench
 4. **Outro paradigma:** o cálculo poderia ser imperativo, com loops e acumuladores mutáveis. Funcionaria, mas a composição funcional deixa a transformação e a soma explícitas e facilita testes isolados.
 5. **Concorrente × paralelo:** no processo Node, o trecho síncrono não é interrompido por outro pedido enquanto o await permite progresso de outras requisições. Em vários processos ou núcleos com estado compartilhado, seria necessário coordenar reservas com transações, restrições de unicidade ou operações atômicas em armazenamento compartilhado.
 
-## Resultados históricos do bench
+## Resultados do bench
 
 | Cenário | Pedidos | Tempo (ms) | Vendidos | Poltrona ocupada | Falha de pagamento |
 |---|---:|---:|---:|---:|---:|
 | Padrão (GitHub Actions, 26/11/2026) | 200 | 168 | 88 | 100 | 12 |
-| Revisão completa (GitHub Actions, 26/11/2026) | 200 | 246 | 90 | 100 | 10 |
+| Revisão anterior — PR #2 (26/11/2026) | 200 | 246 | 90 | 100 | 10 |
+| Catálogo real — PR #3 (26/11/2026) | 200 | 169 | 85 | 100 | 15 |
 
 **Resultado medido:** [execução #5 no GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45747150604), no Ubuntu com Node.js 22. Foram 200 pedidos em 168 ms (1194 pedidos/s). Os resultados variam devido à falha aleatória de 10% da operadora simulada. Reinicie o servidor antes de repetir o benchmark.
 
-**Revisão completa:** [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a`, em Node.js 22.23.5: 200 pedidos em 246 ms (814 pedidos/s), com 90 reservas, 100 conflitos e 10 recusas simuladas. O verificador confirmou as 10 poltronas restantes e que os outros eventos não foram alterados. O tempo de execução varia entre máquinas; não é uma comparação de desempenho entre versões.
+**Histórico do PR #2:** a [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a`, mediu 200 pedidos em 246 ms (814 pedidos/s), com 90 reservas, 100 conflitos, 10 recusas simuladas e 10 poltronas restantes.
+
+**Catálogo atual:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), commit `a630347`, mediu 200 pedidos em **169 ms (1181 pedidos/s)**. O gate confirmou 85 reservas, 100 conflitos, 15 recusas simuladas, **15 lugares restantes no evento 1** e os outros cinco eventos intactos. Ambas as revisões usaram Node.js 22.23.5. O tempo varia entre execuções; não é uma comparação de desempenho entre versões.
 
 ## Histórico de atualizações e validação
 
@@ -65,21 +68,22 @@ npm run bench
 - `8e49302` / [PR #1](https://github.com/Gaabllez/bilheteria-api/pull/1): catálogo e experiência visual de bilheteria.
 - `a70cb49`: validação de entrada da API, correções de formulário/conexão/comprovante e novas regressões.
 - `5b2a15a` / [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2): teste móvel corrigido e Actions atualizadas para runtime suportado.
-- Atualização atual: seis artistas e turnês reais, fontes oficiais, fotografias locais com créditos, nova apresentação visual e catálogo compartilhado entre API e interface.
+- `a630347` / [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3): seis artistas e turnês reais, fontes oficiais, fotografias locais com créditos, nova apresentação visual e catálogo compartilhado entre API e interface.
 
 ### Estado da validação
 
 **Histórico do PR #2:** a [execução 45749110996, de 26/11/2026](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), aprovou os jobs `validar` e `interface` em Node.js 22.23.5: 32 testes/subtestes adicionais, 14 cenários de interface, benchmark e auditoria sem vulnerabilidades reportadas naquela revisão. Essa execução antecede o novo catálogo.
 
-**Revisão atual do catálogo — verificações locais:**
+**Revisão atual do catálogo:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050) aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
 
 | Verificação | Resultado |
 |---|---|
 | TypeScript e sintaxe JavaScript | Aprovados |
 | Testes originais do professor | 14 cenários, **16/16 pontos** |
-| Regressões de backend, gate e catálogo | **36 testes/subtestes aprovados** (29 + 3 + 4) |
-| Interface no Chromium | **16 cenários preparados; execução no CI pendente** |
+| Regressões de backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas (29 + 3 + 4) |
+| Interface no Chromium | **16 cenários aprovados**, zero falhas |
 | Arquivos fornecidos pelo professor | **10 preservados**, verificados por hash |
+| Benchmark de 200 pedidos | Gate aprovado; estoque consistente nos seis eventos |
 
 O executor original retorna código zero mesmo quando um teste falha. Por isso, `validacao/conferir-testes.mjs` exige os **16 pontos e todos os cenários aprovados**. Os arquivos originais em `testes/` não foram alterados. As regressões novas ficam em `validacao/`.
 
@@ -105,7 +109,7 @@ O [catálogo JSON](public/catalogo.json) é a fonte única dos nomes, metadados,
 - Reserva pela API com participantes, poltronas, meia-entrada, taxa de 10%, comprovante imprimível e atualização do estoque.
 - Área técnica recolhida por padrão, com endpoints e última resposta HTTP.
 
-As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaques — que somam **850.490 bytes**. Autoria, licença, contexto e alterações constam nos [créditos das fotografias](public/images/artists/CREDITS.md); as referências das turnês estão em [FONTES.md](FONTES.md). Fotos de arquivo são identificadas com seu contexto original.
+As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaques — que somam **850.490 bytes**. Autoria, licença, contexto e alterações estão na [página de créditos](public/creditos.html), servida em `/creditos.html`, e em [CREDITS.md](public/images/artists/CREDITS.md); as referências das turnês estão em [FONTES.md](FONTES.md). Fotos de arquivo são identificadas com seu contexto original.
 
 **Preços, capacidades, reservas e pagamentos são demonstrativos.** O site não vende ingressos reais. Os textos registram a situação encontrada nas fontes consultadas e encaminham à agenda oficial; não inventam próximas datas nem disponibilidade comercial.
 
@@ -120,7 +124,7 @@ As fotos são servidas em oito arquivos WebP locais — seis cards e dois destaq
 - A impressão mantém o aviso de comprovante fictício, e um recibo fechado não aparece numa impressão comum da página.
 - Rótulos, campos, foco de teclado e menu móvel foram revisados; a busca encontra palavras com ou sem acento.
 
-A nova suíte inclui detalhes das turnês e recuperação após falha inicial do catálogo. Usa as fotografias locais reais e substitui apenas fontes externas. Os 16 cenários ainda aguardam execução no CI nesta atualização; o resultado de 14 cenários do PR #2 permanece como histórico da interface anterior.
+A suíte aprovada no PR #3 inclui detalhes das turnês e recuperação após falha inicial do catálogo. Usa as fotografias locais reais e substitui apenas fontes externas. Na conferência manual, as seis fotos dos cards carregaram e uma reserva de Bruno Mars confirmou o comprovante **#1**, com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**.
 
 ### Repetir as validações adicionais
 

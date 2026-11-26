@@ -8,21 +8,24 @@ A revisão anterior partiu de `8e49302` (interface integrada pelo PR #1). As cor
 
 O [catálogo](public/catalogo.json) reúne Lady Gaga, Bruno Mars, The Weeknd, Coldplay, Shakira e Linkin Park, com turnês pesquisadas em fontes oficiais e filtros Pop, R&B, Rock e Latino. Nomes, fontes, preços fictícios e capacidades vêm desse mesmo JSON na API e no cliente; a disponibilidade permanece sob controle da API. As [fontes das turnês](FONTES.md) registram a consulta de **26/11/2026**. A interface apresenta o contexto pesquisado e links para as agendas oficiais, sem inventar calendário futuro.
 
-São **oito WebPs locais, totalizando 850.490 bytes**, com autoria, licenças e contexto nos [créditos](public/images/artists/CREDITS.md). A apresentação inclui destaque fotográfico, cards, busca por artista/turnê e detalhes com foto e agenda oficial. Preços, lugares, reservas e pagamentos continuam sendo uma simulação acadêmica.
+São **oito WebPs locais, totalizando 850.490 bytes**, com autoria, licenças e contexto na [página de créditos](public/creditos.html), disponível em `/creditos.html`, e em [CREDITS.md](public/images/artists/CREDITS.md). A apresentação inclui destaque fotográfico, cards, busca por artista/turnê e detalhes com foto e agenda oficial. Preços, lugares, reservas e pagamentos continuam sendo uma simulação acadêmica.
+
+**Resultado confirmado:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), do [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3), aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
 
 | Verificação atual | Resultado |
 |---|---|
-| TypeScript e sintaxe da suíte de interface | Aprovados localmente |
+| TypeScript e JavaScript | Aprovados no CI |
 | Testes oficiais e gate | 14 cenários aprovados, **16/16 pontos** |
-| Backend, gate e catálogo | **36 testes/subtestes aprovados**: 29 + 3 + 4 |
+| Backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas: 29 + 3 + 4 |
 | Integridade dos arquivos do professor | **10 arquivos preservados** |
-| Interface no Chromium | **16 cenários preparados; execução no CI pendente** |
+| Interface no Chromium | **16 cenários aprovados**, zero falhas |
+| Benchmark de 200 pedidos | Gate aprovado; capacidade e estoque consistentes |
 
 Os quatro testes de `catalogo.test.ts` verificam artistas/fontes/fotos locais, coerência entre JSON e API, estoques independentes e rejeição de configuração inválida. Também preservam o evento 1 com preço-base fictício de R$ 100 e 100 lugares, usado pelo benchmark. A contagem de 36 inclui subcasos parametrizados e não se confunde com os 16 pontos oficiais.
 
 ## Histórico comprovado — PR #2
 
-A [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a7d5200297cdeb2e9eb8c2c85ec781b2f7`, aprovou os jobs `validar` e `interface` em Node.js **22.23.5**. A versão anterior passou na instalação com lockfile original, typecheck, 14 testes oficiais (16/16 pontos), 32 testes/subtestes adicionais, 14 cenários de interface, integridade dos 10 arquivos e benchmark. A auditoria não reportou vulnerabilidades nessa execução. Esses resultados antecedem o novo catálogo; ainda não há resultado de CI registrado para a atualização atual.
+A [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a7d5200297cdeb2e9eb8c2c85ec781b2f7`, aprovou os jobs `validar` e `interface` em Node.js **22.23.5**. A versão anterior passou na instalação com lockfile original, typecheck, 14 testes oficiais (16/16 pontos), 32 testes/subtestes adicionais, 14 cenários de interface, integridade dos 10 arquivos e benchmark. A auditoria não reportou vulnerabilidades nessa execução. Esses resultados pertencem à versão anterior ao catálogo real.
 
 ## Erros encontrados e corrigidos
 
@@ -54,9 +57,9 @@ As regressões adicionais cobrem dados malformados, tipos incorretos, listas esp
 
 Os códigos HTTP **400, 404, 409 e 502** permanecem conforme o contrato original. Reservar as poltronas continua sendo uma operação síncrona anterior ao `await` do pagamento.
 
-## Cobertura da interface — execução no CI pendente
+## Cobertura da interface
 
-Os 16 cenários preparados verificam:
+Os **16 cenários aprovados no CI do PR #3** verificam:
 
 1. Seis artistas, busca por artista/turnê sem acentos e filtros musicais.
 2. Detalhes das seis turnês, links oficiais e escolha correta do evento para simular.
@@ -77,23 +80,27 @@ Os 16 cenários preparados verificam:
 
 Cada cenário inicia o servidor e o domínio reais com estoque isolado e a mesma fábrica de catálogo usada por `src/main.ts`. A operadora injetada sempre aprova; falhas específicas são simuladas nos respectivos cenários. A suíte usa as fotos locais reais e substitui apenas fontes externas. O teste de resposta HTTP abre a seção técnica pela interface após fechar o comprovante.
 
-**Evidência histórica:** o artefato `interface` do PR #2 contém capturas da versão anterior com imagens substitutas. Na inspeção manual daquela versão, duas reservas foram confirmadas; uma delas tinha três participantes, duas meias e uma inteira, totalizando R$ 220 com a taxa. As novas capturas dependerão do CI desta atualização. A automação cobre Chromium, sem matriz de Safari e Firefox.
+**Conferência manual atual:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
 
-## Benchmark histórico — PR #2
+**Evidência histórica:** o artefato `interface` do PR #2 contém capturas da versão anterior com imagens substitutas. Na inspeção manual daquela versão, duas reservas foram confirmadas; uma delas tinha três participantes, duas meias e uma inteira, totalizando R$ 220 com a taxa.
 
-Na execução documentada, o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
+## Benchmark atual — PR #3
+
+Na [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
 
 | Medida | Resultado |
 |---|---:|
 | Pedidos | 200 |
-| Tempo medido | 246 ms |
-| Taxa observada | 814 pedidos/s |
-| HTTP 201 — reserva confirmada | 90 |
+| Tempo medido | 169 ms |
+| Taxa observada | 1181 pedidos/s |
+| HTTP 201 — reserva confirmada | 85 |
 | HTTP 409 — poltrona ocupada | 100 |
-| HTTP 502 — pagamento simulado recusado | 10 |
-| Lugares restantes no evento 1 | 10 |
+| HTTP 502 — pagamento simulado recusado | 15 |
+| Lugares restantes no evento 1 | 15 |
 
-`conferir-benchmark.mjs` verifica que os 200 pedidos foram contabilizados, não há status inesperado, a capacidade não foi excedida e o estoque final corresponde às reservas aprovadas. Os outros eventos devem continuar intactos. As 10 recusas são parte da simulação do professor, e não dez defeitos da aplicação. Os números variam entre execuções; não representam uma garantia de capacidade em produção.
+`conferir-benchmark.mjs` aprovou a contabilização dos 200 pedidos, os status esperados, a capacidade e o estoque final correspondente às reservas confirmadas. Os outros **cinco eventos permaneceram intactos**. As 15 recusas fazem parte da operadora simulada do professor. Os números variam entre execuções; não representam uma garantia de capacidade em produção.
+
+**Histórico do PR #2:** a execução 45749110996 registrou 200 pedidos em 246 ms (814 pedidos/s), 90 confirmações, 100 conflitos, 10 recusas e 10 lugares restantes. O tempo de execução não deve ser usado como comparação de desempenho entre versões.
 
 ## Arquivos preservados
 
@@ -116,7 +123,7 @@ node --check public/app.js
 node --check validacao/browser.test.mjs
 ```
 
-`npm start` executa o TypeScript com `tsx` e serve `public/`; não existe etapa de build separada nem alteração necessária em `package.json`. Na revisão local anterior, a restrição ao IPC da CLI do `tsx` foi contornada com `node --import tsx testes/executar.ts testes/projeto.ts src --legivel`. O comando normal `npm test` passou no CI histórico em Node 22.
+`npm start` executa o TypeScript com `tsx` e serve `public/`; não existe etapa de build separada nem alteração necessária em `package.json`. Na revisão local anterior, a restrição ao IPC da CLI do `tsx` foi contornada com `node --import tsx testes/executar.ts testes/projeto.ts src --legivel`. O comando normal `npm test` passou no CI do PR #3 em Node 22.23.5.
 
 Para os testes de interface, o CI instala `playwright@1.62.1` em uma pasta temporária. Em um ambiente de desenvolvimento comum, pode-se repetir sem editar o manifesto do professor:
 

@@ -3391,6 +3391,9 @@ dialog::backdrop {
 }
 
 @media print {
+  :root {
+    color-scheme:light;
+  }
   html,body {
     background:white!important;
     color:black!important;
