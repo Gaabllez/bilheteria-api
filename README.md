@@ -28,7 +28,7 @@ npm start
 
 Abra [http://localhost:3000](http://localhost:3000). `npm start` executa `src/main.ts` com `tsx` e serve a interface de `public/`; não há etapa de build. A porta padrão é **3000**, com possibilidade de configuração pela variável `PORT`.
 
-O servidor cria **exatamente três eventos**, conforme o Passo 6 do enunciado. O evento de ID 1 começa com **100 poltronas**. A operadora simulada usa **80 ms de latência** e **10% de falha**, e a bilheteria limita a espera do pagamento a **500 ms**. Os arquivos fornecidos prontos pelo professor permanecem preservados e são conferidos por hash.
+A API original (`/eventos` e `/reservas`) mantém **exatamente três eventos**, conforme o Passo 6 do enunciado. A interface usa `/catalogo/eventos` e `/catalogo/reservas`, uma bilheteria simulada separada com todos os **14 registros do catálogo** reserváveis. O evento de ID 1 começa com **100 poltronas**. A operadora simulada usa **80 ms de latência** e **10% de falha**, e a bilheteria limita a espera do pagamento a **500 ms**. Os arquivos fornecidos prontos pelo professor permanecem preservados e são conferidos por hash.
 
 ### Consultar eventos e fazer uma reserva
 
@@ -110,7 +110,7 @@ O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, 
 
 ## Catálogo e interface
 
-O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
+O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Todos os 14 itens com `reservable: true` no [catálogo](public/catalogo.json) aparecem na interface e permitem simular uma reserva. O estoque da interface é independente do estoque da API original de três eventos.
 
 | Artista | Turnê | Uso no projeto |
 |---|---|---|
@@ -129,7 +129,7 @@ O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos 
 | O Fantasma da Ópera | Musical teatral | Consulta editorial, sem reserva |
 | Wicked | Musical teatral | Consulta editorial, sem reserva |
 
-O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
+O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Todos os itens do catálogo possuem preço e capacidade fictícios para a simulação; não há venda de ingressos reais. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
 
 As referências consultadas em **26/11/2026** estão em [FONTES.md](FONTES.md). Autoria, licenças e contexto das fotografias estão em [CREDITS.md](public/images/artists/CREDITS.md) e na [página de créditos](public/creditos.html), disponível em `/creditos.html` com o servidor ativo.
 
