@@ -47,8 +47,8 @@ async function loadCatalog() {
     }
     entries.set(item.id, item);
   }
-  if ([...entries.values()].filter((item) => item.reservable).length !== 3 || !entries.get(1)?.reservable) {
-    throw new Error("O catálogo precisa informar os três eventos disponíveis para simulação.");
+  if ([...entries.values()].filter((item) => item.reservable).length !== entries.size || !entries.get(1)?.reservable) {
+    throw new Error("Todos os eventos do catálogo precisam estar disponíveis para simulação.");
   }
   // Só guarda metadados validados. O botão Atualizar tenta de novo após uma falha.
   catalog = entries;
@@ -305,7 +305,7 @@ function sourceLink(text, url) {
 function showEventDetails(id) {
   const event = state.events.find((item) => item.id === id);
   const data = catalog.get(id);
-  if (state.processing || state.loading || !state.connected || !data || (data.reservable && !event) || $("#receipt-dialog").open) return;
+  if (state.processing || state.loading || !state.connected || !data || !event || $("#receipt-dialog").open) return;
   detailedEventId = id;
   $("#event-dialog-title").textContent = data.artist;
   $("#event-dialog-tour").textContent = data.tour;
@@ -314,8 +314,8 @@ function showEventDetails(id) {
   $("#event-dialog-style").textContent = data.genre;
   $("#event-dialog-year").textContent = data.year;
   $("#event-dialog-note").textContent = data.status + " Fontes consultadas em " + catalogVerifiedAt + ".";
-  $("#event-dialog-simulation").hidden = !event;
-  $("#event-dialog-editorial").hidden = Boolean(event);
+  $("#event-dialog-simulation").hidden = false;
+  $("#event-dialog-editorial").hidden = true;
   $("#event-dialog-price").textContent = event ? money(round(event.preco / 2)) : "";
   const photo = $("#event-dialog-image");
   photo.src = data.image;
@@ -342,7 +342,7 @@ function showEventDetails(id) {
 
 function createEventCard(event) {
   const data = meta(event);
-  const reservable = data.reservable;
+  const reservable = true;
   const soldOut = reservable && event.disponivel === 0;
   const unavailable = state.processing || state.loading || !state.connected;
   const card = node("article", "event-card");
@@ -361,12 +361,8 @@ function createEventCard(event) {
   const info = node("div", "event-info");
   info.append(node("span", "event-genre", data.type === "theatre" ? "ESPETÁCULO TEATRAL" : "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
   const foot = node("div", "event-footer");
-  const price = node("div", reservable ? "event-price" : "event-price event-editorial-price");
-  if (reservable) {
-    price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
-  } else {
-    price.append(node("small", "", "SÓ PARA EXPLORAR"), node("strong", "", "Agenda oficial"), node("small", "price-note", "Datas no site do artista"));
-  }
+  const price = node("div", "event-price");
+  price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
   const actions = node("div", "event-actions");
   const details = node("button", "event-details", "Ver turnê");
   details.type = "button";
@@ -374,7 +370,7 @@ function createEventCard(event) {
   details.disabled = unavailable;
   details.addEventListener("click", () => showEventDetails(event.id));
   actions.append(details);
-  if (reservable) {
+  {
     const book = node("button", "event-book", soldOut ? "Simulação esgotada" : "Simular");
     book.type = "button";
     book.setAttribute("aria-label", soldOut ? "Simulação esgotada para " + data.artist : "Simular reserva para " + data.artist);
@@ -401,7 +397,7 @@ function renderEvents() {
   const available = new Map(state.events.map((event) => [event.id, event]));
   const displayed = [...catalog.values()].flatMap((item) => {
     const event = available.get(item.id);
-    return event ? [event] : item.reservable ? [] : [{ id: item.id }];
+    return event ? [event] : [];
   });
   const matching = displayed.filter((event) => {
     const info = meta(event);
@@ -425,9 +421,9 @@ async function loadEvents(record = false) {
   updateControls();
   try {
     if (!catalogLoaded) await loadCatalog();
-    const events = await api("/eventos", {}, record);
+    const events = await api("/catalogo/eventos", {}, record);
     if (!Array.isArray(events) || !events.every(isEvent) || new Set(events.map((event) => event.id)).size !== events.length) throw new Error("O servidor retornou um formato de eventos inesperado.");
-    if (!events.every((event) => {
+    if (events.length !== catalog.size || !events.every((event) => {
       const info = meta(event);
       return info?.reservable === true && event.nome === info.artist + " — " + info.tour && event.preco === info.price && event.capacidade === info.capacity;
     })) {
@@ -529,7 +525,7 @@ async function submitReservation(event) {
   const submit = $("#submit-reservation");
   submit.replaceChildren(node("span", "spinner"), document.createTextNode(" Processando reserva..."));
   try {
-    const receipt = await api("/reservas", {
+    const receipt = await api("/catalogo/reservas", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ eventoId: selected.id, ingressos: tickets })
