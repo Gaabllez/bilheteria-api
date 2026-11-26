@@ -1,0 +1,31 @@
+name: Validacao da bilheteria
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Benchmark HTTP
+        shell: bash
+        run: |
+          npm start > servidor.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in {1..30}; do
+            if curl -fsS http://localhost:3000/eventos > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3000/eventos
+          npm run bench | tee benchmark.log
+          cat benchmark.log >> "$GITHUB_STEP_SUMMARY"
