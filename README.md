@@ -11,9 +11,9 @@ Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [mode
 | Gabriel Galvão Fredrich | 33632308 | [Gaabllez](https://github.com/Gaabllez) | API, integração, validação automatizada, catálogo e aprimoramentos da interface |
 | Inácio Assis dos Santos Netto | 32830980 | A confirmar | A confirmar pelo integrante |
 | Marcus Vinícius Souza Fernandes Filho | 33204128 | [Mvsff](https://github.com/Mvsff) | Painel web responsivo e preservação da resposta da reserva após a atualização dos eventos |
-| Rafael Olívio Ribeiro Campos | 34289461 | A confirmar | A confirmar pelo integrante |
+| Rafael Olívio Ribeiro Campos | 34289461 | [rafaeloliviooo](https://github.com/rafaeloliviooo) | Expansão do catálogo com novos artistas e turnês, atualização da documentação e revisão dos registros editoriais |
 
-As contribuições de Gabriel e Marcus foram identificadas no [histórico das respectivas contas](https://github.com/Gaabllez/bilheteria-api/commits/main/). As contas e contribuições de Inácio e Rafael ainda precisam ser confirmadas, incluindo os commits feitos por cada um com a própria conta.
+As contribuições de Gabriel, Marcus e Rafael estão registradas na tabela. A conta e a contribuição de Inácio ainda precisam ser confirmadas.
 
 ## Executar
 
@@ -110,7 +110,7 @@ O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, 
 
 ## Catálogo e interface
 
-O site mantém seis artistas, com busca, filtros, detalhes das turnês, fotos creditadas e links oficiais. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
+O site mantém 12 registros de turnês de nove artistas, com busca, filtros, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Somente os três itens com `reservable: true` no [catálogo](public/catalogo.json) são instanciados na API e aparecem no formulário de reserva.
 
 | Artista | Turnê | Uso no projeto |
 |---|---|---|
@@ -120,6 +120,12 @@ O site mantém seis artistas, com busca, filtros, detalhes das turnês, fotos cr
 | Coldplay | Music Of The Spheres World Tour | Consulta editorial, sem reserva |
 | Shakira | Las Mujeres Ya No Lloran World Tour | Consulta editorial, sem reserva |
 | Linkin Park | From Zero World Tour | Consulta editorial, sem reserva |
+| Adele | Adele Live 2016 | Consulta editorial, sem reserva |
+| Dua Lipa | Radical Optimism Tour | Consulta editorial, sem reserva |
+| Billie Eilish | Hit Me Hard and Soft: The Tour | Consulta editorial, sem reserva |
+| Taylor Swift | The Eras Tour | Consulta editorial, sem reserva |
+| Beyoncé | Renaissance World Tour | Consulta editorial, sem reserva |
+| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |
 
 O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
 

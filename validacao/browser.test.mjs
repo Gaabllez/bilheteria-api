@@ -107,16 +107,16 @@ async function prepararCapturaCompleta(page) {
     ...catalog.events.map((event) => event.image),
     "/images/artists/hero-gaga.webp",
     "/images/artists/hero-coldplay.webp",
-  ]), "Os oito arquivos de fotografia devem carregar na página principal.");
+  ]), "Todas as imagens e artes locais devem carregar na página principal.");
   await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
   await aguardarPintura(page);
 }
 
-test("seis turnês e três eventos reserváveis mantêm busca, filtros e seleção corretos", { timeout: 30000 }, async (t) => {
+test("12 turnês e três eventos reserváveis mantêm busca, filtros e seleção corretos", { timeout: 30000 }, async (t) => {
   await fixture(t, async ({ page, server }) => {
     await abrir(page, server);
     assert.match(await page.title(), /Bilheteria/i);
-    assert.equal(await page.locator(".event-card").count(), 6);
+    assert.equal(await page.locator(".event-card").count(), 12);
     assert.deepEqual(await page.locator(".event-card h3").allTextContents(), catalog.events.map((event) => event.artist));
     assert.equal(await page.locator(".event-book").count(), 3);
     assert.deepEqual(await page.locator("#event-select option").evaluateAll((options) => options.map((option) => option.value)), ["1", "2", "3"]);

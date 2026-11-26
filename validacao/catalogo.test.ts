@@ -6,12 +6,12 @@ import { criarBilheteria } from "../src/bilheteria.ts";
 import { NaoEncontradoErro } from "../src/dominio.ts";
 import { iniciarServidorUI } from "./servidor-ui.ts";
 
-test("catálogo reúne seis artistas, fontes HTTPS, fotos locais e referência de data", () => {
+test("catálogo reúne 12 turnês de nove artistas, fontes HTTPS, fotos locais e referência de data", () => {
   const catalogo = lerCatalogo();
-  assert.equal(catalogo.events.length, 6);
-  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 6);
+  assert.equal(catalogo.events.length, 12);
+  assert.equal(new Set(catalogo.events.map((evento) => evento.artist)).size, 9);
   assert.deepEqual(catalogo.events.filter((evento) => evento.reservable).map((evento) => evento.id), [1, 2, 3]);
-  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6]);
+  assert.deepEqual(catalogo.events.filter((evento) => !evento.reservable).map((evento) => evento.id), [4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.equal(catalogo.verifiedAt, "2026-11-26");
   assert.deepEqual(new Set(catalogo.events.map((evento) => evento.category)), new Set(["pop", "rnb", "rock", "latino"]));
   for (const evento of catalogo.events) {
@@ -22,7 +22,7 @@ test("catálogo reúne seis artistas, fontes HTTPS, fotos locais e referência d
   }
 });
 
-test("API oferece exatamente três eventos e mantém seis artistas no catálogo editorial", async (t) => {
+test("API oferece exatamente três eventos e mantém nove artistas no catálogo editorial", async (t) => {
   const catalogo = lerCatalogo();
   const servidor = await iniciarServidorUI();
   t.after(servidor.fechar);
@@ -58,7 +58,7 @@ test("artistas editoriais não geram estoque, reservas ou cobranças", async () 
     limitePagamentoMs: 500,
   });
   const antes = bilheteria.listarEventos();
-  for (const eventoId of [4, 5, 6]) {
+  for (const eventoId of [4, 5, 6, 7, 8, 9, 10, 11, 12]) {
     await assert.rejects(() => bilheteria.reservar({
       eventoId,
       ingressos: [{ nome: "Pessoa de teste", idade: 25, estudante: false, pcd: false, poltrona: 1 }],

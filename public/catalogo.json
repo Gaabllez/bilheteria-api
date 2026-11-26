@@ -320,6 +320,264 @@
         "rightsNote": "O campo Artist do Commons também identifica CeriRoberts como representante da Warner Records; fotografia de James Minchin III."
       },
       "dialogImageFit": "contain"
+    },
+    {
+      "id": 7,
+      "reservable": false,
+      "artist": "Adele",
+      "tour": "Adele Live 2016",
+      "category": "pop",
+      "genre": "Pop / Soul",
+      "year": "2016–2017",
+      "description": "Registro editorial de Adele Live 2016, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Adele; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#d6a66b",
+      "officialUrl": "https://www.adele.com/",
+      "sourceUrl": "https://www.adele.com/",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Adele",
+          "title": "Adele Live 2016",
+          "url": "https://www.adele.com/",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Adele.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 8,
+      "reservable": false,
+      "artist": "Dua Lipa",
+      "tour": "Radical Optimism Tour",
+      "category": "pop",
+      "genre": "Pop / Dance",
+      "year": "2024–2025",
+      "description": "Registro editorial de Radical Optimism Tour, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Dua Lipa; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#ef7fc0",
+      "officialUrl": "https://www.dualipa.com/tour/",
+      "sourceUrl": "https://www.dualipa.com/tour/",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Dua Lipa",
+          "title": "Radical Optimism Tour",
+          "url": "https://www.dualipa.com/tour/",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Dua Lipa.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 9,
+      "reservable": false,
+      "artist": "Billie Eilish",
+      "tour": "Hit Me Hard and Soft: The Tour",
+      "category": "pop",
+      "genre": "Pop alternativo",
+      "year": "2024–2025",
+      "description": "Registro editorial de Hit Me Hard and Soft: The Tour, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Billie Eilish; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#9be68b",
+      "officialUrl": "https://www.billieeilish.com/tour",
+      "sourceUrl": "https://www.billieeilish.com/tour",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Billie Eilish",
+          "title": "Hit Me Hard and Soft: The Tour",
+          "url": "https://www.billieeilish.com/tour",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Billie Eilish.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 10,
+      "reservable": false,
+      "artist": "Taylor Swift",
+      "tour": "The Eras Tour",
+      "category": "pop",
+      "genre": "Pop",
+      "year": "2023–2024",
+      "description": "Registro editorial de The Eras Tour, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Taylor Swift; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#b9a3e8",
+      "officialUrl": "https://www.taylorswift.com/tour/",
+      "sourceUrl": "https://www.taylorswift.com/tour/",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Taylor Swift",
+          "title": "The Eras Tour",
+          "url": "https://www.taylorswift.com/tour/",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Taylor Swift.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 11,
+      "reservable": false,
+      "artist": "Beyoncé",
+      "tour": "Renaissance World Tour",
+      "category": "rnb",
+      "genre": "R&B / Pop",
+      "year": "2023",
+      "description": "Registro editorial de Renaissance World Tour, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Beyoncé; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#d9c08a",
+      "officialUrl": "https://www.beyonce.com/tour/",
+      "sourceUrl": "https://www.beyonce.com/tour/",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Beyoncé",
+          "title": "Renaissance World Tour",
+          "url": "https://www.beyonce.com/tour/",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Beyoncé.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
+    },
+    {
+      "id": 12,
+      "reservable": false,
+      "artist": "Ed Sheeran",
+      "tour": "Mathematics Tour",
+      "category": "pop",
+      "genre": "Pop",
+      "year": "2022–2025",
+      "description": "Registro editorial de Mathematics Tour, com repertório e produção associados a essa fase da carreira.",
+      "image": "/images/artists/catalog-placeholder.svg",
+      "imageAlt": "Arte abstrata ilustrativa do registro de Ed Sheeran; não é uma fotografia do artista.",
+      "objectPosition": "50% 50%",
+      "accent": "#e28d76",
+      "officialUrl": "https://www.edsheeran.com/",
+      "sourceUrl": "https://www.edsheeran.com/",
+      "status": "Registro editorial de turnê histórica ou concluída. Não indica disponibilidade atual; consulte os canais oficiais para anúncios futuros.",
+      "price": 100,
+      "capacity": 100,
+      "sources": [
+        {
+          "publisher": "Ed Sheeran",
+          "title": "Mathematics Tour",
+          "url": "https://www.edsheeran.com/",
+          "supports": "Página oficial do artista para consulta editorial; não confirma disponibilidade atual de shows."
+        }
+      ],
+      "credit": {
+        "author": "Rafael Olívio Ribeiro Campos",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://github.com/Gaabllez/bilheteria-api",
+        "title": "Arte abstrata editorial Bilheteria",
+        "date": "2026-11-26",
+        "description": "Arte vetorial abstrata original para identificar registros sem fotografia específica licenciada.",
+        "alt": "Arte abstrata editorial para Ed Sheeran.",
+        "modifications": "Arte vetorial original.",
+        "width": 800,
+        "height": 600,
+        "bytes": 1800,
+        "objectPosition": "50% 50%"
+      },
+      "dialogImageFit": "cover"
     }
   ]
 }

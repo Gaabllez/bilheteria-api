@@ -37,7 +37,7 @@ async function loadCatalog() {
     if (!item || !Number.isSafeInteger(item.id) || item.id < 1 || entries.has(item.id) ||
         !["artist", "tour", "genre", "year", "description", "imageAlt", "status"].every((field) => hasText(item[field])) ||
         !["pop", "rnb", "rock", "latino"].includes(item.category) ||
-        !/^\/images\/artists\/[a-z0-9-]+\.webp$/.test(item.image) ||
+        !/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(item.image) ||
         !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
         typeof item.reservable !== "boolean" || !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
         !/^#[a-f0-9]{6}$/i.test(item.accent) || !["contain", "cover"].includes(item.dialogImageFit) || !positions || positions.some((position) => position > 100) ||
