@@ -471,6 +471,7 @@ test("nomes são texto seguro e impressão mantém aviso de comprovante fictíci
     assert.equal(await page.locator("#receipt-items img").count(), 0);
     assert.equal(await page.evaluate(() => window.injetado), undefined);
     await page.emulateMedia({ media: "print" });
+    assert.equal(await page.evaluate(() => matchMedia("print").matches), true, "O navegador precisa aplicar a mídia de impressão.");
     await aguardarPintura(page);
     const printStyles = await page.evaluate(() => {
       const body = getComputedStyle(document.body);

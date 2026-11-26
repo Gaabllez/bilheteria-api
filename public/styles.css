@@ -3393,33 +3393,38 @@ dialog::backdrop {
 @media print {
   :root {
     color-scheme:light;
+    --bg:#ffffff;
+    --surface:#ffffff;
+    --text:#000000;
+    --lime:#000000;
+    --muted:#333333;
   }
   html,body {
-    background:white!important;
-    color:black!important;
-    margin:0!important;
-    padding:0!important;
+    background:white;
+    color:black;
+    margin:0;
+    padding:0;
   }
   body:has(dialog[open]) {
     overflow:visible;
   }
   body>* {
-    display:none!important;
+    display:none;
   }
   body>#receipt-dialog[open] {
-    display:block!important;
-    position:static!important;
-    width:100%!important;
-    max-width:none!important;
-    max-height:none!important;
-    margin:0!important;
-    padding:0!important;
-    overflow:visible!important;
-    border:0!important;
-    border-radius:0!important;
-    box-shadow:none!important;
-    color:black!important;
-    background:white!important;
+    display:block;
+    position:static;
+    width:100%;
+    max-width:none;
+    max-height:none;
+    margin:0;
+    padding:0;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    color:black;
+    background:white;
   }
   #receipt-dialog::backdrop {
     display:none;
@@ -3429,10 +3434,10 @@ dialog::backdrop {
     color:black;
   }
   .receipt-content h2,.receipt-content p,.receipt-content strong,.receipt-content span,.receipt-content small,.receipt-kicker {
-    color:black!important;
+    color:black;
   }
   .receipt-ticket {
-    background:white!important;
+    background:white;
     border:1px solid #777;
     color:black;
   }
@@ -3452,7 +3457,7 @@ dialog::backdrop {
   }
   .receipt-content .receipt-disclaimer {
     font-size:12px;
-    color:black!important;
+    color:black;
     font-weight:600;
   }
 }
