@@ -5,11 +5,13 @@ import { criarEventosDemo, criarEventosCatalogo } from "./catalogo.ts";
 import { criarBilheteria } from "./bilheteria.ts";
 import { criarPagamentoFalso } from "./pagamento.ts";
 import { criarServidor } from "./servidor.ts";
+import { criarServidorCatalogo } from "./servidor-catalogo.ts";
 const eventos = criarEventosDemo();
 const pagar = criarPagamentoFalso({ latenciaMs: 80, taxaDeFalha: 0.1 });
 const bilheteria = criarBilheteria({ eventos, pagar, limitePagamentoMs: 500 });
 const bilheteriaCatalogo = criarBilheteria({ eventos: criarEventosCatalogo(), pagar, limitePagamentoMs: 500 });
-const app = criarServidor(bilheteria, bilheteriaCatalogo);
+const app = criarServidor(bilheteria);
+app.use(criarServidorCatalogo(bilheteriaCatalogo));
 app.use(express.static(resolve(dirname(fileURLToPath(import.meta.url)), "../public")));
 const porta = Number(process.env.PORT ?? 3000);
 if (!Number.isInteger(porta) || porta < 1 || porta > 65535) {
