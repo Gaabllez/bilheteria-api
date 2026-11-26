@@ -5,7 +5,8 @@ const referencia = JSON.parse(readFileSync(new URL("./originais-professor.json",
 let erros = 0;
 for (const [arquivo, esperado] of Object.entries(referencia.files)) {
   try {
-    const conteudo = readFileSync(new URL(`../${arquivo}`, import.meta.url));
+    // O Git pode usar CRLF no checkout do Windows; compare o texto canônico LF.
+    const conteudo = Buffer.from(readFileSync(new URL(`../${arquivo}`, import.meta.url), "utf8").replace(/\r\n/g, "\n"));
     const atual = createHash("sha1").update(`blob ${conteudo.length}\0`).update(conteudo).digest("hex");
     if (atual !== esperado) throw new Error("conteúdo diferente do original");
     console.log(`✔ ${arquivo}`);
