@@ -8,18 +8,29 @@ permissions:
 jobs:
   validar:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npm ci
+      - name: Preservar arquivos originais do professor
+        run: node validacao/conferir-originais.mjs
       - run: npm run typecheck
-      - run: npm test
+      - name: Testes oficiais pelo comando do projeto
+        run: npm test
+      - name: Exigir os 16 pontos oficiais
+        run: node validacao/conferir-testes.mjs
+      - name: Regressões de API, concorrência e gate
+        run: node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs
+      - name: Verificar JavaScript da interface
+        run: node --check public/app.js
       - name: Benchmark HTTP
         shell: bash
         run: |
-          npm start > servidor.log 2>&1 &
+          mkdir -p coverage
+          npm start > coverage/servidor.log 2>&1 &
           pid=$!
           trap 'kill "$pid" 2>/dev/null || true' EXIT
           for i in {1..30}; do
@@ -27,5 +38,39 @@ jobs:
             sleep 1
           done
           curl -fsS http://localhost:3000/eventos
-          npm run bench | tee benchmark.log
-          cat benchmark.log >> "$GITHUB_STEP_SUMMARY"
+          npm run bench | tee coverage/benchmark.log
+          node validacao/conferir-benchmark.mjs coverage/benchmark.log
+          cat coverage/benchmark.log >> "$GITHUB_STEP_SUMMARY"
+      - name: Guardar evidências do benchmark
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark
+          path: coverage/*.log
+          if-no-files-found: ignore
+  interface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Instalar navegador de teste sem alterar o projeto do professor
+        run: |
+          npm install --prefix "$RUNNER_TEMP/bilheteria-browser" --no-save --package-lock=false playwright@1.62.1
+          node "$RUNNER_TEMP/bilheteria-browser/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Fluxos da interface em desktop e celular
+        env:
+          PLAYWRIGHT_MODULE_PATH: ${{ runner.temp }}/bilheteria-browser/node_modules/playwright/index.mjs
+        run: node --import tsx --test --test-concurrency=1 validacao/browser.test.mjs
+      - name: Conferir originais após os testes
+        run: node validacao/conferir-originais.mjs
+      - name: Guardar evidências da interface
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: interface
+          path: coverage/ui/
+          if-no-files-found: ignore

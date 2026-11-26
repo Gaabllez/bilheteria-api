@@ -1,0 +1,21 @@
+import { readFileSync } from "node:fs";
+import assert from "node:assert/strict";
+
+const texto = readFileSync(process.argv[2] ?? "coverage/benchmark.log", "utf8");
+const metrica = texto.match(/(\d+) pedidos em (\d+) ms \((\d+) pedidos\/s\)/);
+const status = texto.match(/por status HTTP:\s*\{([^}]+)\}/);
+assert.ok(metrica && status, "O benchmark não produziu uma medição completa.");
+assert.equal(Number(metrica[1]), 200, "A medição padrão precisa enviar 200 pedidos.");
+const contagem = Object.fromEntries([...status[1].matchAll(/['"]?(\d{3})['"]?\s*:\s*(\d+)/g)].map((par) => [Number(par[1]), Number(par[2])]));
+assert.equal(Object.values(contagem).reduce((total, valor) => total + valor, 0), 200);
+assert.ok(Object.keys(contagem).every((codigo) => [201, 409, 502].includes(Number(codigo))), "Resposta HTTP inesperada no benchmark.");
+const vendidos = contagem[201] ?? 0;
+assert.ok(vendidos <= 100, "Foram vendidas mais poltronas que a capacidade do evento.");
+const resposta = await fetch(`${process.env.URL ?? "http://localhost:3000"}/eventos`);
+assert.equal(resposta.status, 200);
+const eventos = await resposta.json();
+const show = eventos.find((evento) => evento.id === 1);
+assert.equal(show.capacidade, 100);
+assert.equal(show.disponivel, 100 - vendidos, "Estoque incompatível com as reservas confirmadas.");
+assert.ok(eventos.filter((evento) => evento.id !== 1).every((evento) => evento.disponivel === evento.capacidade), "O benchmark alterou outro evento.");
+console.log(`Benchmark validado: ${vendidos} vendidos, ${contagem[409] ?? 0} conflitos, ${contagem[502] ?? 0} falhas simuladas; estoque consistente.`);

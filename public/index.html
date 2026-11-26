@@ -13,6 +13,7 @@
   <script src="/app.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#eventos">Ir para os eventos</a>
   <div class="announcement"><span class="pulse"></span> AMBIENTE DE DEMONSTRAÇÃO <span class="announcement-divider">/</span> Pagamentos simulados, sem cobrança real</div>
   <header class="site-header">
     <div class="nav-container">
@@ -20,7 +21,7 @@
       <nav class="main-nav" aria-label="Menu principal">
         <a href="#eventos">Eventos</a><a href="#como-funciona">Como funciona</a><a href="#reserva">Ingressos</a><a href="#tecnologia">Sobre o projeto</a>
       </nav>
-      <div class="nav-actions"><span class="connection-label" id="connection-label"><span class="connection-dot"></span> Conectando...</span><a class="nav-cta" href="#eventos">Explorar eventos <span aria-hidden="true">↗</span></a></div>
+      <div class="nav-actions"><span class="connection-label" id="connection-label"><span class="connection-dot"></span> Conectando...</span><a class="nav-cta" href="#eventos">Explorar eventos</a></div>
       <button class="mobile-toggle" id="mobile-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menu">☰</button>
     </div>
     <nav class="mobile-menu" id="mobile-menu" aria-label="Menu móvel" hidden>
@@ -34,7 +35,7 @@
         <div class="hero-kicker"><span class="kicker-line"></span> MAIS DO QUE UM INGRESSO</div>
         <h1 id="hero-heading">Momentos que<br><span>merecem ser vividos<span class="hero-period">.</span></span></h1>
         <p>O show que você esperou, a peça que emociona, o festival que reúne todo mundo. Encontre sua próxima experiência e garanta seu lugar.</p>
-        <div class="hero-actions"><a class="btn btn-lime" href="#eventos">Encontrar experiências <span aria-hidden="true">↗</span></a><a class="hero-text-link" href="#como-funciona">Como funciona <span aria-hidden="true">↓</span></a></div>
+        <div class="hero-actions"><a class="btn btn-lime" href="#eventos">Encontrar experiências</a><a class="hero-text-link" href="#como-funciona">Como funciona</a></div>
         <div class="hero-proof"><span class="proof-avatars" aria-hidden="true"><i>♪</i><i>✦</i><i>♫</i></span><span>Eventos, ingressos e boas histórias<br><strong>em um só lugar</strong></span></div>
       </div>
       <div class="hero-media" aria-label="Público aproveitando um evento ao vivo">
@@ -48,14 +49,14 @@
           <div class="mini-ticket-footer"><span>INGRESSOS & EXPERIÊNCIAS</span><span>↗</span></div>
         </div>
       </div>
-      <div class="hero-bottom"><span>ESCOLHA • RESERVE • VIVA</span><span class="scroll-cue">DESCUBRA OS EVENTOS <span aria-hidden="true">↓</span></span></div>
+      <div class="hero-bottom"><span>ESCOLHA • RESERVE • VIVA</span><span class="scroll-cue">DESCUBRA OS EVENTOS</span></div>
     </section>
 
     <section class="benefit-strip" aria-label="Benefícios da bilheteria"><div class="container strip-inner"><span><i aria-hidden="true">✦</i> Reserva em poucos passos</span><span><i aria-hidden="true">◈</i> Meia-entrada para quem tem direito</span><span><i aria-hidden="true">◎</i> Confirmação da reserva</span><span><i aria-hidden="true">⌁</i> Experiência 100% digital</span></div></section>
 
     <section class="events-section container" id="eventos" aria-labelledby="events-heading">
       <div class="section-heading">
-        <div><div class="eyebrow">01 / DESCUBRA</div><h2 id="events-heading">Escolha sua <em>próxima história.</em></h2><p>Eventos disponíveis agora no nosso catálogo demonstrativo.</p></div>
+        <div><div class="eyebrow">01 / DESCUBRA</div><h2 id="events-heading" tabindex="-1">Escolha sua <em>próxima história.</em></h2><p>Eventos disponíveis agora no nosso catálogo demonstrativo.</p></div>
         <div class="section-tools"><label class="search-wrap"><span aria-hidden="true">⌕</span><span class="sr-only">Buscar eventos</span><input id="search-events" type="search" placeholder="Buscar evento..." autocomplete="off"></label><button class="outline-button" type="button" id="refresh-events"><span aria-hidden="true">↻</span> Atualizar</button></div>
       </div>
       <div class="filter-row" role="group" aria-label="Filtrar por categoria">
@@ -69,7 +70,7 @@
       <p class="events-footnote"><span aria-hidden="true">ⓘ</span> Os eventos e preços são exemplos para demonstração acadêmica. Não há apresentações, datas ou pagamentos reais.</p>
     </section>
 
-    <section class="story-banner container" aria-label="Inspiração para o próximo evento"><div class="story-banner-inner"><div><span class="banner-label">SINTA MAIS. VIVA MAIS.</span><h2>Os melhores momentos<br><em>não ficam para depois.</em></h2><a href="#reserva" class="banner-link">Escolher meu ingresso <span aria-hidden="true">↗</span></a></div><div class="banner-graphic" aria-hidden="true"><span>LIVE<br>THE<br>NIGHT<span class="banner-dot">.</span></span><div class="banner-ring"></div></div></div></section>
+    <section class="story-banner container" aria-label="Inspiração para o próximo evento"><div class="story-banner-inner"><div><span class="banner-label">SINTA MAIS. VIVA MAIS.</span><h2>Os melhores momentos<br><em>não ficam para depois.</em></h2><a href="#reserva" class="banner-link">Escolher meu ingresso</a></div><div class="banner-graphic" aria-hidden="true"><span>LIVE<br>THE<br>NIGHT<span class="banner-dot">.</span></span><div class="banner-ring"></div></div></div></section>
 
     <section class="booking-section" id="reserva" aria-labelledby="booking-heading"><div class="container">
       <div class="section-heading booking-title"><div><div class="eyebrow">02 / SUA RESERVA</div><h2 id="booking-heading">Seu lugar está <em>te esperando.</em></h2><p>Escolha o evento, preencha os dados e confirme sua reserva.</p></div><span class="section-note"><span class="pulse"></span> CONFIRMAÇÃO EM TEMPO REAL</span></div>
@@ -77,14 +78,17 @@
         <div class="booking-main">
           <div class="booking-step-heading"><div class="step-number">01</div><div><h3>Escolha o evento</h3><p>Selecione a experiência que você quer viver</p></div></div>
           <label for="event-select" class="field-label">EVENTO DISPONÍVEL</label>
-          <select id="event-select" class="select-input" required><option value="">Carregando eventos...</option></select>
+          <select id="event-select" class="select-input" form="reservation-form" required aria-describedby="seat-guidance"><option value="">Carregando eventos...</option></select>
           <div class="selected-event" id="selected-event"><span class="selected-placeholder">Selecione um evento para conferir disponibilidade e valores.</span></div>
           <div class="booking-divider"></div>
           <div class="booking-step-heading"><div class="step-number">02</div><div><h3>Quem vai viver esse momento?</h3><p>Informe os participantes e os tipos de ingresso</p></div></div>
           <form id="reservation-form" novalidate>
+            <p class="seat-guidance" id="seat-guidance">Escolha uma poltrona pelo número. A disponibilidade de cada lugar é confirmada ao reservar.</p>
+            <div id="reservation-message" class="reservation-message" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+            <button type="button" class="outline-button reset-reservation" id="reset-reservation" hidden>Entendi, iniciar outro pedido</button>
             <div id="ticket-list" class="ticket-list"></div>
             <button type="button" class="add-person" id="add-ticket"><span aria-hidden="true">＋</span> Adicionar outra pessoa</button>
-            <div class="discount-note"><span class="note-icon">%</span><span><strong>Meia-entrada garantida por regra.</strong><br>Estudantes, pessoas com deficiência e pessoas com 60 anos ou mais pagam 50% do ingresso.</span></div>
+            <div class="discount-note"><span class="note-icon">%</span><span><strong>Regras da meia-entrada nesta demonstração.</strong><br>Estudantes, pessoas com deficiência e pessoas com 60 anos ou mais pagam 50% do ingresso.</span></div>
           </form>
         </div>
         <aside class="checkout-panel" aria-labelledby="checkout-heading">
@@ -96,7 +100,7 @@
           <div class="price-line"><span>Subtotal</span><strong id="summary-subtotal">R$ 0,00</strong></div>
           <div class="price-line"><span>Taxa de serviço (10%)</span><strong id="summary-fee">R$ 0,00</strong></div>
           <div class="summary-total"><span>Valor total</span><strong id="summary-total">R$ 0,00</strong></div>
-          <button class="btn btn-lime checkout-button" type="submit" form="reservation-form" id="submit-reservation">Confirmar reserva <span aria-hidden="true">↗</span></button>
+          <button class="btn btn-lime checkout-button" type="submit" form="reservation-form" id="submit-reservation">Confirmar reserva</button>
           <p class="checkout-disclaimer"><span aria-hidden="true">◈</span> Pagamento fictício para fins acadêmicos. Nenhum valor será cobrado.</p>
           <div class="checkout-security"><span>✓ Reserva protegida contra duplicidade</span><span>✓ Comprovante instantâneo</span></div>
         </aside>
@@ -107,19 +111,19 @@
       <div class="how-grid">
         <article class="how-card"><div class="how-icon">✦</div><div class="how-number">01 / 03</div><h3>Encontre seu evento</h3><p>Explore shows, festivais e espetáculos e escolha o que combina com você.</p></article>
         <article class="how-card"><div class="how-icon">▦</div><div class="how-number">02 / 03</div><h3>Escolha seus lugares</h3><p>Informe os participantes, selecione as poltronas e confira os valores.</p></article>
-        <article class="how-card"><div class="how-icon">✓</div><div class="how-number">03 / 03</div><h3>Confirme sua reserva</h3><p>Receba um comprovante da API. O pagamento é apenas simulado.</p></article>
+        <article class="how-card"><div class="how-icon">✓</div><div class="how-number">03 / 03</div><h3>Confirme sua reserva</h3><p>Receba seu comprovante digital. O pagamento é apenas simulado.</p></article>
       </div>
     </section>
 
-    <section class="tech-section" id="tecnologia"><div class="container tech-content"><div><span class="eyebrow">04 / POR TRÁS DO INGRESSO</span><h2>Uma experiência bonita.<br><em>Uma API bem construída.</em></h2><p>Este site é a interface do projeto final de Paradigmas de Linguagens de Programação. A lógica de reservas, concorrência e preços está na API em TypeScript e Express.</p><div class="tech-tags"><span>TypeScript</span><span>Express 5</span><span>Programação funcional</span><span>Concorrência segura</span></div><a href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noopener noreferrer" class="outline-button tech-link">Ver código no GitHub ↗</a></div>
+    <section class="tech-section" id="tecnologia"><div class="container tech-content"><div><span class="eyebrow">04 / POR TRÁS DO INGRESSO</span><h2>Uma experiência bonita.<br><em>Uma API bem construída.</em></h2><p>Este site é a interface do projeto final de Paradigmas de Linguagens de Programação. A lógica de reservas, concorrência e preços está na API em TypeScript e Express.</p><div class="tech-tags"><span>TypeScript</span><span>Express 5</span><span>Programação funcional</span><span>Concorrência segura</span></div><a href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noopener noreferrer" class="outline-button tech-link">Ver código no GitHub</a></div>
     <details class="api-details"><summary><span><span class="terminal-icon">&gt;_</span> Laboratório da API</span><span>Ver detalhes técnicos ＋</span></summary><div class="api-inner"><p>As mesmas rotas do projeto original permanecem disponíveis:</p><div class="endpoint"><span class="get">GET</span><code>/eventos</code><span>Lista eventos e disponibilidade</span></div><div class="endpoint"><span class="post">POST</span><code>/reservas</code><span>Processa uma reserva e retorna comprovante</span></div><div class="api-response-heading"><span>Última resposta HTTP</span><button type="button" id="copy-response">Copiar JSON</button></div><div class="response-meta" id="response-meta">Nenhuma requisição enviada.</div><pre id="response-body" class="response-code">Aguardando resposta da API.</pre><p class="api-warning">A API não informa quais poltronas estão ocupadas individualmente; a confirmação ocorre ao reservar. Em caso de conflito, escolha outro lugar.</p></div></details>
     </div></section>
   </main>
 
-  <footer class="site-footer"><div class="container footer-layout"><div><a class="logo footer-logo" href="#inicio"><span class="logo-mark">✳</span> bilheteria<span class="logo-dot">.</span></a><p>Experiências que merecem ser vividas.<br>Projeto demonstrativo — não comercializa ingressos reais.</p></div><div class="footer-links"><a href="#eventos">Eventos</a><a href="#reserva">Ingressos</a><a href="#como-funciona">Como funciona</a><a href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div><div class="container footer-bottom"><span>© 2026 Bilheteria. Projeto acadêmico.</span><span>Feito para demonstrar uma API de verdade, sem cobranças reais.</span></div></footer>
+  <footer class="site-footer"><div class="container footer-layout"><div><a class="logo footer-logo" href="#inicio"><span class="logo-mark">✳</span> bilheteria<span class="logo-dot">.</span></a><p>Experiências que merecem ser vividas.<br>Projeto demonstrativo — não comercializa ingressos reais.</p></div><div class="footer-links"><a href="#eventos">Eventos</a><a href="#reserva">Ingressos</a><a href="#como-funciona">Como funciona</a><a href="https://github.com/Gaabllez/bilheteria-api" target="_blank" rel="noopener noreferrer">GitHub</a></div></div><div class="container footer-bottom"><span>© 2026 Bilheteria. Projeto acadêmico.</span><span>Feito para demonstrar uma API de verdade, sem cobranças reais.</span></div></footer>
 
-  <dialog id="receipt-dialog" class="receipt-dialog" aria-labelledby="receipt-heading"><div class="receipt-content"><div class="receipt-success"><span>✓</span></div><div class="receipt-kicker">RESERVA CONFIRMADA</div><h2 id="receipt-heading">Seu momento começa agora.</h2><p>A API aprovou sua reserva simulada. Guarde os dados do seu comprovante.</p><div class="receipt-ticket"><div class="receipt-top"><span>COMPROVANTE DIGITAL</span><span>✳ BILHETERIA.</span></div><div class="receipt-info" id="receipt-info"></div><div class="receipt-divider"></div><div class="receipt-items" id="receipt-items"></div><div class="receipt-total"><span>TOTAL DA RESERVA</span><strong id="receipt-total"></strong></div></div><div class="receipt-actions"><button type="button" class="btn btn-lime" id="close-receipt">Voltar aos eventos ↗</button><button type="button" class="outline-button" id="print-receipt">Imprimir comprovante</button></div><span class="receipt-disclaimer">Comprovante fictício: não é válido para entrada em eventos reais.</span></div></dialog>
+  <dialog id="receipt-dialog" class="receipt-dialog" aria-labelledby="receipt-heading"><div class="receipt-content"><div class="receipt-success"><span>✓</span></div><div class="receipt-kicker">RESERVA CONFIRMADA</div><h2 id="receipt-heading">Seu momento começa agora.</h2><p>Sua reserva de demonstração foi confirmada. Guarde os dados do seu comprovante.</p><div class="receipt-ticket"><div class="receipt-top"><span>COMPROVANTE DIGITAL</span><span>✳ BILHETERIA.</span></div><div class="receipt-info" id="receipt-info"></div><div class="receipt-divider"></div><div class="receipt-items" id="receipt-items"></div><div class="receipt-total"><span>TOTAL DA RESERVA</span><strong id="receipt-total"></strong></div></div><div class="receipt-actions"><button type="button" class="btn btn-lime" id="close-receipt">Voltar aos eventos</button><button type="button" class="outline-button" id="print-receipt">Imprimir comprovante</button></div><span class="receipt-disclaimer">Comprovante fictício: não é válido para entrada em eventos reais.</span></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <template id="ticket-template"><fieldset class="ticket-card"><legend class="sr-only">Dados do participante</legend><div class="ticket-card-head"><span class="ticket-tag">INGRESSO 01</span><button type="button" class="remove-ticket" aria-label="Remover participante">Remover <span>×</span></button></div><div class="ticket-fields"><label class="form-field name-field">NOME COMPLETO<input name="nome" type="text" placeholder="Como você se chama?" maxlength="80" autocomplete="name" required></label><label class="form-field">IDADE<input name="idade" type="number" min="0" max="120" value="25" required></label><label class="form-field">POLTRONA<input name="poltrona" type="number" min="1" value="1" required></label></div><div class="ticket-checks"><label><input name="estudante" type="checkbox"><span>Sou estudante</span></label><label><input name="pcd" type="checkbox"><span>Sou pessoa com deficiência</span></label></div><div class="ticket-price"><span class="ticket-kind">Entrada inteira</span><strong class="ticket-amount">R$ 0,00</strong></div></fieldset></template>
+  <template id="ticket-template"><fieldset class="ticket-card"><legend class="sr-only">Dados do participante</legend><div class="ticket-card-head"><span class="ticket-tag">INGRESSO 01</span><button type="button" class="remove-ticket" aria-label="Remover participante">Remover <span>×</span></button></div><div class="ticket-fields"><label class="form-field name-field">NOME COMPLETO<input name="nome" type="text" placeholder="Como você se chama?" maxlength="80" autocomplete="name" aria-describedby="reservation-message" required></label><label class="form-field">IDADE<input name="idade" type="number" min="0" max="120" step="1" inputmode="numeric" value="25" aria-describedby="reservation-message" required></label><label class="form-field">POLTRONA<input name="poltrona" type="number" min="1" step="1" inputmode="numeric" value="1" aria-describedby="seat-guidance reservation-message" required></label></div><div class="ticket-checks"><label><input name="estudante" type="checkbox"><span>Sou estudante</span></label><label><input name="pcd" type="checkbox"><span>Sou pessoa com deficiência</span></label></div><div class="ticket-price"><span class="ticket-kind">Entrada inteira</span><strong class="ticket-amount">R$ 0,00</strong></div></fieldset></template>
 </body>
 </html>

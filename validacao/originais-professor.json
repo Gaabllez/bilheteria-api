@@ -1,0 +1,16 @@
+{
+  "repository": "douglasmeneses/bilheteria-projeto-final",
+  "commit": "b5fc6edd8b5e16a0615e2663b837261eb42875a6",
+  "files": {
+    "GUIA.md": "5f2790a08ff871986afa17ea9e2218032a6dd8d4",
+    "package.json": "64cec97962f21203a634a85df82121772f54ee0e",
+    "package-lock.json": "34fc69b0ff8c83dd9dfaf96a1344a000535c8902",
+    "tsconfig.json": "8743407a62e0b0e5d8d8f62a7d033d393cef21fb",
+    "src/tipos.ts": "d93ba36c9a1bea178a8a0b7d0f8b0e2003531260",
+    "src/servidor.ts": "2c50527f61293f2d6e2676ade84d114f38bfde3c",
+    "src/pagamento.ts": "f552973c0897783113e8f96e6086470307c0e4c9",
+    "src/bench.ts": "cff1ba8c2b23fb79abe9cf163d1e87d18c3e87f4",
+    "testes/executar.ts": "692569892c7be89161452c08f28070b7e898f6a7",
+    "testes/projeto.ts": "3c812beb7122aba660e1175a1d51204d914170ea"
+  }
+}
