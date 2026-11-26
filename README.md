@@ -1,6 +1,6 @@
 # Bilheteria concorrente
 
-**Link do vídeo:** PENDENTE — gravação e publicação ainda não concluídas.
+**Link do vídeo:** [Assistir à apresentação](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz).
 
 Projeto final de **Paradigmas de Linguagens de Programação**, baseado no [modelo do professor Douglas](https://github.com/douglasmeneses/bilheteria-projeto-final). A aplicação reúne uma API de reservas concorrentes e uma interface de bilheteria com artistas, turnês e espetáculos teatrais. **Preços, capacidades, reservas e pagamentos são demonstrativos; não há venda de ingressos reais.**
 
@@ -140,7 +140,7 @@ O [roteiro do vídeo](docs/ROTEIRO_VIDEO.md) reúne as **oito partes obrigatóri
 Ainda depende do grupo:
 
 - Verificar os commits próprios de cada integrante e confirmar que a descrição das contribuições corresponde ao trabalho realizado.
-- Gravar e publicar o vídeo com o código da entrega, testar o acesso sem login e colocar o link verdadeiro no início deste README.
+- Vídeo da apresentação publicado: [assistir no YouTube](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz).
 - Confirmar o nome cadastrado do grupo e o prazo da turma no Blackboard e realizar o envio com os links, nomes completos e RGMs.
 
 A pontuação máxima do trabalho é **3,5**: até **2,5** pelo código (`2,5 × pontos do npm test ÷ 16`), **0,75** pela avaliação do vídeo e **0,25** pelo README completo. A aprovação dos testes não substitui as etapas de entrega nem a participação individual exigida no enunciado.
