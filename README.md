@@ -141,7 +141,9 @@ O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos 
 | Billie Eilish | Hit Me Hard and Soft: The Tour | Consulta editorial, sem reserva |
 | Taylor Swift | The Eras Tour | Consulta editorial, sem reserva |
 | Beyoncé | Renaissance World Tour | Consulta editorial, sem reserva |
-| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |\n| O Fantasma da Ópera | Musical teatral | Consulta editorial, sem reserva |\n| Wicked | Musical teatral | Consulta editorial, sem reserva |
+| Ed Sheeran | Mathematics Tour | Consulta editorial, sem reserva |
+| O Fantasma da Ópera | Musical teatral | Consulta editorial, sem reserva |
+| Wicked | Musical teatral | Consulta editorial, sem reserva |
 
 O evento 1 mantém preço-base fictício de R$ 100 e 100 poltronas. Os itens editoriais não apresentam preço de reserva nem permitem envio ao checkout. A interface inclui participantes, meia-entrada, taxa de 10%, comprovante imprimível e tratamento de falhas, preservando a resposta da reserva após atualizar os eventos.
 
