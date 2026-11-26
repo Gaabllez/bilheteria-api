@@ -49,15 +49,17 @@
 
     <section class="events-section container" id="eventos" aria-labelledby="events-heading">
       <div class="section-heading">
-        <div><div class="eyebrow">ENCONTRE SEU SOM</div><h2 id="events-heading" tabindex="-1">Sua próxima <em>obsessão.</em></h2><p>Artistas que você ama. Turnês que merecem ser descobertas.</p></div>
+        <div><div class="eyebrow">EXPLORE A PROGRAMAÇÃO</div><h2 id="events-heading" tabindex="-1">Sua próxima <em>experiência.</em></h2><p>Artistas, shows e espetáculos para descobrir.</p></div>
         <div class="section-tools"><label class="search-wrap" for="search-events"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg><span class="sr-only">Buscar artistas ou turnês</span><input id="search-events" type="search" placeholder="Artista, turnê ou estilo..." autocomplete="off"></label><button class="outline-button refresh-button" type="button" id="refresh-events" aria-label="Atualizar catálogo"><span aria-hidden="true">↻</span><span class="refresh-label">Atualizar</span></button></div>
       </div>
-      <div class="filter-row" role="group" aria-label="Filtrar por estilo musical">
+      <div class="filter-row" role="group" aria-label="Filtrar por categoria ou estilo">
         <button class="filter-pill active" type="button" data-filter="todos" aria-pressed="true">Todas as turnês</button>
         <button class="filter-pill" type="button" data-filter="pop" aria-pressed="false">Pop</button>
         <button class="filter-pill" type="button" data-filter="rnb" aria-pressed="false">R&amp;B</button>
         <button class="filter-pill" type="button" data-filter="rock" aria-pressed="false">Rock</button>
         <button class="filter-pill" type="button" data-filter="latino" aria-pressed="false">Latino</button>
+        <button class="filter-pill" type="button" data-filter="artistas" aria-pressed="false">Artistas</button>
+        <button class="filter-pill" type="button" data-filter="teatro" aria-pressed="false">Teatro</button>
         <span class="catalog-counter" id="catalog-counter">Carregando...</span>
       </div>
       <div class="events-grid" id="events-grid" aria-live="polite"><div class="loading-events"><span class="spinner"></span> Preparando o seu próximo bis...</div></div>
@@ -66,7 +68,7 @@
 
     <section class="experience-section container" id="experiencias" aria-labelledby="experience-heading">
       <div class="experience-photo"><img src="/images/artists/hero-coldplay.webp" alt="Panorama do show do Coldplay no Kai Tak Stadium, Hong Kong, durante a Music Of The Spheres World Tour, em abril de 2025." width="1600" height="900" loading="lazy"><span class="experience-photo-label">A MÚSICA CONECTA.</span></div>
-      <div class="experience-copy"><span class="eyebrow">MUITO ALÉM DO PLAY</span><h2 id="experience-heading">Tem coisas que<br>só se sente <em>ao vivo.</em></h2><p>A voz de uma multidão. A primeira nota. A música que vira memória. Conheça as turnês por trás desses momentos.</p><div class="experience-facts"><div><strong>12</strong><span>artistas na seleção</span></div><div><strong>04</strong><span>estilos para explorar</span></div></div><a class="btn btn-lime" href="#eventos">Quero explorar</a></div>
+      <div class="experience-copy"><span class="eyebrow">MUITO ALÉM DO PLAY</span><h2 id="experience-heading">Tem coisas que<br>só se sente <em>ao vivo.</em></h2><p>A voz de uma multidão. A primeira nota. A música que vira memória. Conheça as turnês por trás desses momentos.</p><div class="experience-facts"><div><strong>12</strong><span>artistas na seleção</span></div><div><strong>02</strong><span>espetáculos teatrais</span></div></div><a class="btn btn-lime" href="#eventos">Quero explorar</a></div>
     </section>
 
     <section class="booking-section" id="reserva" aria-labelledby="booking-heading">
@@ -74,8 +76,8 @@
         <div class="section-heading booking-title"><div><div class="eyebrow">EXPERIMENTE A BILHETERIA</div><h2 id="booking-heading">Seu lugar nessa <em>história.</em></h2><p>Teste a experiência de reservar. Os valores e os lugares abaixo são demonstrativos.</p></div><span class="simulation-badge">SIMULAÇÃO · SEM COBRANÇA</span></div>
         <div class="booking-layout">
           <div class="booking-main">
-            <div class="booking-step-heading"><span class="step-icon" aria-hidden="true">♫</span><div><h3>Qual artista você quer ver?</h3><p>Escolha a turnê para simular sua reserva.</p></div></div>
-            <label for="event-select" class="field-label">ARTISTA E TURNÊ</label>
+            <div class="booking-step-heading"><span class="step-icon" aria-hidden="true">♫</span><div><h3>O que você quer assistir?</h3><p>Escolha a turnê para simular sua reserva.</p></div></div>
+            <label for="event-select" class="field-label">EVENTO E APRESENTAÇÃO</label>
             <select id="event-select" class="select-input" form="reservation-form" required aria-describedby="seat-guidance"><option value="">Carregando turnês...</option></select>
             <div class="selected-event" id="selected-event"><span class="selected-placeholder">Escolha uma turnê para começar.</span></div>
             <div class="booking-divider"></div>
