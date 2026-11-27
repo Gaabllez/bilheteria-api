@@ -1,10 +1,18 @@
 import assert from "node:assert/strict";
 import { readFileSync, statSync } from "node:fs";
 import test from "node:test";
-import { criarEventosDemo, lerCatalogo, validarCatalogo } from "../src/catalogo.ts";
+import { criarEventosCatalogo, criarEventosDemo, lerCatalogo, validarCatalogo } from "../src/catalogo.ts";
 import { criarBilheteria } from "../src/bilheteria.ts";
 import { NaoEncontradoErro } from "../src/dominio.ts";
 import { iniciarServidorUI } from "./servidor-ui.ts";
+
+function alterarPrimeiro(campos: Record<string, unknown>) {
+  const catalogo = lerCatalogo();
+  return {
+    ...catalogo,
+    events: catalogo.events.map((evento) => evento.id === 1 ? { ...evento, ...campos } : evento),
+  };
+}
 
 test("catálogo reúne 14 registros editoriais, com 12 artistas e dois espetáculos teatrais, fontes HTTPS, imagens licenciadas e referência de data", () => {
   const catalogo = lerCatalogo();
@@ -55,13 +63,13 @@ test("API original mantém os três eventos exigidos pelo enunciado", async (t) 
   const metadados = await fetch(`${servidor.url}/catalogo.json`);
   assert.equal(metadados.status, 200);
   assert.deepEqual(await metadados.json(), JSON.parse(readFileSync(new URL("../public/catalogo.json", import.meta.url), "utf8")));
-  for (const evento of catalogo.events.filter((item) => !item.reservable)) {
+  for (const evento of catalogo.events.filter((item) => ![1, 2, 3].includes(item.id))) {
     const tentativa = await fetch(`${servidor.url}/reservas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ eventoId: evento.id, ingressos: [{ nome: "Pessoa de teste", idade: 25, estudante: false, pcd: false, poltrona: 1 }] }),
     });
-    assert.equal(tentativa.status, 404, `${evento.artist} tem conteúdo editorial, sem reserva na API.`);
+    assert.equal(tentativa.status, 404, `${evento.artist} pertence ao catálogo expandido, sem reserva na API original.`);
   }
 });
 
@@ -86,7 +94,7 @@ test("interface disponibiliza todos os 14 shows para simulação e permite reser
   assert.equal(atualizado.find((evento: { id: number }) => evento.id === 4).disponivel, coldplay.capacidade - 1);
 });
 
-test("artistas editoriais não geram estoque, reservas ou cobranças", async () => {
+test("API original rejeita eventos exclusivos do catálogo expandido sem cobrar", async () => {
   let cobrancas = 0;
   const bilheteria = criarBilheteria({
     eventos: criarEventosDemo(),
@@ -107,12 +115,19 @@ test("artistas editoriais não geram estoque, reservas ou cobranças", async () 
 test("instâncias do catálogo têm estoques independentes e mantêm o evento 1 do benchmark", async () => {
   const primeira = criarEventosDemo();
   const segunda = criarEventosDemo();
+  const completa = criarEventosCatalogo();
   const evento = primeira.find((item) => item.id === 1)!;
   assert.equal(evento.capacidade, 100);
   assert.equal(evento.preco, 100);
   evento.reservar([1]);
   assert.equal(evento.disponivel, 99);
   assert.equal(segunda.find((item) => item.id === 1)!.disponivel, 100);
+  assert.equal(completa.find((item) => item.id === 1)!.disponivel, 100);
+  const segundoCompleto = completa.find((item) => item.id === 2)!;
+  const segundoOriginal = segunda.find((item) => item.id === 2)!;
+  segundoCompleto.reservar([1]);
+  assert.equal(segundoCompleto.disponivel, segundoCompleto.capacidade - 1);
+  assert.equal(segundoOriginal.disponivel, segundoOriginal.capacidade);
   const bilheteria = criarBilheteria({ eventos: segunda, pagar: async () => {}, limitePagamentoMs: 500 });
   const recibo = await bilheteria.reservar({ eventoId: 1, ingressos: [{ nome: "Pessoa de teste", idade: 60, estudante: false, pcd: false, poltrona: 1 }] });
   assert.equal(recibo.total, 55);
@@ -123,10 +138,6 @@ test("instâncias do catálogo têm estoques independentes e mantêm o evento 1 
 
 test("configuração inválida falha antes de iniciar a venda", () => {
   const catalogo = lerCatalogo();
-  const alterarPrimeiro = (campos: Record<string, unknown>) => ({
-    ...catalogo,
-    events: catalogo.events.map((evento) => evento.id === 1 ? { ...evento, ...campos } : evento),
-  });
   const invalidos = [
     { valor: null, erro: /ao menos um evento/ },
     { valor: { ...catalogo, verifiedAt: "2026-02-31" }, erro: /data ISO válida/ },
@@ -144,18 +155,86 @@ test("configuração inválida falha antes de iniciar a venda", () => {
   for (const { valor, erro } of invalidos) assert.throws(() => validarCatalogo(valor), erro);
 });
 
-test("configuração permite catálogo expandido, exige ao menos três eventos e mantém o evento 1 do benchmark", () => {
+test("configuração exige os IDs originais reserváveis e permite expansão sem limitar a quantidade", () => {
   const catalogo = lerCatalogo();
-  const selecionar = (ids: number[]) => ({
-    ...catalogo,
-    events: catalogo.events.map((evento) => ({ ...evento, reservable: ids.includes(evento.id) })),
-  });
-  assert.doesNotThrow(() => validarCatalogo(selecionar([1, 2, 3])));
-  assert.doesNotThrow(() => validarCatalogo(selecionar([1, 2, 3, 4])));
-  assert.throws(() => validarCatalogo(selecionar([1, 2])), /ao menos três eventos/);
-  assert.throws(() => validarCatalogo(selecionar([2, 3, 4])), /evento 1 disponível/);
+  assert.doesNotThrow(() => validarCatalogo({
+    ...catalogo, events: catalogo.events.filter((evento) => [1, 2, 3].includes(evento.id)),
+  }));
+  assert.doesNotThrow(() => validarCatalogo(catalogo));
+  for (const id of [1, 2, 3]) {
+    const erro = new RegExp(`evento ${id} disponível`);
+    assert.throws(() => validarCatalogo({
+      ...catalogo, events: catalogo.events.filter((evento) => evento.id !== id),
+    }), erro, `Outros eventos não podem substituir o ID ${id} da API original.`);
+    assert.throws(() => validarCatalogo({
+      ...catalogo, events: catalogo.events.map((evento) => evento.id === id ? { ...evento, reservable: false } : evento),
+    }), erro, `O ID ${id} precisa continuar reservável nas duas APIs.`);
+  }
   assert.throws(() => validarCatalogo({
-    ...catalogo,
-    events: catalogo.events.map((evento) => evento.id === 1 ? { ...evento, id: 7 } : evento),
-  }), /evento 1 disponível/);
+    ...catalogo, events: catalogo.events.map((evento) => evento.id === 107 ? { ...evento, reservable: false } : evento),
+  }), /todos os eventos precisam estar disponíveis/, "O cliente oferece simulação para todos os registros, inclusive teatro.");
+});
+
+test("metadados obrigatórios para renderizar e filtrar o catálogo são validados na inicialização", () => {
+  const casos = [
+    { campos: { type: undefined }, erro: /type/ },
+    { campos: { type: "festival" }, erro: /type/ },
+    { campos: { category: "desconhecida" }, erro: /category/ },
+    { campos: { genre: undefined }, erro: /genre/ },
+    { campos: { year: 2026 }, erro: /year/ },
+    { campos: { status: "   " }, erro: /status/ },
+  ];
+  for (const { campos, erro } of casos) assert.throws(() => validarCatalogo(alterarPrimeiro(campos)), erro);
+});
+
+test("créditos precisam manter autor, licença, contexto e links HTTPS utilizáveis", () => {
+  const original = lerCatalogo().events[0].credit;
+  const casos = [
+    { credit: undefined, erro: /credit/ },
+    { credit: [], erro: /credit/ },
+    { credit: { ...original, author: " " }, erro: /credit.author/ },
+    { credit: { ...original, license: undefined }, erro: /credit.license/ },
+    { credit: { ...original, description: 42 }, erro: /credit.description/ },
+    { credit: { ...original, licenseUrl: "http://creativecommons.org/licenses/by/2.0/" }, erro: /credit.licenseUrl/ },
+    { credit: { ...original, sourceUrl: "https://pessoa:senha@commons.wikimedia.org/wiki/File:Foto.jpg" }, erro: /credit.sourceUrl/ },
+  ];
+  for (const { credit, erro } of casos) assert.throws(() => validarCatalogo(alterarPrimeiro({ credit })), erro);
+});
+
+test("enquadramento e apresentação das fotos obedecem ao contrato aceito pela interface", () => {
+  assert.doesNotThrow(() => validarCatalogo(alterarPrimeiro({ objectPosition: "0% 100%", accent: "#AABBCC", dialogImageFit: "contain" })));
+  const casos = [
+    { campos: { objectPosition: undefined }, erro: /objectPosition/ },
+    { campos: { objectPosition: "50%" }, erro: /objectPosition/ },
+    { campos: { objectPosition: "-1% 50%" }, erro: /objectPosition/ },
+    { campos: { objectPosition: "50% 101%" }, erro: /objectPosition/ },
+    { campos: { accent: "red" }, erro: /accent/ },
+    { campos: { accent: "#123" }, erro: /accent/ },
+    { campos: { dialogImageFit: undefined }, erro: /dialogImageFit/ },
+    { campos: { dialogImageFit: "fill" }, erro: /dialogImageFit/ },
+  ];
+  for (const { campos, erro } of casos) assert.throws(() => validarCatalogo(alterarPrimeiro(campos)), erro);
+});
+
+test("imagens preservam URLs Commons codificadas e rejeitam caminhos e consultas fora do contrato", () => {
+  const comuns = lerCatalogo().events.filter((evento) => evento.image.startsWith("https://commons.wikimedia.org/"));
+  assert.ok(comuns.length > 0);
+  for (const evento of comuns) assert.doesNotThrow(() => validarCatalogo(alterarPrimeiro({ image: evento.image })));
+  assert.doesNotThrow(() => validarCatalogo(alterarPrimeiro({ image: "/images/artists/cartaz.svg" })));
+  const imagensInvalidas = [
+    "/images/%2e%2e/catalogo.json",
+    "/images/artists/%2e%2e%2fsecret.webp",
+    "/images/artists/gaga.webp?cache=1",
+    "/images/artists/gaga.webp#foto",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/?width=900",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/%2e%2e/catalogo.json",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Adele.jpg?download=1",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Adele.jpg?width=900&download=1",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Adele.jpg#foto",
+    "https://commons.wikimedia.org.evil.example/wiki/Special:FilePath/Adele.jpg",
+    "http://commons.wikimedia.org/wiki/Special:FilePath/Adele.jpg",
+  ];
+  for (const image of imagensInvalidas) {
+    assert.throws(() => validarCatalogo(alterarPrimeiro({ image })), /arquivo local/, `Imagem inválida aceita: ${image}`);
+  }
 });

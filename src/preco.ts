@@ -1,8 +1,12 @@
 import type { Pessoa, Ingresso, TipoIngresso } from "./tipos.ts";
+// Compensa a imprecisão binária para não perder um centavo em valores como 1,005.
+const arredondar = (valor: number): number =>
+  Math.round((valor + Number.EPSILON * Math.max(1, Math.abs(valor))) * 100) / 100;
+
 export const valorDoIngresso = (precoBase: number) => (tipo: TipoIngresso): number =>
-  tipo === "meia" ? Math.round(precoBase / 2 * 100) / 100 : precoBase;
+  tipo === "meia" ? arredondar(precoBase / 2) : precoBase;
 export const aplicarTaxa = (percentual: number) => (valor: number): number =>
-  Math.round(valor * (1 + percentual) * 100) / 100;
+  arredondar(valor * (1 + percentual));
 export function montarIngressos(precoBase: number, pessoas: Pessoa[], temDireitoAMeia: (pessoa: Pessoa) => boolean): Ingresso[] {
   const calcular = valorDoIngresso(precoBase);
   return pessoas.map(pessoa => {

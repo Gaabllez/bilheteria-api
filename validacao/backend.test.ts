@@ -5,6 +5,7 @@ import test from "node:test";
 import { criarBilheteria } from "../src/bilheteria.ts";
 import { DadosInvalidosErro, Evento, NaoEncontradoErro, PagamentoErro, PoltronaOcupadaErro } from "../src/dominio.ts";
 import type { Pagamento } from "../src/pagamento.ts";
+import { aplicarTaxa, calcularTotal, valorDoIngresso } from "../src/preco.ts";
 import { criarServidor } from "../src/servidor.ts";
 import type { Pedido, Pessoa } from "../src/tipos.ts";
 
@@ -177,6 +178,33 @@ test("meias por idade, estudo e PcD usam uma única redução e taxa sobre a som
   assert.equal(comprovante.total, 100.65);
   assert.deepEqual(cobrancas, [100.65]);
   assert.deepEqual(entrada, antes);
+});
+
+test("meia e taxa arredondam corretamente empates de meio centavo", () => {
+  assert.equal(valorDoIngresso(2.01)("meia"), 1.01);
+  assert.equal(valorDoIngresso(1.15)("meia"), 0.58);
+  assert.equal(valorDoIngresso(2.01)("inteira"), 2.01);
+  assert.equal(aplicarTaxa(0.1)(17.15), 18.87);
+  assert.equal(aplicarTaxa(0.1)(33.05), 36.36);
+  assert.equal(aplicarTaxa(0)(17.15), 17.15);
+  assert.equal(calcularTotal([{ nome: "Ana", poltrona: 1, tipo: "inteira", valor: 17.15 }]), 18.87);
+});
+
+test("reserva de preço fracionário cobra os mesmos centavos do comprovante", async () => {
+  const cobrancas: number[] = [];
+  const bilheteria = criarBilheteria({
+    eventos: [new Evento(1, "Preço fracionário", 2.01, 2)],
+    pagar: async valor => { cobrancas.push(valor); },
+    limitePagamentoMs: 500,
+  });
+  const meia = await bilheteria.reservar(pedido([{ ...pessoa(1), estudante: true }]));
+  const inteira = await bilheteria.reservar(pedido([pessoa(2)]));
+  assert.deepEqual(meia.ingressos, [{ nome: "Ana", poltrona: 1, tipo: "meia", valor: 1.01 }]);
+  assert.equal(meia.total, 1.11);
+  assert.equal(inteira.ingressos[0].valor, 2.01);
+  assert.equal(inteira.total, 2.21);
+  assert.deepEqual(cobrancas, [1.11, 2.21]);
+  assert.equal(bilheteria.listarEventos()[0].disponivel, 0);
 });
 
 test("HTTP valida JSON e dados, mantém 404/409/502 e permite refazer pagamento recusado", async (t) => {
