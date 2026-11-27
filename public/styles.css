@@ -2330,7 +2330,7 @@ dialog::backdrop {
     min-height:540px;
   }
   .hero h1 {
-    font-size:98px;
+    font-size:clamp(86px,9vw,98px);
   }
   .hero-main>p {
     max-width:330px;
@@ -3316,7 +3316,7 @@ dialog::backdrop {
     width:calc(100% - 32px);
   }
   .hero h1 {
-    font-size:76px;
+    font-size:clamp(64px,21.1vw,76px);
   }
   .hero-media {
     min-height:410px;
