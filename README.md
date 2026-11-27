@@ -112,6 +112,8 @@ O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, 
 
 ## Catálogo e interface
 
+O visual usa referências de cartazes de turnê e cultura pop, com títulos em Barlow Condensed, fotografias em destaque e textos diretos sobre os artistas e a reserva. A [direção visual](docs/DIRECAO_VISUAL.md) registra as referências oficiais, as mudanças e a licença da fonte local.
+
 O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As fotografias possuem créditos e usam arquivos locais ou URLs do Wikimedia Commons; quando uma imagem não carrega, card, detalhes e seleção exibem uma arte alternativa. Todos os 14 itens com `reservable: true` no [catálogo](public/catalogo.json) aparecem na interface e permitem simular uma reserva. O estoque da interface é independente do estoque da API original de três eventos.
 
 | Artista | Turnê | Uso no projeto |

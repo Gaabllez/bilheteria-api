@@ -1,3 +1,11 @@
+@font-face {
+  font-family:'Barlow Condensed';
+  src:url('/fonts/barlow-condensed-800.ttf') format('truetype');
+  font-style:normal;
+  font-weight:800;
+  font-display:swap;
+}
+
 :root {
   color-scheme:dark;
   --bg:#0a0b0d;
@@ -7,9 +15,11 @@
   --text:#f7f7f2;
   --muted:#acafb4;
   --lime:#dcff72;
+  --pink:#ff91bc;
   --lime-hover:#eaffab;
   --radius:22px;
   --display:'Outfit',Arial,sans-serif;
+  --poster:'Barlow Condensed','Arial Narrow',Impact,sans-serif;
   --body:'DM Sans',Arial,sans-serif;
 }
 
@@ -357,27 +367,20 @@ input[aria-invalid=true] {
 }
 
 .hero-kicker {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:11px;
-  letter-spacing:.16em;
+  font-size:14px;
+  letter-spacing:.08em;
   font-weight:700;
-  color:#d6d9d0;
-  margin-bottom:28px;
-}
-
-.kicker-line {
-  width:28px;
-  height:2px;
-  background:var(--lime);
+  color:var(--pink);
+  margin-bottom:24px;
 }
 
 .hero h1 {
-  font-size:clamp(64px,6.9vw,104px);
+  font-family:var(--poster);
+  font-size:clamp(84px,8.4vw,120px);
   font-weight:800;
-  line-height:.99;
-  letter-spacing:-.065em;
+  text-transform:uppercase;
+  line-height:.9;
+  letter-spacing:-.02em;
   margin-bottom:26px;
 }
 
@@ -386,10 +389,10 @@ input[aria-invalid=true] {
 }
 
 .hero-main>p {
-  font-size:16px;
-  line-height:1.8;
-  max-width:390px;
-  color:var(--muted);
+  font-size:18px;
+  line-height:1.7;
+  max-width:430px;
+  color:#c2c5ca;
 }
 
 .hero-actions {
@@ -401,7 +404,7 @@ input[aria-invalid=true] {
 }
 
 .hero-text-link {
-  font-size:13px;
+  font-size:14px;
   color:#e0e2dd;
   border-bottom:1px solid #74766e;
   padding-bottom:3px;
@@ -425,34 +428,18 @@ input[aria-invalid=true] {
   margin-top:45px;
 }
 
-.artist-avatars {
-  display:flex;
-  flex-shrink:0;
-  padding-left:0;
-}
 
-.artist-avatars img {
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid var(--bg);
-  margin-left:-12px;
-}
 
-.artist-avatars img:first-child {
-  margin-left:0;
-}
 
 .hero-proof p {
-  font-size:11px;
+  font-size:14px;
   line-height:1.6;
   letter-spacing:0;
 }
 
 .hero-proof strong {
-  font-weight:500;
-  color:#dddeda;
+  font-weight:700;
+  color:#f7f7f2;
   display:block;
 }
 
@@ -520,7 +507,7 @@ input[aria-invalid=true] {
 }
 
 .hero-feature-tag {
-  font-size:10px;
+  font-size:14px;
   font-weight:700;
   letter-spacing:.12em;
   background:#09090b7a;
@@ -545,7 +532,7 @@ input[aria-invalid=true] {
 }
 
 .hero-tour-label {
-  font-size:11px;
+  font-size:14px;
   font-weight:600;
   letter-spacing:.15em;
   color:#f2e4dc;
@@ -558,7 +545,7 @@ input[aria-invalid=true] {
 }
 
 .hero-artist p {
-  font-size:13px;
+  font-size:16px;
   color:#dfcac7;
   margin-top:9px;
 }
@@ -572,7 +559,7 @@ input[aria-invalid=true] {
   border-bottom:1px solid #ffffff50;
   background:none;
   border-radius:0;
-  font-size:12px;
+  font-size:14px;
   padding:12px 0 6px;
   margin-top:14px;
   color:#fff;
@@ -597,21 +584,21 @@ input[aria-invalid=true] {
   display:grid;
   place-content:center;
   text-align:center;
-  width:88px;
+  width:94px;
   height:88px;
-  background:var(--lime);
-  color:#18200b;
-  border-radius:50%;
-  border:4px double #344619;
-  font:800 18px/.95 var(--display);
-  letter-spacing:-.04em;
-  transform:rotate(13deg);
-  box-shadow:0 5px 24px #0005;
+  background:var(--pink);
+  color:#1b0c14;
+  border-radius:8px;
+  border:2px solid #1b0c14;
+  font:800 21px/.95 var(--poster);
+  letter-spacing:.01em;
+  transform:rotate(-8deg);
+  box-shadow:4px 4px 0 #1b0c14;
 }
 
 .artist-ribbon {
-  border-block:1px solid #282c26;
-  background:#10140d;
+  background:var(--lime);
+  color:#11170b;
   overflow:hidden;
 }
 
@@ -626,14 +613,14 @@ input[aria-invalid=true] {
 }
 
 .artist-ribbon span {
-  font:500 14px var(--display);
-  letter-spacing:.09em;
-  color:#c3cbb5;
+  font:800 22px var(--poster);
+  letter-spacing:.03em;
+  color:inherit;
 }
 
 .artist-ribbon i {
   font:normal 22px var(--display);
-  color:var(--lime);
+  color:#48601d;
 }
 
 .events-section {
@@ -651,7 +638,7 @@ input[aria-invalid=true] {
 }
 
 .eyebrow {
-  font-size:10px;
+  font-size:12px;
   letter-spacing:.17em;
   font-weight:700;
   color:var(--lime);
@@ -660,10 +647,12 @@ input[aria-invalid=true] {
 }
 
 .section-heading h2,.experience-copy h2 {
-  font-size:clamp(32px,3.1vw,45px);
-  font-weight:600;
-  line-height:1.12;
-  letter-spacing:-.045em;
+  font-family:var(--poster);
+  font-size:clamp(44px,4.5vw,66px);
+  font-weight:800;
+  text-transform:uppercase;
+  line-height:1;
+  letter-spacing:-.015em;
 }
 
 h2 em {
@@ -673,7 +662,7 @@ h2 em {
 
 .section-heading p {
   color:var(--muted);
-  font-size:14px;
+  font-size:16px;
   line-height:1.75;
   margin-top:13px;
 }
@@ -716,7 +705,7 @@ h2 em {
   width:100%;
   min-width:0;
   color:var(--text);
-  font-size:12px;
+  font-size:14px;
   padding:12px 0;
 }
 
@@ -759,7 +748,7 @@ h2 em {
   color:#b0b5ba;
   border-radius:8px;
   padding:8px 19px;
-  font-size:12px;
+  font-size:14px;
   font-weight:600;
   min-height:39px;
   transition:background .2s,border-color .2s,color .2s;
@@ -777,7 +766,7 @@ h2 em {
 }
 
 .catalog-counter {
-  font-size:11px;
+  font-size:12px;
   color:#8b929a;
   margin-left:auto;
 }
@@ -844,7 +833,7 @@ h2 em {
   color:#f7f8f2;
   background:#101014b3;
   backdrop-filter:blur(8px);
-  font-size:10px;
+  font-size:12px;
   font-weight:700;
   letter-spacing:.08em;
 }
@@ -861,7 +850,7 @@ h2 em {
   justify-content:space-between;
   gap:12px;
   color:var(--event-accent,var(--lime));
-  font-size:10px;
+  font-size:12px;
   line-height:1.5;
   letter-spacing:.09em;
   font-weight:600;
@@ -874,7 +863,7 @@ h2 em {
   right:15px;
   bottom:13px;
   z-index:1;
-  font-size:9px;
+  font-size:12px;
   color:#f3ede4;
   letter-spacing:.03em;
   background:#0a0c10a3;
@@ -884,16 +873,18 @@ h2 em {
 }
 
 .event-title,.event-card h3 {
-  font-size:29px;
-  letter-spacing:-.035em;
-  font-weight:600;
+  font-family:var(--poster);
+  font-size:38px;
+  text-transform:uppercase;
+  letter-spacing:0;
+  font-weight:800;
   overflow-wrap:anywhere;
-  line-height:1.08;
+  line-height:1.05;
 }
 
 .event-tour {
   color:#d7d9dc;
-  font-size:13px;
+  font-size:14px;
   line-height:1.5;
   min-height:39px;
   margin-top:9px;
@@ -902,7 +893,7 @@ h2 em {
 
 .event-description {
   color:#a1a7ae;
-  font-size:12px;
+  font-size:16px;
   line-height:1.75;
   margin-top:13px;
   margin-bottom:21px;
@@ -927,7 +918,7 @@ h2 em {
 .event-price small,.event-price>span {
   display:block;
   color:#9da5ac;
-  font-size:9px;
+  font-size:12px;
   font-weight:600;
   letter-spacing:.06em;
   line-height:1.7;
@@ -946,7 +937,7 @@ h2 em {
 }
 
 .event-price .price-note {
-  font-size:9px;
+  font-size:12px;
   letter-spacing:0;
   font-weight:400;
   color:#929aa3;
@@ -964,7 +955,7 @@ h2 em {
   padding:9px 12px;
   border:1px solid #3d454b;
   border-radius:7px;
-  font-size:11px;
+  font-size:14px;
   font-weight:700;
   line-height:1.4;
   background:transparent;
@@ -993,7 +984,7 @@ h2 em {
   align-items:flex-start;
   gap:9px;
   color:#999fa7;
-  font-size:11px;
+  font-size:12px;
   line-height:1.7;
   max-width:800px;
 }
@@ -1075,7 +1066,7 @@ h2 em {
   bottom:25px;
   left:28px;
   z-index:1;
-  font-size:10px;
+  font-size:12px;
   letter-spacing:.18em;
   font-weight:600;
 }
@@ -1086,12 +1077,12 @@ h2 em {
 }
 
 .experience-copy h2 {
-  font-size:40px;
-  line-height:1.15;
+  font-size:58px;
+  line-height:1;
 }
 
 .experience-copy>p {
-  font-size:13px;
+  font-size:16px;
   color:#b1b7ac;
   margin-top:18px;
   line-height:1.8;
@@ -1115,7 +1106,7 @@ h2 em {
 }
 
 .experience-facts span {
-  font-size:10px;
+  font-size:12px;
   line-height:1.5;
   color:#aab29f;
   max-width:62px;
@@ -1146,7 +1137,7 @@ h2 em {
   color:#cbe79b;
   border-radius:6px;
   padding:8px 11px;
-  font-size:9px;
+  font-size:12px;
   font-weight:700;
   letter-spacing:.08em;
 }
@@ -1191,13 +1182,13 @@ h2 em {
 
 .booking-step-heading p {
   color:#9ca3ac;
-  font-size:12px;
+  font-size:14px;
   margin-top:7px;
 }
 
 .field-label {
   display:block;
-  font-size:10px;
+  font-size:14px;
   letter-spacing:.08em;
   font-weight:600;
   color:#b4bbc2;
@@ -1214,7 +1205,7 @@ h2 em {
   color:#eee;
   border-radius:9px;
   padding:12px 14px;
-  font-size:13px;
+  font-size:16px;
   text-overflow:ellipsis;
 }
 
@@ -1249,7 +1240,7 @@ h2 em {
 
 .selected-event strong {
   display:block;
-  font-size:12px;
+  font-size:14px;
   font-weight:600;
   line-height:1.6;
   overflow-wrap:anywhere;
@@ -1258,7 +1249,7 @@ h2 em {
 .selected-event span {
   display:block;
   color:#969fa7;
-  font-size:10px;
+  font-size:12px;
   margin-top:3px;
   line-height:1.6;
 }
@@ -1274,7 +1265,7 @@ h2 em {
 }
 
 .seat-guidance {
-  font-size:11px;
+  font-size:12px;
   color:#a1a8b1;
   line-height:1.7;
   margin:-8px 0 18px;
@@ -1344,7 +1335,7 @@ h2 em {
   border:0;
   padding:5px 0;
   color:#a3aab2;
-  font-size:10px;
+  font-size:14px;
   display:flex;
   gap:7px;
   align-items:center;
@@ -1370,7 +1361,7 @@ h2 em {
   flex-direction:column;
   gap:8px;
   min-width:0;
-  font-size:9px;
+  font-size:14px;
   letter-spacing:.07em;
   font-weight:600;
   color:#b3bbc4;
@@ -1406,7 +1397,7 @@ h2 em {
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:11px;
+  font-size:14px;
   color:#c0c6cc;
   cursor:pointer;
 }
@@ -1469,7 +1460,7 @@ h2 em {
   gap:12px;
   margin-top:22px;
   color:#9ca6ad;
-  font-size:11px;
+  font-size:12px;
   line-height:1.7;
 }
 
@@ -1508,7 +1499,7 @@ h2 em {
 }
 
 .checkout-eyebrow {
-  font-size:9px;
+  font-size:12px;
   font-weight:600;
   letter-spacing:.13em;
   color:#c5d8a2;
@@ -1548,7 +1539,7 @@ h2 em {
 
 .checkout-event strong {
   display:block;
-  font-size:12px;
+  font-size:14px;
   line-height:1.6;
   font-weight:600;
   overflow-wrap:anywhere;
@@ -1556,7 +1547,7 @@ h2 em {
 
 .checkout-event span {
   display:block;
-  font-size:10px;
+  font-size:12px;
   color:#a6b298;
   margin-top:4px;
 }
@@ -1587,20 +1578,20 @@ h2 em {
 }
 
 .summary-row span {
-  font-size:12px;
+  font-size:14px;
   display:block;
   overflow-wrap:anywhere;
 }
 
 .summary-row small {
-  font-size:10px;
+  font-size:12px;
   color:#a4b098;
   display:block;
   margin-top:4px;
 }
 
 .summary-row strong {
-  font-size:12px;
+  font-size:14px;
   white-space:nowrap;
   font-weight:500;
 }
@@ -1616,7 +1607,7 @@ h2 em {
   justify-content:space-between;
   gap:15px;
   color:#b2bda5;
-  font-size:12px;
+  font-size:14px;
   margin-top:13px;
 }
 
@@ -1654,7 +1645,7 @@ h2 em {
 }
 
 .checkout-disclaimer {
-  font-size:10px;
+  font-size:12px;
   color:#c0cbb2;
   line-height:1.75;
   text-align:center;
@@ -1670,7 +1661,7 @@ h2 em {
   margin-top:20px;
   padding-top:16px;
   border-top:1px solid #363e2d;
-  font-size:9px;
+  font-size:12px;
   color:#8e9d7e;
   letter-spacing:.02em;
 }
@@ -1710,7 +1701,7 @@ h2 em {
 }
 
 .how-card p {
-  font-size:12px;
+  font-size:16px;
   color:#a1a9b0;
   line-height:1.8;
   margin-top:12px;
@@ -1900,7 +1891,7 @@ h2 em {
   display:flex;
   justify-content:space-between;
   gap:20px;
-  font-size:10px;
+  font-size:12px;
   color:#7e8a94;
   padding:22px 0;
 }
@@ -2012,7 +2003,7 @@ dialog::backdrop {
 }
 
 .dialog-description {
-  font-size:13px;
+  font-size:16px;
   line-height:1.8;
   color:#b7c0c8;
   margin-top:19px;
@@ -2043,7 +2034,7 @@ dialog::backdrop {
 }
 
 .official-note {
-  font-size:11px;
+  font-size:14px;
   line-height:1.75;
   color:#a7b3bd;
   margin-top:18px;
@@ -2072,7 +2063,7 @@ dialog::backdrop {
 }
 
 .dialog-simulation>div>span {
-  font-size:8px;
+  font-size:14px;
   letter-spacing:.09em;
   color:#b0ba9f;
   display:block;
@@ -2087,18 +2078,18 @@ dialog::backdrop {
 
 .dialog-simulation small {
   display:block;
-  font-size:9px;
+  font-size:12px;
   color:#98a58f;
 }
 
 .dialog-simulation .btn {
   min-height:45px;
-  font-size:11px;
+  font-size:14px;
   padding:11px 16px;
 }
 
 .image-credit {
-  font-size:9px;
+  font-size:12px;
   line-height:1.7;
   color:#83909b;
   margin-top:21px;
@@ -2312,7 +2303,7 @@ dialog::backdrop {
     min-height:600px;
   }
   .hero h1 {
-    font-size:108px;
+    font-size:128px;
   }
 }
 
@@ -2324,7 +2315,7 @@ dialog::backdrop {
     gap:20px;
   }
   .main-nav a {
-    font-size:12px;
+    font-size:14px;
   }
   .nav-actions {
     gap:13px;
@@ -2339,14 +2330,14 @@ dialog::backdrop {
     min-height:540px;
   }
   .hero h1 {
-    font-size:82px;
+    font-size:clamp(86px,9vw,98px);
   }
   .hero-main>p {
     max-width:330px;
-    font-size:14px;
+    font-size:16px;
   }
   .hero-kicker {
-    font-size:10px;
+    font-size:14px;
   }
   .hero-proof {
     margin-top:32px;
@@ -2409,7 +2400,7 @@ dialog::backdrop {
     padding:36px;
   }
   .experience-copy h2 {
-    font-size:34px;
+    font-size:46px;
   }
   .experience-facts {
     gap:27px;
@@ -2460,18 +2451,18 @@ dialog::backdrop {
     padding-bottom:36px;
   }
   .hero h1 {
-    font-size:70px;
+    font-size:clamp(68px,9.6vw,86px);
   }
   .hero-kicker {
     letter-spacing:.1em;
-    font-size:9px;
+    font-size:14px;
     margin-bottom:23px;
   }
   .hero-main {
     padding-top:24px;
   }
   .hero-main>p {
-    font-size:13px;
+    font-size:16px;
     line-height:1.8;
   }
   .hero-media {
@@ -2482,24 +2473,19 @@ dialog::backdrop {
     margin-top:25px;
   }
   .hero-actions .btn {
-    font-size:12px;
+    font-size:14px;
     min-height:47px;
     padding:12px 18px;
   }
   .hero-text-link {
-    font-size:11px;
+    font-size:14px;
   }
   .hero-proof {
     gap:7px;
     margin-top:28px;
   }
   .hero-proof p {
-    font-size:9px;
-  }
-  .artist-avatars img {
-    width:32px;
-    height:32px;
-    margin-left:-13px;
+    font-size:14px;
   }
   .hero-bottom {
     gap:10px;
@@ -2514,7 +2500,7 @@ dialog::backdrop {
     right:20px;
   }
   .hero-feature-tag {
-    font-size:8px;
+    font-size:14px;
   }
   .hero-symbol {
     font-size:29px;
@@ -2535,14 +2521,14 @@ dialog::backdrop {
     font-size:37px;
   }
   .hero-tour-label {
-    font-size:9px;
+    font-size:14px;
   }
   .hero-artist p {
-    font-size:11px;
+    font-size:16px;
     max-width:145px;
   }
   .hero-tour-button {
-    font-size:10px;
+    font-size:14px;
     gap:25px;
   }
   .artist-ribbon>.container {
@@ -2552,7 +2538,7 @@ dialog::backdrop {
     min-height:54px;
   }
   .artist-ribbon span {
-    font-size:12px;
+    font-size:18px;
   }
   .artist-ribbon i {
     font-size:17px;
@@ -2562,10 +2548,10 @@ dialog::backdrop {
     padding-bottom:65px;
   }
   .section-heading h2 {
-    font-size:34px;
+    font-size:44px;
   }
   .section-heading p {
-    font-size:12px;
+    font-size:16px;
   }
   .section-tools {
     padding-top:10px;
@@ -2610,7 +2596,7 @@ dialog::backdrop {
     padding:9px 10px;
   }
   .event-title,.event-card h3 {
-    font-size:29px;
+    font-size:36px;
   }
   .experience-section {
     min-height:370px;
@@ -2623,10 +2609,10 @@ dialog::backdrop {
     padding:29px;
   }
   .experience-copy h2 {
-    font-size:29px;
+    font-size:46px;
   }
   .experience-copy>p {
-    font-size:12px;
+    font-size:16px;
   }
   .experience-facts {
     gap:20px;
@@ -2635,7 +2621,7 @@ dialog::backdrop {
     font-size:31px;
   }
   .experience-facts span {
-    font-size:9px;
+    font-size:12px;
   }
   .booking-section {
     padding-block:65px;
@@ -2644,7 +2630,7 @@ dialog::backdrop {
     align-items:flex-start;
   }
   .simulation-badge {
-    font-size:8px;
+    font-size:12px;
     padding:7px 9px;
   }
   .booking-layout {
@@ -2662,7 +2648,7 @@ dialog::backdrop {
     display:none;
   }
   .checkout-event strong {
-    font-size:11px;
+    font-size:14px;
   }
   .summary-total strong {
     font-size:28px;
@@ -2688,19 +2674,19 @@ dialog::backdrop {
     font-size:21px;
   }
   .booking-step-heading p {
-    font-size:11px;
+    font-size:14px;
   }
   .ticket-card {
     padding:17px;
   }
   .form-field {
-    font-size:9px;
+    font-size:14px;
   }
   .ticket-checks {
     gap:11px;
   }
   .ticket-checks label {
-    font-size:10px;
+    font-size:14px;
   }
   .how-section {
     padding-top:65px;
@@ -2723,7 +2709,7 @@ dialog::backdrop {
     padding-top:0;
   }
   .footer-bottom {
-    font-size:9px;
+    font-size:12px;
   }
   .event-dialog-copy {
     padding:38px 25px 25px;
@@ -2785,17 +2771,17 @@ dialog::backdrop {
     padding:2px 0 0;
   }
   .hero-kicker {
-    font-size:9px;
+    font-size:14px;
     margin-bottom:20px;
   }
   .hero h1 {
-    font-size:clamp(66px,15vw,88px);
-    line-height:1;
-    letter-spacing:-.06em;
+    font-size:clamp(72px,21.3vw,112px);
+    line-height:.92;
+    letter-spacing:-.02em;
     margin-bottom:20px;
   }
   .hero-main>p {
-    font-size:14px;
+    font-size:16px;
     max-width:400px;
     line-height:1.8;
   }
@@ -2804,24 +2790,19 @@ dialog::backdrop {
     gap:26px;
   }
   .hero-actions .btn {
-    font-size:13px;
+    font-size:14px;
     min-height:48px;
     padding:12px 21px;
   }
   .hero-text-link {
-    font-size:12px;
+    font-size:14px;
   }
   .hero-proof {
     margin-top:26px;
     gap:10px;
   }
-  .artist-avatars img {
-    width:34px;
-    height:34px;
-    margin-left:-11px;
-  }
   .hero-proof p {
-    font-size:10px;
+    font-size:14px;
   }
   .hero-bottom {
     display:none;
@@ -2839,7 +2820,7 @@ dialog::backdrop {
     right:21px;
   }
   .hero-feature-tag {
-    font-size:9px;
+    font-size:14px;
   }
   .hero-artist {
     left:24px;
@@ -2848,17 +2829,17 @@ dialog::backdrop {
     padding-right:70px;
   }
   .hero-tour-label {
-    font-size:10px;
+    font-size:14px;
   }
   .hero-artist h2 {
     font-size:44px;
   }
   .hero-artist p {
     max-width:200px;
-    font-size:12px;
+    font-size:16px;
   }
   .hero-tour-button {
-    font-size:11px;
+    font-size:14px;
     gap:34px;
     margin-top:10px;
   }
@@ -2875,7 +2856,7 @@ dialog::backdrop {
     gap:18px;
   }
   .artist-ribbon span {
-    font-size:11px;
+    font-size:18px;
   }
   .events-section {
     padding-top:52px;
@@ -2886,14 +2867,14 @@ dialog::backdrop {
     margin-bottom:23px;
   }
   .eyebrow {
-    font-size:9px;
+    font-size:12px;
     margin-bottom:11px;
   }
   .section-heading h2 {
-    font-size:33px;
+    font-size:44px;
   }
   .section-heading p {
-    font-size:12px;
+    font-size:16px;
     line-height:1.8;
     margin-top:11px;
   }
@@ -2909,7 +2890,7 @@ dialog::backdrop {
     min-height:45px;
   }
   .search-wrap input {
-    font-size:12px;
+    font-size:14px;
   }
   .refresh-button {
     min-height:45px;
@@ -2921,12 +2902,12 @@ dialog::backdrop {
   .filter-pill {
     padding:8px 14px;
     min-height:37px;
-    font-size:11px;
+    font-size:14px;
   }
   .catalog-counter {
     margin:7px 0 0;
     width:100%;
-    font-size:10px;
+    font-size:12px;
   }
   .events-grid {
     gap:22px;
@@ -2942,26 +2923,26 @@ dialog::backdrop {
     padding:23px;
   }
   .event-genre {
-    font-size:9px;
+    font-size:12px;
     margin-bottom:10px;
   }
   .event-title,.event-card h3 {
-    font-size:31px;
+    font-size:36px;
   }
   .event-tour {
-    font-size:13px;
+    font-size:14px;
     min-height:0;
     margin-top:7px;
   }
   .event-description {
-    font-size:12px;
+    font-size:16px;
     min-height:0;
     margin-top:12px;
     margin-bottom:20px;
     max-width:95%;
   }
   .event-footer {
-    flex-wrap:nowrap;
+    flex-wrap:wrap;
     padding-top:17px;
     gap:8px;
   }
@@ -2969,10 +2950,10 @@ dialog::backdrop {
     font-size:25px;
   }
   .event-price small,.event-price>span {
-    font-size:8px;
+    font-size:12px;
   }
   .event-price .price-note {
-    font-size:8px;
+    font-size:12px;
     max-width:none;
   }
   .event-actions {
@@ -2980,12 +2961,12 @@ dialog::backdrop {
     width:auto;
   }
   .event-book,.event-details {
-    font-size:10px;
+    font-size:14px;
     min-height:39px;
     padding:9px 11px;
   }
   .catalog-note {
-    font-size:10px;
+    font-size:12px;
     margin-top:21px;
     line-height:1.8;
   }
@@ -3001,16 +2982,16 @@ dialog::backdrop {
   .experience-photo-label {
     bottom:20px;
     left:23px;
-    font-size:9px;
+    font-size:12px;
   }
   .experience-copy {
     padding:30px 25px 33px;
   }
   .experience-copy h2 {
-    font-size:33px;
+    font-size:46px;
   }
   .experience-copy>p {
-    font-size:13px;
+    font-size:16px;
   }
   .experience-facts {
     gap:42px;
@@ -3020,7 +3001,7 @@ dialog::backdrop {
     font-size:35px;
   }
   .experience-facts span {
-    font-size:10px;
+    font-size:12px;
   }
   .booking-section {
     padding:50px 0;
@@ -3031,7 +3012,7 @@ dialog::backdrop {
   .simulation-badge {
     display:inline-flex;
     margin-top:19px;
-    font-size:8px;
+    font-size:12px;
   }
   .booking-layout {
     grid-template-columns:1fr;
@@ -3041,7 +3022,7 @@ dialog::backdrop {
     font-size:21px;
   }
   .booking-step-heading p {
-    font-size:11px;
+    font-size:14px;
   }
   .booking-step-heading {
     margin-bottom:23px;
@@ -3051,15 +3032,15 @@ dialog::backdrop {
     height:38px;
   }
   .select-input {
-    font-size:12px;
+    font-size:16px;
     padding:12px;
     min-height:48px;
   }
   .selected-event strong {
-    font-size:11px;
+    font-size:14px;
   }
   .selected-event span {
-    font-size:9px;
+    font-size:12px;
   }
   .selected-event-cover {
     height:48px;
@@ -3069,7 +3050,7 @@ dialog::backdrop {
     margin:26px 0;
   }
   .seat-guidance {
-    font-size:10px;
+    font-size:12px;
     line-height:1.8;
   }
   .ticket-card {
@@ -3083,13 +3064,13 @@ dialog::backdrop {
     min-height:46px;
   }
   .form-field {
-    font-size:9px;
+    font-size:14px;
   }
   .ticket-checks {
     gap:12px 19px;
   }
   .ticket-checks label {
-    font-size:11px;
+    font-size:14px;
   }
   .ticket-price {
     margin-top:18px;
@@ -3099,7 +3080,7 @@ dialog::backdrop {
     font-size:17px;
   }
   .discount-note {
-    font-size:11px;
+    font-size:12px;
   }
   .checkout-panel {
     position:static;
@@ -3107,7 +3088,7 @@ dialog::backdrop {
     border-radius:14px;
   }
   .checkout-eyebrow {
-    font-size:9px;
+    font-size:12px;
   }
   .checkout-panel h3 {
     font-size:29px;
@@ -3116,22 +3097,22 @@ dialog::backdrop {
     display:flex;
   }
   .checkout-event strong {
-    font-size:12px;
+    font-size:14px;
   }
   .checkout-event span {
-    font-size:10px;
+    font-size:12px;
   }
   .summary-row span {
-    font-size:13px;
+    font-size:14px;
   }
   .summary-row strong {
-    font-size:13px;
+    font-size:14px;
   }
   .summary-row small {
-    font-size:10px;
+    font-size:12px;
   }
   .price-line {
-    font-size:13px;
+    font-size:14px;
   }
   .summary-total {
     padding-top:24px;
@@ -3147,10 +3128,10 @@ dialog::backdrop {
     font-size:13px;
   }
   .checkout-disclaimer {
-    font-size:11px;
+    font-size:12px;
   }
   .checkout-security {
-    font-size:10px;
+    font-size:12px;
   }
   .how-section {
     padding:52px 0 42px;
@@ -3178,7 +3159,7 @@ dialog::backdrop {
     font-size:22px;
   }
   .how-card p {
-    font-size:12px;
+    font-size:16px;
     max-width:none;
     margin-top:9px;
   }
@@ -3223,7 +3204,7 @@ dialog::backdrop {
   .footer-bottom {
     flex-direction:column;
     gap:7px;
-    font-size:9px;
+    font-size:12px;
     padding:20px 0 25px;
   }
   .event-dialog {
@@ -3256,7 +3237,7 @@ dialog::backdrop {
     font-size:16px;
   }
   .dialog-description {
-    font-size:13px;
+    font-size:16px;
   }
   .tour-facts {
     gap:16px;
@@ -3266,18 +3247,18 @@ dialog::backdrop {
     font-size:12px;
   }
   .official-note {
-    font-size:11px;
+    font-size:14px;
   }
   .dialog-simulation {
     gap:12px;
     margin-top:22px;
   }
   .dialog-simulation .btn {
-    font-size:11px;
+    font-size:14px;
     min-height:44px;
   }
   .image-credit {
-    font-size:10px;
+    font-size:12px;
   }
   .receipt-content {
     padding:27px 21px;
@@ -3322,7 +3303,7 @@ dialog::backdrop {
     padding:10px 12px;
   }
   .receipt-disclaimer {
-    font-size:9px;
+    font-size:12px;
   }
   .toast {
     bottom:18px;
@@ -3335,7 +3316,7 @@ dialog::backdrop {
     width:calc(100% - 32px);
   }
   .hero h1 {
-    font-size:66px;
+    font-size:clamp(64px,21.1vw,76px);
   }
   .hero-media {
     min-height:410px;
@@ -3354,14 +3335,14 @@ dialog::backdrop {
     right:20px;
   }
   .hero-artist p {
-    font-size:11px;
+    font-size:16px;
   }
   .event-info {
     padding:20px;
   }
   .event-book,.event-details {
     padding:9px 9px;
-    font-size:9px;
+    font-size:14px;
   }
   .event-actions {
     gap:6px;
@@ -3373,7 +3354,7 @@ dialog::backdrop {
     padding:8px 12px;
   }
   .section-heading h2 {
-    font-size:31px;
+    font-size:44px;
   }
   .checkout-panel {
     padding:23px;

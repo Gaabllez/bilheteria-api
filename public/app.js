@@ -16,6 +16,7 @@ let catalogLoaded = false;
 let catalogVerifiedAt = "";
 let detailedEventId = null;
 const meta = (event) => catalog.get(event.id);
+const eventLabel = (event) => meta(event).artist + " · " + meta(event).tour;
 const hasText = (value) => typeof value === "string" && value.trim().length > 0;
 
 function isHttpsUrl(value) {
@@ -216,7 +217,7 @@ function calculateSummary() {
   checkout.replaceChildren();
   const mark = node("div", "checkout-event-icon", "✦");
   const details = node("div");
-  details.append(node("strong", "", event?.nome || "Selecione um evento"), node("span", "", event ? tickets.length + (tickets.length === 1 ? " ingresso" : " ingressos") + " • " + event.disponivel + " lugares no simulador" : "Seu resumo aparecerá aqui"));
+  details.append(node("strong", "", event ? eventLabel(event) : "Selecione um evento"), node("span", "", event ? tickets.length + (tickets.length === 1 ? " ingresso" : " ingressos") + " • " + event.disponivel + " lugares no simulador" : "Seu resumo aparecerá aqui"));
   checkout.append(mark, details);
 }
 
@@ -246,7 +247,7 @@ function renderSelectedEvent() {
     const image = node("img", "selected-event-cover");
     setEventImage(image, meta(event), { decorative: true });
     const detail = node("div");
-    detail.append(node("strong", "", event.nome), node("span", "", money(event.preco) + " • " + event.disponivel + " de " + event.capacidade + " lugares no simulador"));
+    detail.append(node("strong", "", eventLabel(event)), node("span", "", money(event.preco) + " • " + event.disponivel + " de " + event.capacidade + " lugares no simulador"));
     target.append(image, detail);
   } else {
     target.append(node("span", "selected-placeholder", "Selecione um evento para conferir disponibilidade e valores."));
@@ -385,14 +386,14 @@ function createEventCard(event) {
   image.style.objectPosition = data.objectPosition;
   cover.append(image, node("span", "event-tag", data.genre), node("span", "event-year", data.year));
   const info = node("div", "event-info");
-  info.append(node("span", "event-genre", data.type === "theatre" ? "ESPETÁCULO TEATRAL" : "ARTISTA EM DESTAQUE"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
+  info.append(node("span", "event-genre", data.type === "theatre" ? "MUSICAL" : "TURNÊ"), node("h3", "event-title", data.artist), node("p", "event-tour", data.tour), node("p", "event-description", data.description));
   const foot = node("div", "event-footer");
   const price = node("div", "event-price");
   price.append(node("small", "", "MEIA NO SIMULADOR"), node("strong", "", money(round(event.preco / 2))), node("small", "price-note", "+ taxa de serviço (10%)"));
   const actions = node("div", "event-actions");
-  const details = node("button", "event-details", "Ver turnê");
+  const details = node("button", "event-details", data.type === "theatre" ? "Ver peça" : "Ver show");
   details.type = "button";
-  details.setAttribute("aria-label", "Ver turnê de " + data.artist);
+  details.setAttribute("aria-label", "Ver detalhes de " + data.artist);
   details.disabled = unavailable;
   details.addEventListener("click", () => showEventDetails(event.id));
   actions.append(details);
@@ -462,7 +463,7 @@ async function loadEvents(record = false) {
     const previous = select.value;
     select.replaceChildren();
     events.forEach((event) => {
-      const option = node("option", "", event.nome + " — " + money(event.preco) + " • " + event.disponivel + " lugares no simulador");
+      const option = node("option", "", eventLabel(event) + " · " + money(event.preco) + " • " + event.disponivel + " lugares no simulador");
       option.value = String(event.id);
       select.append(option);
     });
@@ -528,7 +529,7 @@ function showReceipt(receipt, event) {
   const dialog = $("#receipt-dialog");
   const info = $("#receipt-info");
   info.replaceChildren();
-  const fields = [["RESERVA", "#" + receipt.reservaId], ["EVENTO", event?.nome || String(receipt.eventoId)], ["INGRESSOS", String(receipt.ingressos.length)], ["SITUAÇÃO", "CONFIRMADA · SIMULAÇÃO"]];
+  const fields = [["RESERVA", "#" + receipt.reservaId], ["EVENTO", event ? eventLabel(event) : String(receipt.eventoId)], ["INGRESSOS", String(receipt.ingressos.length)], ["SITUAÇÃO", "CONFIRMADA · SIMULAÇÃO"]];
   fields.forEach(([label, value]) => {
     const el = node("div");
     el.append(node("small", "", label), node("strong", "", value));
@@ -539,7 +540,7 @@ function showReceipt(receipt, event) {
   receipt.ingressos.forEach((ticket) => {
     const row = node("div", "receipt-item");
     const left = node("span");
-    left.append(document.createTextNode(ticket.nome + " — Poltrona " + ticket.poltrona + " "), node("small", "", "(" + (ticket.tipo === "meia" ? "meia" : "inteira") + ")"));
+    left.append(document.createTextNode(ticket.nome + " · Poltrona " + ticket.poltrona + " "), node("small", "", "(" + (ticket.tipo === "meia" ? "meia" : "inteira") + ")"));
     row.append(left, node("strong", "", money(ticket.valor)));
     items.append(row);
   });
