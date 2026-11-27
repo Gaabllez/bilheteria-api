@@ -1,205 +1,145 @@
 # Relatório de validação e correções
 
-Revisão realizada em **26/11/2026**, comparando o projeto com o enunciado e com [o modelo do professor](https://github.com/douglasmeneses/bilheteria-projeto-final/tree/b5fc6edd8b5e16a0615e2663b837261eb42875a6).
+## Revisão atual — 26/11/2026
 
-A revisão anterior partiu de `8e49302` (interface integrada pelo PR #1). As correções funcionais estão em `a70cb49`; a revisão do teste móvel e das Actions está em `5b2a15a`. O [PR #2](https://github.com/Gaabllez/bilheteria-api/pull/2) reúne essa etapa e sua documentação. A nova interface preserva a contribuição de **Marcus (Mvsff)**, incluindo a resposta da reserva após atualizar os eventos.
+A revisão do [PR #5](https://github.com/Gaabllez/bilheteria-api/pull/5) partiu do commit `490bc57017e0b98653181b68aba89e7bfeb29fc4`. Nessa versão, a [execução 45900814907](https://github.com/Gaabllez/bilheteria-api/actions/runs/45900814907) passou no backend e reprovou a interface: 13 dos 17 cenários passaram. Havia expectativas antigas de apenas três eventos reserváveis e uma comparação de caminhos de imagem com URLs completas, além dos problemas funcionais reproduzidos nesta revisão.
 
-## Conformidade com o enunciado — três eventos na API
+**Resultado desta revisão:** a [execução 45922063858](https://github.com/Gaabllez/bilheteria-api/actions/runs/45922063858), referente ao commit [`f23a223`](https://github.com/Gaabllez/bilheteria-api/commit/f23a223bb93ecd8c67f28db0b6188f828ae5aab2), aprovou os jobs `validar` e `interface`, em Ubuntu com Node.js **22.23.5**.
 
-O Passo 6 exige três eventos. A versão atual mantém **Lady Gaga (ID 1), Bruno Mars (ID 2) e The Weeknd (ID 3)** na bilheteria, com 100 poltronas no evento 1. O catálogo editorial agora contém 12 artistas/turnês e dois espetáculos teatrais (14 registros); os outros 11 são somente para consulta e não têm botão de reserva. O detalhe editorial encaminha ao canal oficial.
-
-- O catálogo exige exatamente três itens `reservable: true`, incluindo o evento 1; dados inconsistentes impedem a inicialização.
-- `GET /eventos` devolve três eventos. Tentativas de reservar IDs editoriais retornam 404, sem cobrança nem alteração do estoque.
-- O benchmark verifica explicitamente a quantidade de eventos, os 200 pedidos e o estoque restante.
-- A interface atual apresenta 14 registros editoriais, busca, filtros por estilo/categoria e detalhes; somente os três artistas reserváveis oferecem simulação. Uma resposta indevida da API oferecendo um registro editorial bloqueia o formulário.
-- O [roteiro de vídeo](docs/ROTEIRO_VIDEO.md) segue as oito partes do professor, com comandos Bash e PowerShell. O [guia de entrega](docs/ENTREGA.md) traz rubrica, contribuições comprovadas e texto para o Blackboard.
-
-**Validação comprovada do commit `153b8d7` (antes da inclusão dos dois registros teatrais e dos novos filtros):** typecheck e sintaxe aprovados; 14 cenários oficiais com **16/16 pontos**; **38 testes/subtestes adicionais aprovados**; os **10 arquivos fornecidos pelo professor preservados**. A CLI local `npm test` encontrou restrição de IPC (`EPERM` do `tsx`); o executor foi repetido com `node --import tsx`. Esses números pertencem ao commit validado e não devem ser apresentados como teste da versão atual.
-
-O ensaio isolado do erro de concorrência confirmou **16/16 antes → 11/16 com o erro proposital → 16/16 após desfazer**. A falha central foi `cobrou 200 pessoas por 50 poltronas`: cobrar antes de reservar permite que pedidos concorrentes paguem pelo mesmo lugar. O auxiliar `node validacao/demonstrar-concorrencia.mjs` trabalha em cópia temporária, valida a causa da falha e a restauração, sem deixar o projeto incorreto. Ele serve para ensaiar; o vídeo ainda deve mostrar a alteração, `npm test`, a explicação e a reversão.
-
-### Evidência no GitHub Actions
-
-A [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771), do [PR #4](https://github.com/Gaabllez/bilheteria-api/pull/4), validou o commit **`153b8d7cfbfcd6e0621dad1e65110069e39f84df`** com Node.js **22.23.5** no Ubuntu. Os dois jobs, `validar` e `interface`, passaram.
-
-| Verificação da conformidade | Resultado |
+| Verificação | Resultado |
 |---|---|
-| Instalação com lockfile original, TypeScript e JavaScript | Aprovados |
-| `npm test` original e conferência da pontuação | 14 cenários, **16/16 pontos** |
-| Backend, catálogo e gate | **38 testes/subtestes aprovados**, zero falhas |
-| Interface no Chromium | **17 cenários aprovados**, zero falhas |
+| Instalação com o lockfile original, TypeScript e sintaxe JavaScript | Aprovados |
+| `npm test` original e conferência da pontuação | **14 cenários, 16/16 pontos** |
+| Regressões de backend, catálogo, HTTP e gate | **49 testes/subtestes aprovados**, zero falhas |
+| Interface no Chromium | **38 cenários aprovados**, zero falhas |
 | Arquivos fornecidos pelo professor | **10 preservados**, conferidos por hash |
-| Ensaio do erro em cópia temporária | **16/16 → 11/16 proposital → 16/16** |
-| Quantidade na API | **3 eventos**, com 100 poltronas no evento 1 |
-| Benchmark | 200 pedidos, estoque consistente e demais eventos intactos |
+| Ensaio do erro de concorrência em cópia temporária | **16/16 → 11/16 com o erro → 16/16 após desfazer** |
+| Benchmark | **200 pedidos**, estoque consistente |
 
-Na versão validada daquele commit, a suíte de interface confirmou seis cards e três opções de reserva, além dos cenários de responsividade, erros HTTP, comprovante e impressão. Isso é evidência histórica da versão anterior ao catálogo teatral, não da interface atual.
+Os 49 testes/subtestes adicionais correspondem a **31 de backend, 11 de catálogo, 4 de integração HTTP e 3 do gate**. Essa contagem inclui subtestes e não deve ser confundida com os 16 pontos oficiais.
 
-### Atualização posterior: filtros e catálogo teatral (26/11/2026)
+## Erros reproduzidos e correções
 
-Depois da validação do commit `153b8d7`, Inácio (`nettoinacio`) integrou dois registros editoriais — **O Fantasma da Ópera** (ID 107) e **Wicked** (ID 108) — e os filtros de categoria **Artistas** e **Teatro**, preservando os filtros musicais e os três eventos reserváveis. Os anos vagos `2016–2017` e `2024–2025` foram substituídos por referências históricas verificáveis: “Desde 1986 (Londres)” e “Desde 2003 (Broadway)”, com fontes oficiais e testes de regressão. Os testes de catálogo agora esperam 14 registros (12 artistas/turnês e dois musicais teatrais), com somente IDs 1, 2 e 3 reserváveis. O filtro geral da interface foi corrigido para “Todos os eventos”, pois também inclui teatro.
-
-**Atenção:** a validação verde citada acima é de uma revisão anterior a essas alterações. Ao consultar o commit mais recente do código teatral, o GitHub não retornou status de verificação associados; portanto, não afirmo que os novos filtros e registros já passaram pelo CI. Antes da entrega, execute `npm test`, `npm run typecheck` e a suíte de interface/Actions sobre a versão atual e registre o resultado real.
-
-### Benchmark da revisão de conformidade
-
-| Cenário | Pedidos | Tempo (ms) | Pedidos/s | Vendidos (201) | Ocupada (409) | Pagamento (502) |
-|---|---:|---:|---:|---:|---:|---:|
-| Padrão (`main.ts`), 26/11/2026 | 200 | 168 | 1191 | 93 | 100 | 7 |
-
-O servidor começou vazio, com os parâmetros originais: 80 ms de latência, 10% de falha e timeout de 500 ms. Restaram **7 poltronas** no evento 1, e os **outros dois eventos ficaram intactos**. As sete recusas são falhas simuladas previstas, não falhas dos testes. Tempo e distribuição variam por execução.
-
-As seções abaixo registram as validações históricas dos PRs #2 e #3; suas contagens não devem ser confundidas com a revisão de conformidade.
-
-## Histórico — catálogo e interface do PR #3
-
-O [catálogo](public/catalogo.json) reúne Lady Gaga, Bruno Mars, The Weeknd, Coldplay, Shakira e Linkin Park, com turnês pesquisadas em fontes oficiais e filtros Pop, R&B, Rock e Latino. Nomes, fontes, preços fictícios e capacidades vêm desse mesmo JSON na API e no cliente; a disponibilidade permanece sob controle da API. As [fontes das turnês](FONTES.md) registram a consulta de **26/11/2026**. A interface apresenta o contexto pesquisado e links para as agendas oficiais, sem inventar calendário futuro.
-
-São **oito WebPs locais, totalizando 850.490 bytes**, com autoria, licenças e contexto na [página de créditos](public/creditos.html), disponível em `/creditos.html`, e em [CREDITS.md](public/images/artists/CREDITS.md). A apresentação inclui destaque fotográfico, cards, busca por artista/turnê e detalhes com foto e agenda oficial. Preços, lugares, reservas e pagamentos continuam sendo uma simulação acadêmica.
-
-**Resultado confirmado:** a [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), do [PR #3](https://github.com/Gaabllez/bilheteria-api/pull/3), aprovou os jobs `validar` e `interface` no commit **`a630347e2182233f7df58c85f5301495d6d090b9`**, com Node.js **22.23.5**.
-
-| Verificação no PR #3 | Resultado |
-|---|---|
-| TypeScript e JavaScript | Aprovados no CI |
-| Testes oficiais e gate | 14 cenários aprovados, **16/16 pontos** |
-| Backend, gate e catálogo | **36 testes/subtestes aprovados**, zero falhas: 29 + 3 + 4 |
-| Integridade dos arquivos do professor | **10 arquivos preservados** |
-| Interface no Chromium | **16 cenários aprovados**, zero falhas |
-| Benchmark de 200 pedidos | Gate aprovado; capacidade e estoque consistentes |
-
-Os quatro testes de `catalogo.test.ts` verificam artistas/fontes/fotos locais, coerência entre JSON e API, estoques independentes e rejeição de configuração inválida. Também preservam o evento 1 com preço-base fictício de R$ 100 e 100 lugares, usado pelo benchmark. A contagem de 36 inclui subcasos parametrizados e não se confunde com os 16 pontos oficiais.
-
-## Histórico comprovado — PR #2
-
-A [execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996), commit `5b2a15a7d5200297cdeb2e9eb8c2c85ec781b2f7`, aprovou os jobs `validar` e `interface` em Node.js **22.23.5**. A versão anterior passou na instalação com lockfile original, typecheck, 14 testes oficiais (16/16 pontos), 32 testes/subtestes adicionais, 14 cenários de interface, integridade dos 10 arquivos e benchmark. A auditoria não reportou vulnerabilidades nessa execução. Esses resultados pertencem à versão anterior ao catálogo real.
-
-## Erros encontrados e corrigidos
-
-| Problema reproduzido | Efeito anterior | Correção |
+| Problema | Reprodução e consequência | Correção |
 |---|---|---|
-| Nome em branco ou idade ausente na API | O pedido era cobrado e consumia poltrona | Validação dos participantes antes da marcação e cobrança, com HTTP 400 |
-| `estudante: "false"` em JSON | A string era considerada verdadeira e concedia meia indevida | `estudante` e `pcd` precisam ser booleanos |
-| Lista esparsa em `Evento.reservar` | Uma posição vazia podia consumir disponibilidade | Todas as posições são verificadas antes de alterar o estado |
-| Idade em branco na interface | `Number("")` virava zero | Uso de `valueAsNumber`, checagem de inteiro/faixa e erro junto ao campo |
-| Remover participante e adicionar outro | A sugestão automática podia repetir uma poltrona | Escolha do próximo número ainda não usado no formulário/sessão |
-| Repetir uma tentativa de compra | O botão acumulava símbolos | Rótulo fixo após cada envio |
-| Falha ao atualizar eventos | Catálogo antigo continuava utilizável | Limpeza dos dados e bloqueio do envio até reconectar |
-| Requisição sem resposta | A interface podia ficar processando indefinidamente | Timeout de 10 segundos com `AbortController` |
-| Conexão perdida durante POST | A tela tratava resultado desconhecido como falha certa | Aviso explícito, preservação dos dados e bloqueio do reenvio automático |
-| Alterar o formulário durante POST | Resumo visível podia divergir do pedido enviado | Bloqueio dos controles enquanto a reserva está em andamento |
-| Reserva concluída | Formulário mantinha nomes e poltronas já compradas | Novo formulário após confirmação, preservando o comprovante |
-| Impressão do recibo | Aviso de simulação era ocultado | Aviso permanece visível; recibo fechado não é impresso |
-| CI verde com pontuação insuficiente | O executor original sempre terminava com código zero | Gate externo exige todos os itens aprovados e 16/16 pontos |
+| Comprovantes divergentes aceitos | Um adulto sem direito à meia podia receber um recibo de meia; ingresso de R$ 1 ou total de R$ 999 também eram aceitos para um pedido esperado de R$ 110 | A confirmação exige evento, participante, poltrona, tipo, valor individual, total com taxa e identificador válidos |
+| Reenvio manual após resultado desconhecido | Depois de iniciar outro pedido, era possível digitar novamente a poltrona do POST sem resposta | A validação bloqueia também a digitação manual das poltronas incertas na sessão da página, por evento |
+| Arredondamento divergente | Meia de R$ 2,01 era R$ 1,00 no backend e R$ 1,01 na interface; taxa de 10% sobre R$ 17,15 terminava em R$ 18,86 | API e interface usam a mesma regra pura de arredondamento, com tolerância à imprecisão binária; os resultados são R$ 1,01 e R$ 18,87 |
+| Tratamento de imagens incompleto | A miniatura da seleção não tinha fallback e reabrir o modal acumulava listeners de erro | Um helper atende card, detalhes e seleção, substitui o handler anterior e evita repetir o fallback indefinidamente |
+| Catálogo aceito pelo servidor e recusado pela interface | IDs originais ausentes, metadados/créditos incompletos ou apresentação inválida podiam passar na inicialização | O validador exige os IDs 1, 2 e 3 reserváveis e os campos, categorias, créditos, cores e enquadramento utilizados pela interface |
+| Caminhos de imagem incompatíveis | O servidor aceitava caminho local com `%2e%2e`, consultas locais e URLs Commons fora do formato suportado | As duas camadas usam formatos compatíveis e verificam o caminho remoto depois da normalização |
+| Entrada inválida reportada como erro interno | JSON acima de 100 KB e codificação não suportada retornavam 500; gzip inválido também precisava manter o status 400 do parser | A composição HTTP responde 413, 415 ou 400 antes de reservar/cobrar, mantendo resposta JSON e os arquivos originais |
+| Testes desatualizados após a expansão | A suíte ainda esperava três reservas no site; um filtro de eventos não reserváveis retornava uma lista vazia e não exercitava os 11 IDs adicionais | Testes conferem os 14 eventos em `/catalogo/*`, os três em `/eventos` e a rejeição dos 11 IDs exclusivos na API original |
+| Documentação contraditória | Relatório e guias ainda descreviam 11 registros sem reserva e vídeo pendente | README, relatório, roteiro e guia descrevem as duas APIs e mantêm o link do vídeo já publicado |
 
-A falha do executor foi reproduzida apontando-o para um diretório fonte inexistente: **0/16 pontos com código de saída 0**. O novo gate tem regressão específica para rejeitar esse caso, JSON ausente/truncado e erros do processo. O executor original não foi modificado.
+Os preços atuais do catálogo são inteiros; o problema monetário foi reproduzido com preços fracionários válidos, evitando uma divergência quando esse tipo de preço for usado.
 
-No PR #2, a primeira execução da suíte de interface aprovou 13 cenários e o teste móvel parou ao aguardar visibilidade de um indicador oculto no cabeçalho móvel. A espera foi corrigida para verificar sua presença e estado; a repetição documentada aprovou os 14 cenários. As Actions antigas também foram substituídas por versões oficiais que usam runtime Node 24; a aplicação continua sendo testada em Node 22, como exige o professor.
+## Contrato preservado
 
-## Cobertura do backend
+| Recurso | Comportamento |
+|---|---|
+| `GET /eventos` e `POST /reservas` | Três eventos, de IDs 1, 2 e 3, conforme o enunciado |
+| `GET /catalogo/eventos` e `POST /catalogo/reservas` | Os 14 eventos do site: 12 artistas/turnês e dois espetáculos teatrais |
+| Estoque | As duas bilheterias são independentes; reservas do site não consomem as poltronas do benchmark |
+| Evento 1 | Preço fictício de R$ 100 e capacidade inicial de 100 poltronas |
+| Pagamento do programa principal | Operadora simulada com latência de 80 ms, taxa de falha de 10% e timeout de 500 ms |
+| API original | Status de negócio 400, 404, 409 e 502 preservados |
+| Estado e cobrança | Reserva síncrona antes do `await`; pedidos em conflito não são cobrados; falha de pagamento libera o grupo inteiro |
 
-Os testes oficiais continuam verificando herança e status dos erros, encapsulamento das poltronas, atomicidade, funções puras, regras de meia, comprovantes, conflito e concorrência. Incluem **200 pedidos disputando 50 poltronas** e **120 requisições HTTP disputando 30 poltronas**, sem vendas ou cobranças duplicadas.
+[src/aplicacao.ts](src/aplicacao.ts) reúne o servidor original, as rotas do catálogo, o tratamento dos erros de leitura do JSON e os arquivos estáticos. Tanto `main.ts` quanto o servidor usado nos testes de interface usam essa composição. O domínio e as APIs são reais; nos testes de navegador, somente a operadora é injetada para aprovar de forma determinística, e as falhas específicas são controladas por cenário.
 
-As regressões adicionais cobrem dados malformados, tipos incorretos, listas esparsas, ausência de cobrança quando há erro, liberação atômica após falha, exceção síncrona da operadora, timeout, rejeição tardia, pagamentos concluídos fora de ordem, IDs distintos e isolamento entre o pedido, o comprovante e o estado interno. O teste de timeout controla o relógio para não depender de pausas imprecisas.
+## Cobertura e evidências
 
-Os códigos HTTP **400, 404, 409 e 502** permanecem conforme o contrato original. Reservar as poltronas continua sendo uma operação síncrona anterior ao `await` do pagamento.
+Os testes oficiais incluem **200 pedidos simultâneos disputando 50 poltronas** e **120 requisições HTTP disputando 30 poltronas**. As regressões adicionais verificam validação antes da cobrança, atomicidade, rollback, falha síncrona, timeout, rejeição tardia, pagamentos fora de ordem, IDs distintos, imutabilidade das entradas, centavos e contratos HTTP.
 
-## Cobertura da interface
+A integração HTTP verifica as duas rotas de reserva com JSON excessivo, charset e codificação não suportados, JSON inválido e gzip inválido; confirma ausência de cobrança e de mudança do estoque. Um pedido gzip válido posterior continua sendo aceito. A composição também serve a página e o catálogo e permite reservas independentes nas duas APIs.
 
-Os **16 cenários aprovados no CI do PR #3** verificam:
+A suíte de navegador cobre:
 
-1. Seis artistas, busca por artista/turnê sem acentos e filtros musicais.
-2. Detalhes das seis turnês, links oficiais e escolha correta do evento para simular.
-3. Larguras de 360, 390 e 768 px, sem rolagem horizontal, e menu por toque/teclado.
-4. Idades inválidas, foco e ausência de POST quando há erro.
-5. Adição/remoção de participantes e bloqueio de poltronas duplicadas.
-6. Meia por estudante, PcD e idade a partir de 60, sem acumular descontos, e taxa de 10%.
-7. Reserva pela API real, bloqueio durante envio, prevenção de duplo envio, comprovante preservado e nova compra.
-8. Tratamento do conflito 409.
-9. Tratamento de pagamento recusado 502.
-10. Falha na listagem, remoção do catálogo antigo e reconexão.
-11. Recuperação pelo botão Atualizar após falha inicial de `catalogo.json`.
-12. Catálogo vazio, esgotado ou com formato inválido.
-13. POST sem resposta, timeout e início explícito de outro pedido.
-14. Interrupção de conexão durante POST.
-15. Resposta 201 sem comprovante válido.
-16. Conteúdo com HTML tratado como texto e impressão com aviso de demonstração.
+- Busca sem acentos, filtros de artistas/teatro e estilos, detalhes e seleção dos 14 eventos.
+- Uma reserva completa pela interface para **cada um dos 14 eventos**, verificando que o estoque da API original continua intacto.
+- Larguras de **360, 390 e 768 px**, menu móvel por toque e Escape e ausência de transbordamento horizontal.
+- Participantes, idade, poltronas repetidas, meia por estudo/PcD/idade e taxa de 10%.
+- Reserva real, controles bloqueados durante envio, prevenção de envio duplo, comprovante preservado e nova compra.
+- Erros 409, 502, 413 e 415; recuperação após falha na listagem ou no JSON do catálogo.
+- Catálogo vazio, incompleto, duplicado, desconhecido, divergente ou esgotado.
+- Timeout, conexão interrompida, erro 500, recibo ausente ou adulterado e bloqueio de poltronas incertas.
+- Arredondamento fracionário, fallback das imagens, nomes tratados como texto e impressão com aviso de demonstração.
 
-A revisão das evidências também passou a visitar cada imagem antes da captura completa, conferindo o carregamento dos oito WebPs e retornando a página ao topo. O modo de impressão ganhou um tema claro próprio; o teste exige fundo branco, texto preto, ausência da navegação e preservação do aviso de simulação. A primeira comprovação do tema claro está na [execução 45753389715](https://github.com/Gaabllez/bilheteria-api/actions/runs/45753389715), commit `32782b4`, com 16 cenários aprovados. As execuções posteriores do PR registram o refinamento final dos seletores de impressão.
+As imagens locais são carregadas de verdade. As imagens remotas do Wikimedia Commons são interrompidas de forma controlada nos testes, exercitando o fallback sem depender de terceiros; isso não verifica a disponibilidade atual dessas fotografias na Internet. O artefato **interface** da execução indicada contém capturas de desktop, celular e comprovante. A automação cobre Chromium; não foi executada uma matriz de Safari e Firefox.
 
-Cada cenário inicia o servidor e o domínio reais com estoque isolado e a mesma fábrica de catálogo usada por `src/main.ts`. A operadora injetada sempre aprova; falhas específicas são simuladas nos respectivos cenários. A suíte usa as fotos locais reais e substitui apenas fontes externas. O teste de resposta HTTP abre a seção técnica pela interface após fechar o comprovante.
+## Benchmark desta revisão
 
-**Conferência manual no PR #3:** as seis fotografias dos cards carregaram corretamente. A reserva demonstrativa de Bruno Mars gerou o comprovante **#1**, confirmado com meia de **R$ 70**, taxa de **R$ 7** e total de **R$ 77**. As capturas automatizadas desta versão estão no artefato `interface` da execução do PR #3. A automação cobre Chromium, sem matriz de Safari e Firefox.
+Medição identificada pela mesma execução acima, com o servidor recém-iniciado e a configuração original da operadora:
 
-**Evidência histórica:** o artefato `interface` do PR #2 contém capturas da versão anterior com imagens substitutas. Na inspeção manual daquela versão, duas reservas foram confirmadas; uma delas tinha três participantes, duas meias e uma inteira, totalizando R$ 220 com a taxa.
+| Pedidos | Tempo (ms) | Pedidos/s reportados | Vendidos — 201 | Ocupada — 409 | Pagamento — 502 |
+|---:|---:|---:|---:|---:|---:|
+| 200 | 167 | 1194 | 88 | 100 | 12 |
 
-## Benchmark histórico — PR #3
+Restaram **12 poltronas** no evento 1. Os outros dois eventos da API original permaneceram intactos. As recusas de pagamento fazem parte da simulação aleatória; a distribuição e o tempo variam entre execuções e não constituem garantia de desempenho em produção.
 
-Na [execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050), o servidor foi iniciado com o estado vazio, usando a operadora original: latência de 80 ms, probabilidade de falha de 10% e limite de pagamento de 500 ms.
+O gate confere a soma dos 200 pedidos, os códigos esperados, a capacidade e a disponibilidade final. O artefato **benchmark** guarda o log do servidor e o resultado medido.
 
-| Medida | Resultado |
-|---|---:|
-| Pedidos | 200 |
-| Tempo medido | 169 ms |
-| Taxa observada | 1181 pedidos/s |
-| HTTP 201 — reserva confirmada | 85 |
-| HTTP 409 — poltrona ocupada | 100 |
-| HTTP 502 — pagamento simulado recusado | 15 |
-| Lugares restantes no evento 1 | 15 |
+## Arquivos originais do professor
 
-`conferir-benchmark.mjs` aprovou a contabilização dos 200 pedidos, os status esperados, a capacidade e o estoque final correspondente às reservas confirmadas. Os outros **cinco eventos permaneceram intactos**. As 15 recusas fazem parte da operadora simulada do professor. Os números variam entre execuções; não representam uma garantia de capacidade em produção.
+A referência é [douglasmeneses/bilheteria-projeto-final@`b5fc6ed`](https://github.com/douglasmeneses/bilheteria-projeto-final/tree/b5fc6edd8b5e16a0615e2663b837261eb42875a6).
 
-**Histórico do PR #2:** a execução 45749110996 registrou 200 pedidos em 246 ms (814 pedidos/s), 90 confirmações, 100 conflitos, 10 recusas e 10 lugares restantes. O tempo de execução não deve ser usado como comparação de desempenho entre versões.
+Foram preservados `GUIA.md`, `package.json`, `package-lock.json`, `tsconfig.json`, `src/tipos.ts`, `src/servidor.ts`, `src/pagamento.ts`, `src/bench.ts`, `testes/executar.ts` e `testes/projeto.ts`. Os hashes estão em [validacao/originais-professor.json](validacao/originais-professor.json); o verificador normaliza LF/CRLF para aceitar checkout Windows sem mudanças de código.
 
-## Arquivos preservados
-
-Foram preservados `GUIA.md`, `package.json`, `package-lock.json`, `tsconfig.json`, `src/tipos.ts`, `src/servidor.ts`, `src/pagamento.ts`, `src/bench.ts`, `testes/executar.ts` e `testes/projeto.ts`.
-
-Os hashes Git da referência estão em `validacao/originais-professor.json`. O verificador compara o conteúdo canônico com quebras LF, para aceitar também um checkout Windows convertido para CRLF sem mudança de código. As novas verificações ficam em `validacao/`, e o workflow do grupo as executa sem modificar as dependências do professor.
+O executor original pode terminar com código zero mesmo quando há falhas. Por isso, [validacao/conferir-testes.mjs](validacao/conferir-testes.mjs) exige os 14 cenários e os 16 pontos. O ensaio de concorrência usa uma cópia temporária: desloca a marcação das poltronas para depois do pagamento, confirma a falha de **200 cobranças por 50 poltronas** e verifica a restauração. Essa versão propositalmente incorreta não fica no código entregue.
 
 ## Como reproduzir
 
-Com Node.js 22 ou superior:
+Use Node.js 22 ou superior:
 
 ```bash
 npm ci
 npm run typecheck
 npm test
 node validacao/conferir-testes.mjs
-node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
+node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts validacao/http.test.ts
 node validacao/conferir-originais.mjs
 node --check public/app.js
 node --check validacao/browser.test.mjs
+node validacao/demonstrar-concorrencia.mjs
 ```
 
-`npm start` executa o TypeScript com `tsx` e serve `public/`; não existe etapa de build separada nem alteração necessária em `package.json`. Na revisão local anterior, a restrição ao IPC da CLI do `tsx` foi contornada com `node --import tsx testes/executar.ts testes/projeto.ts src --legivel`. O comando normal `npm test` passou no CI do PR #3 em Node 22.23.5.
+Na revisão local, a CLI do `tsx` encontrou uma restrição de IPC (`EPERM`); o mesmo executor foi utilizado por `node --import tsx`. A confirmação do comando **`npm test` normal** pertence ao CI identificado acima.
 
-Para os testes de interface, o CI instala `playwright@1.62.1` em uma pasta temporária. Em um ambiente de desenvolvimento comum, pode-se repetir sem editar o manifesto do professor:
+O CI instala `playwright@1.62.1` em pasta temporária para preservar os manifestos do professor. Em um ambiente de desenvolvimento comum, instale sem alterar esses arquivos:
 
 ```bash
 npm install --prefix .cache/bilheteria-browser --no-save --package-lock=false playwright@1.62.1
 node .cache/bilheteria-browser/node_modules/playwright/cli.js install chromium
 ```
 
-No Bash:
+Bash:
 
 ```bash
 PLAYWRIGHT_MODULE_PATH="$PWD/.cache/bilheteria-browser/node_modules/playwright/index.mjs" node --import tsx --test --test-concurrency=1 validacao/browser.test.mjs
 ```
 
-No PowerShell:
+PowerShell:
 
 ```powershell
 $env:PLAYWRIGHT_MODULE_PATH = (Resolve-Path .cache/bilheteria-browser/node_modules/playwright/index.mjs).Path
 node --import tsx --test --test-concurrency=1 validacao/browser.test.mjs
 ```
 
-O benchmark deve ser executado em um servidor recém-iniciado, em outro terminal, com `npm run bench`. Reinicie o servidor antes de repetir para restaurar a disponibilidade.
+Execute `npm start` para abrir o site em `http://localhost:3000`. Não há build separado. Para o benchmark, reinicie o servidor e execute `npm run bench` em outro terminal, com as 100 poltronas originais livres.
 
-## Pendências fora do código
+## Histórico de validações anteriores
 
-O README ainda precisa do link do vídeo. Os commits recentes identificam `nettoinacio` e `rafaeloliviooo`, e as contribuições estão descritas no README; o grupo deve confirmar que os resumos correspondem ao trabalho realizado. Também faltam o nome cadastrado do grupo, o prazo exato e a confirmação do envio ao Blackboard.
+| Revisão | Evidência |
+|---|---|
+| PR #2, commit `5b2a15a` | [Execução 45749110996](https://github.com/Gaabllez/bilheteria-api/actions/runs/45749110996): 16/16 pontos, 32 testes/subtestes adicionais e 14 cenários de interface |
+| PR #3, commit `a630347` | [Execução 45752558050](https://github.com/Gaabllez/bilheteria-api/actions/runs/45752558050): 16/16 pontos, 36 testes/subtestes adicionais e 16 cenários de interface |
+| PR #4, commit `153b8d7` | [Execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771): 16/16 pontos, 38 testes/subtestes adicionais e 17 cenários de interface |
 
-O grupo deve gravar o vídeo com a versão final, mostrar `git log -1`, seguir o roteiro do enunciado, demonstrar temporariamente o erro de concorrência e desfazê-lo, conferir os links sem login e realizar a entrega no Blackboard. Essas etapas continuam necessárias para a entrega acadêmica.
+Essas contagens pertencem aos commits indicados. O catálogo e os cenários mudaram desde então; a tabela da revisão atual é a evidência aplicável ao código revisado.
 
-O sistema permanece uma demonstração: pagamentos são fictícios, reservas ficam em memória e reiniciar o processo limpa o estado. O contrato fornecido não oferece consulta de reserva por identificador após perda de resposta; por isso, a interface informa a incerteza e evita repetir automaticamente o pedido.
+## Limites e entrega
+
+O sistema continua sendo uma demonstração acadêmica: pagamentos são fictícios e reiniciar o processo limpa as reservas em memória. O timeout não cancela uma cobrança externa real. O contrato fornecido não oferece consulta de reserva após perda de resposta; a interface sinaliza a incerteza e evita reenviar as mesmas poltronas na sessão atual da página. Isso não substitui persistência nem idempotência de um sistema de venda real.
+
+O [vídeo publicado](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz) está no README, e os quatro integrantes e suas contribuições foram preservados. Esta revisão de código não avalia o conteúdo da gravação nem comprova o envio ao Blackboard. O [guia de entrega](docs/ENTREGA.md) e o [roteiro](docs/ROTEIRO_VIDEO.md) reúnem os requisitos acadêmicos.

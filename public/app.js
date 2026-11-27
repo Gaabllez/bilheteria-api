@@ -3,11 +3,13 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const money = (value) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
-const round = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
+// Mantém o mesmo arredondamento centesimal usado pela API.
+const round = (value) => Math.round((value + Number.EPSILON * Math.max(1, Math.abs(value))) * 100) / 100;
 const state = { events: [], filter: "todos", search: "", lastResponse: null, processing: false, loading: false, connected: false, uncertain: false };
 const confirmedSeats = new Map();
 const uncertainSeats = new Map();
 const REQUEST_TIMEOUT_MS = 10000;
+const IMAGE_FALLBACK = "/images/artists/catalog-placeholder.svg";
 const searchText = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
 let catalog = new Map();
 let catalogLoaded = false;
@@ -21,6 +23,17 @@ function isHttpsUrl(value) {
   try {
     const url = new URL(value);
     return url.protocol === "https:" && !url.username && !url.password;
+  } catch { return false; }
+}
+
+function isCatalogImage(value) {
+  if (typeof value !== "string") return false;
+  if (/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(value)) return true;
+  if (!/^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/[^?#]+(?:\?width=\d{1,4})?$/.test(value)) return false;
+  try {
+    const url = new URL(value);
+    const prefix = "/wiki/Special:FilePath/";
+    return url.pathname.startsWith(prefix) && url.pathname.length > prefix.length;
   } catch { return false; }
 }
 
@@ -38,7 +51,7 @@ async function loadCatalog() {
         !["artist", "tour", "genre", "year", "description", "imageAlt", "status"].every((field) => hasText(item[field])) ||
         !["pop", "rnb", "rock", "latino", "theatre"].includes(item.category) ||
         !["artist", "theatre"].includes(item.type) ||
-        !(/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(item.image) || /^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/[^?#]+(?:\?width=\d{1,4})?$/.test(item.image)) ||
+        !isCatalogImage(item.image) ||
         !isHttpsUrl(item.officialUrl) || !isHttpsUrl(item.sourceUrl) ||
         typeof item.reservable !== "boolean" || !Number.isFinite(item.price) || item.price <= 0 || !Number.isSafeInteger(item.capacity) || item.capacity < 1 ||
         !/^#[a-f0-9]{6}$/i.test(item.accent) || !["contain", "cover"].includes(item.dialogImageFit) || !positions || positions.some((position) => position > 100) ||
@@ -47,7 +60,7 @@ async function loadCatalog() {
     }
     entries.set(item.id, item);
   }
-  if ([...entries.values()].filter((item) => item.reservable).length !== entries.size || !entries.get(1)?.reservable) {
+  if ([...entries.values()].filter((item) => item.reservable).length !== entries.size || ![1, 2, 3].every((id) => entries.get(id)?.reservable)) {
     throw new Error("Todos os eventos do catálogo precisam estar disponíveis para simulação.");
   }
   // Só guarda metadados validados. O botão Atualizar tenta de novo após uma falha.
@@ -207,14 +220,31 @@ function calculateSummary() {
   checkout.append(mark, details);
 }
 
+function setEventImage(image, data, { decorative = false, fit = "cover" } = {}) {
+  // O modal reutiliza o mesmo <img>: substituir onerror evita acumular handlers
+  // antigos. O fallback não tenta carregar a si próprio novamente se falhar.
+  image.onerror = () => {
+    image.onerror = null;
+    image.dataset.fallback = "true";
+    image.alt = decorative ? "" : "Imagem indisponível para " + data.artist + ".";
+    image.style.objectFit = "contain";
+    image.style.objectPosition = "50% 50%";
+    image.src = IMAGE_FALLBACK;
+  };
+  image.dataset.fallback = "false";
+  image.alt = decorative ? "" : data.imageAlt;
+  image.style.objectFit = fit;
+  image.style.objectPosition = data.objectPosition;
+  image.src = data.image;
+}
+
 function renderSelectedEvent() {
   const event = selectedEvent();
   const target = $("#selected-event");
   target.replaceChildren();
   if (event) {
     const image = node("img", "selected-event-cover");
-    image.src = meta(event).image;
-    image.alt = "";
+    setEventImage(image, meta(event), { decorative: true });
     const detail = node("div");
     detail.append(node("strong", "", event.nome), node("span", "", money(event.preco) + " • " + event.disponivel + " de " + event.capacidade + " lugares no simulador"));
     target.append(image, detail);
@@ -318,11 +348,7 @@ function showEventDetails(id) {
   $("#event-dialog-editorial").hidden = true;
   $("#event-dialog-price").textContent = event ? money(round(event.preco / 2)) : "";
   const photo = $("#event-dialog-image");
-  photo.src = data.image;
-  photo.addEventListener("error", () => { photo.src = "/images/artists/catalog-placeholder.svg"; }, { once: true });
-  photo.alt = data.imageAlt;
-  photo.style.objectPosition = data.objectPosition;
-  photo.style.objectFit = data.dialogImageFit;
+  setEventImage(photo, data, { fit: data.dialogImageFit });
   const officialLink = $("#event-official-link");
   officialLink.href = data.officialUrl;
   officialLink.target = "_blank";
@@ -351,9 +377,7 @@ function createEventCard(event) {
   card.style.setProperty("--event-accent", data.accent);
   const cover = node("div", "event-cover");
   const image = node("img", "event-img");
-  image.src = data.image;
-  image.addEventListener("error", () => { image.src = "/images/artists/catalog-placeholder.svg"; }, { once: true });
-  image.alt = data.imageAlt;
+  setEventImage(image, data);
   image.loading = "lazy";
   image.decoding = "async";
   image.width = data.credit.width || 800;
@@ -482,13 +506,22 @@ function validateTickets(event, tickets) {
     if (!Number.isInteger(ticket.poltrona) || ticket.poltrona < 1 || ticket.poltrona > event.capacidade) return issue("A poltrona deve estar entre 1 e " + event.capacidade + ".", $('[name="poltrona"]', rows[index]));
     if (seats.has(ticket.poltrona)) return issue("Há duas pessoas com a mesma poltrona. Escolha lugares diferentes.", $('[name="poltrona"]', rows[index]));
     if (confirmedSeats.get(event.id)?.has(ticket.poltrona)) return issue("A poltrona " + ticket.poltrona + " já foi confirmada nesta sessão. Escolha outro lugar.", $('[name="poltrona"]', rows[index]));
+    if (uncertainSeats.get(event.id)?.has(ticket.poltrona)) return issue("A poltrona " + ticket.poltrona + " faz parte de uma reserva com resultado desconhecido. Escolha outro lugar para evitar reenviar o mesmo pedido.", $('[name="poltrona"]', rows[index]));
     seats.add(ticket.poltrona);
   }
   return null;
 }
 
 function isReceipt(receipt, event, tickets) {
-  return receipt && Number.isInteger(receipt.reservaId) && receipt.reservaId > 0 && receipt.eventoId === event.id && Array.isArray(receipt.ingressos) && receipt.ingressos.length === tickets.length && Number.isFinite(receipt.total) && receipt.total > 0 && receipt.ingressos.every((ticket, index) => ticket && ticket.nome === tickets[index].nome && ticket.poltrona === tickets[index].poltrona && (ticket.tipo === "inteira" || ticket.tipo === "meia") && Number.isFinite(ticket.valor) && ticket.valor > 0);
+  if (!receipt || !Number.isSafeInteger(receipt.reservaId) || receipt.reservaId < 1 ||
+      receipt.eventoId !== event.id || !Array.isArray(receipt.ingressos) ||
+      receipt.ingressos.length !== tickets.length || tickets.length === 0) return false;
+  const expectedValues = tickets.map((ticket) => ticketPrice(event.preco, ticket));
+  if (!receipt.ingressos.every((ticket, index) => ticket &&
+      ticket.nome === tickets[index].nome && ticket.poltrona === tickets[index].poltrona &&
+      ticket.tipo === ticketType(tickets[index]) && ticket.valor === expectedValues[index])) return false;
+  const expectedTotal = round(expectedValues.reduce((sum, value) => sum + value, 0) * 1.1);
+  return Number.isFinite(receipt.total) && receipt.total === expectedTotal;
 }
 
 function showReceipt(receipt, event) {
@@ -545,7 +578,7 @@ async function submitReservation(event) {
     resetTickets(selected);
     formMessage("Reserva confirmada. O formulário está pronto para uma nova reserva.", "success");
   } catch (error) {
-    if (error.uncertain || (error.status && ![400, 404, 409, 502].includes(error.status))) {
+    if (error.uncertain || (error.status && ![400, 404, 409, 413, 415, 502].includes(error.status))) {
       state.uncertain = true;
       const attemptedSeats = uncertainSeats.get(selected.id) || new Set();
       tickets.forEach((ticket) => attemptedSeats.add(ticket.poltrona));

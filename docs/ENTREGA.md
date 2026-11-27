@@ -2,6 +2,8 @@
 
 Repositório do grupo: **https://github.com/Gaabllez/bilheteria-api**.
 
+Vídeo publicado: **[Assistir à apresentação](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz)**. O link já consta no início do README; este guia não confirma a reprodução, o acesso sem login ou o conteúdo da gravação.
+
 Este guia segue os requisitos do enunciado de **Bilheteria concorrente**, projeto final de Paradigmas de Linguagens de Programação. A correção considera o último commit do repositório até o prazo. A data exata deve ser consultada na atividade da turma no Blackboard; ela não foi informada no PDF.
 
 ## Valor do trabalho
@@ -19,9 +21,13 @@ Os **16 pontos dos testes equivalem a 2,5 pontos de código**, não aos 3,5 pont
 
 ## Situação do repositório
 
-O código mantém três eventos na API, com o evento 1 começando com 100 poltronas. O catálogo do site contém 12 artistas/turnês e dois espetáculos teatrais; somente três artistas são reserváveis, e os outros 11 registros são editoriais. As decisões solicitadas pelo README e a tabela de benchmark estão preenchidas. O [relatório de validação](../VALIDACAO.md) e o [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions) registram resultados por revisão; confira a execução do commit que será entregue.
+O código mantém três eventos, de IDs **1, 2 e 3**, na API original (`/eventos` e `/reservas`), com o evento 1 começando com 100 poltronas. O catálogo do site contém **14 eventos reserváveis em simulação**: 12 artistas/turnês e dois espetáculos teatrais. A interface usa `/catalogo/eventos` e `/catalogo/reservas`, com estoque independente do estoque da API original. Preços, reservas e pagamentos são demonstrativos, sem venda real de ingressos.
 
-O [roteiro do vídeo](ROTEIRO_VIDEO.md) está preparado com as oito partes obrigatórias e comandos de demonstração. Ele é material de preparação, não um vídeo já gravado.
+O arquivo [src/aplicacao.ts](../src/aplicacao.ts) compõe as duas APIs e os arquivos de `public/`, e é usado tanto pelo servidor principal quanto pelas verificações HTTP e de interface. Ele trata erros de transporte com **400** para JSON inválido ou corpo incompleto, **413** para JSON acima de 100 KB e **415** para codificação não suportada, preservando os arquivos originais do professor.
+
+As decisões solicitadas pelo README e a tabela de benchmark estão preenchidas. O [relatório de validação](../VALIDACAO.md) e o [GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions) registram resultados por revisão; confira a execução do commit que será entregue.
+
+O [roteiro do vídeo](ROTEIRO_VIDEO.md) reúne as oito partes obrigatórias e os comandos de demonstração para conferir a apresentação publicada e preparar eventuais atualizações.
 
 ## Itens que o grupo precisa concluir
 
@@ -44,18 +50,19 @@ git log --all --format="%h | %an | %s"
 
 O nome de autor do Git, isoladamente, não comprova a associação a uma conta. Abra os commits no GitHub e confira a conta vinculada. As contribuições que valerão para a entrega precisam estar na versão entregue até o prazo, não apenas numa branch que ficou sem integração.
 
-### Vídeo
+### Conferência do vídeo publicado
 
-- [ ] Escolher o integrante que apresentará; basta um falar pelo grupo.
-- [ ] Confirmar as contribuições antes de apresentá-las na abertura.
-- [ ] Gravar a versão do código que será entregue, começando com `git log -1` na tela.
-- [ ] Mostrar código legível enquanto explica; não substituir por slides ou leitura de um texto pronto.
-- [ ] Cobrir as oito partes do [roteiro](ROTEIRO_VIDEO.md), na ordem do professor.
-- [ ] Mostrar a alteração que causa o erro de concorrência, executar os testes, explicar a falha e desfazer a alteração.
-- [ ] Mostrar os testes corretos novamente e executar o benchmark com o servidor reiniciado.
-- [ ] Publicar no YouTube não listado ou no Drive com acesso para qualquer pessoa com o link.
-- [ ] Conferir que o vídeo abre sem login em uma janela anônima.
-- [ ] Substituir a indicação pendente no início do README pelo link verdadeiro e registrar a atualização no repositório.
+O [link publicado](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz) já está registrado. Os itens abaixo são critérios para o grupo conferir na gravação, sem presumir que estejam ausentes ou já verificados:
+
+- [ ] Confirmar que a abertura identifica os integrantes e suas contribuições reais; basta um integrante falar pelo grupo.
+- [ ] Conferir que o vídeo mostra a versão do código que será entregue e começa com `git log -1` na tela.
+- [ ] Conferir a legibilidade do código durante a explicação; slides ou leitura de um texto pronto não substituem a explicação do código.
+- [ ] Conferir as oito partes do [roteiro](ROTEIRO_VIDEO.md), na ordem do professor.
+- [ ] Conferir a alteração que causa o erro de concorrência, a execução dos testes, a explicação da falha e a reversão da alteração.
+- [ ] Conferir os testes corretos depois da reversão e o benchmark com o servidor reiniciado.
+- [ ] Conferir que a publicação atende ao acesso exigido: YouTube não listado ou Drive para qualquer pessoa com o link.
+- [ ] Abrir o link do vídeo sem login em uma janela anônima.
+- [ ] Se houver atualização da gravação, manter o mesmo link atualizado no README e no texto de envio abaixo.
 
 Um vídeo com link inacessível não atende à entrega. O enunciado informa que um link de vídeo que não abre vale zero nessa parte.
 
@@ -67,12 +74,12 @@ Um vídeo com link inacessível não atende à entrega. O enunciado informa que 
 - [ ] Confirmar que a alteração proposital do vídeo foi desfeita e não foi publicada.
 - [ ] Conferir testes e demais evidências da versão final, preservando os arquivos originais do professor.
 - [ ] Confirmar nome do grupo e data/horário do prazo na atividade da turma.
-- [ ] Preencher os dois campos pendentes no texto abaixo e enviar pelo Blackboard.
+- [ ] Preencher o nome do grupo no texto abaixo e enviar pelo Blackboard.
 - [ ] Conferir que a plataforma registrou o envio e guardar o comprovante exibido.
 
 ## Texto para o Blackboard
 
-Um integrante faz o envio pelo grupo. Copie o texto abaixo **depois de substituir os dois campos entre colchetes**. Não envie um campo pendente como se fosse informação concluída.
+Um integrante faz o envio pelo grupo. Copie o texto abaixo **depois de substituir o nome do grupo entre colchetes**. O link do vídeo já está preenchido; confira seu acesso antes de enviar.
 
 ```text
 Projeto final — Bilheteria concorrente
@@ -81,7 +88,7 @@ Disciplina: Paradigmas de Linguagens de Programação
 Nome do grupo: [PREENCHER COM O NOME CADASTRADO NA TURMA]
 
 Repositório: https://github.com/Gaabllez/bilheteria-api
-Vídeo: [PREENCHER COM O LINK PUBLICADO E TESTADO SEM LOGIN]
+Vídeo: https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz
 
 Integrantes:
 Gabriel Galvão Fredrich — RGM 33632308
@@ -92,4 +99,4 @@ Rafael Olívio Ribeiro Campos — RGM 34289461
 
 ## O que ainda não está comprovado
 
-Até a preparação deste material, não há link de vídeo publicado, nome cadastrado do grupo, prazo exato da turma ou comprovante de envio ao Blackboard disponíveis neste repositório. As contas e os commits de Inácio (`nettoinacio`) e Rafael (`rafaeloliviooo`) estão identificados no histórico; o grupo ainda deve confirmar que as descrições de contribuição refletem o trabalho efetivamente realizado. Não se deve considerar a entrega concluída sem o vídeo e o envio no Blackboard.
+O vídeo já tem link publicado e registrado no README. A revisão do código e deste guia não verificou a reprodução, o acesso sem login ou o cumprimento das oito partes na gravação. O nome cadastrado do grupo, o prazo exato da turma e o comprovante de envio ao Blackboard ainda precisam ser confirmados pelo grupo. As contas e os commits de Inácio (`nettoinacio`) e Rafael (`rafaeloliviooo`) estão identificados no histórico; o grupo deve confirmar que as descrições de contribuição refletem o trabalho efetivamente realizado. A entrega somente fica concluída após as conferências exigidas e o envio registrado no Blackboard.

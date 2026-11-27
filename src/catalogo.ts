@@ -19,6 +19,24 @@ function linkOficial(valor: unknown, campo: string): string {
   return link;
 }
 
+function opcao(valor: unknown, campo: string, opcoes: string[]): string {
+  const escolha = texto(valor, campo);
+  if (!opcoes.includes(escolha)) throw new Error(`Catálogo inválido: ${campo} contém uma opção não suportada.`);
+  return escolha;
+}
+
+function imagemCatalogo(valor: unknown): string {
+  const image = texto(valor, "image");
+  if (/^\/images\/artists\/[a-z0-9-]+\.(?:webp|svg)$/.test(image)) return image;
+  if (/^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/[^?#]+(?:\?width=\d{1,4})?$/.test(image)) {
+    const url = new URL(image);
+    const prefixo = "/wiki/Special:FilePath/";
+    // URL normaliza segmentos como %2e%2e; o destino também precisa ser uma imagem.
+    if (url.pathname.startsWith(prefixo) && url.pathname.length > prefixo.length) return image;
+  }
+  throw new Error("Catálogo inválido: use um arquivo local em /images/artists/ ou uma imagem HTTPS do Wikimedia Commons no formato suportado.");
+}
+
 // As informações editoriais e os valores fictícios têm uma fonte única.
 // Nenhum arquivo de tipos ou configuração fornecido pelo professor é alterado.
 export function validarCatalogo(valor: unknown) {
@@ -42,42 +60,61 @@ export function validarCatalogo(valor: unknown) {
         typeof item.capacity !== "number" || !Number.isSafeInteger(item.capacity) || item.capacity < 1) {
       throw new Error("Catálogo inválido: preço fictício e capacidade precisam ser positivos.");
     }
-    const image = texto(item.image, "image");
-    const imagemLocal = image.startsWith("/images/") && !image.includes("..") && !image.includes("\\");
-    const imagemCommons = (() => {
-      try {
-        const url = new URL(image);
-        return url.protocol === "https:" && url.hostname === "commons.wikimedia.org" &&
-          url.pathname.startsWith("/wiki/Special:FilePath/") && !url.username && !url.password;
-      } catch {
-        return false;
-      }
-    })();
-    if (!imagemLocal && !imagemCommons) {
-      throw new Error("Catálogo inválido: use um arquivo local em /images/ ou uma imagem HTTPS do Wikimedia Commons.");
+    const image = imagemCatalogo(item.image);
+    const objectPosition = texto(item.objectPosition, "objectPosition");
+    if (!/^\d{1,3}% \d{1,3}%$/.test(objectPosition) || objectPosition.match(/\d+/g)!.some((posicao) => Number(posicao) > 100)) {
+      throw new Error("Catálogo inválido: objectPosition precisa de duas porcentagens entre 0 e 100.");
     }
+    const accent = texto(item.accent, "accent");
+    if (!/^#[a-f0-9]{6}$/i.test(accent)) {
+      throw new Error("Catálogo inválido: accent precisa de uma cor hexadecimal com seis dígitos.");
+    }
+    if (!objeto(item.credit)) {
+      throw new Error("Catálogo inválido: credit precisa informar a atribuição da imagem.");
+    }
+    const credit = {
+      ...item.credit,
+      author: texto(item.credit.author, "credit.author"),
+      license: texto(item.credit.license, "credit.license"),
+      description: texto(item.credit.description, "credit.description"),
+      licenseUrl: linkOficial(item.credit.licenseUrl, "credit.licenseUrl"),
+      sourceUrl: linkOficial(item.credit.sourceUrl, "credit.sourceUrl"),
+    };
     return {
       ...item,
       id: item.id,
       reservable: item.reservable,
       artist: texto(item.artist, "artist"),
       tour: texto(item.tour, "tour"),
-      category: texto(item.category, "category"),
+      category: opcao(item.category, "category", ["pop", "rnb", "rock", "latino", "theatre"]),
+      type: opcao(item.type, "type", ["artist", "theatre"]),
+      genre: texto(item.genre, "genre"),
+      year: texto(item.year, "year"),
+      status: texto(item.status, "status"),
       description: texto(item.description, "description"),
       image,
       imageAlt: texto(item.imageAlt, "imageAlt"),
+      objectPosition,
+      accent,
+      dialogImageFit: opcao(item.dialogImageFit, "dialogImageFit", ["contain", "cover"]),
+      credit,
       officialUrl: linkOficial(item.officialUrl, "officialUrl"),
       sourceUrl: linkOficial(item.sourceUrl, "sourceUrl"),
       price: item.price,
       capacity: item.capacity,
     };
   });
-  if (events.filter((evento) => evento.reservable).length < 3) {
-    throw new Error("Catálogo inválido: informe ao menos três eventos disponíveis para simulação.");
-  }
   const primeiro = events.find((evento) => evento.id === 1);
   if (!primeiro || !primeiro.reservable || primeiro.capacity !== 100 || primeiro.price !== 100) {
     throw new Error("Catálogo inválido: mantenha o evento 1 disponível para reserva, com 100 poltronas e preço fictício de R$ 100 para os testes do projeto.");
+  }
+  for (const id of [2, 3]) {
+    if (!events.some((evento) => evento.id === id && evento.reservable)) {
+      throw new Error(`Catálogo inválido: mantenha o evento ${id} disponível para reserva na API original.`);
+    }
+  }
+  if (events.some((evento) => !evento.reservable)) {
+    throw new Error("Catálogo inválido: todos os eventos precisam estar disponíveis para simulação.");
   }
   return { ...valor, verifiedAt, events };
 }

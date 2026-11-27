@@ -2,6 +2,8 @@
 
 Este guia organiza as **oito partes obrigatórias, na ordem do enunciado**. Use os tópicos para estudar e explicar com suas próprias palavras: o professor exige dizer o que o código faz e por quê; a leitura de um texto pronto não substitui a explicação.
 
+O vídeo já está publicado e registrado no README: **[assistir à apresentação](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz)**. Este roteiro serve para conferir a gravação e preparar eventuais atualizações; ele não afirma que o acesso ou o conteúdo do vídeo tenham sido verificados nesta revisão.
+
 O grupo entrega um vídeo só e pode escolher apenas um integrante para falar. Mantenha o código visível enquanto o explica, com fonte legível. Slides não substituem a demonstração do código. O enunciado não fixa duração; cubra os itens sem alongar a apresentação com telas sem relação com eles.
 
 ## Preparação antes de começar a gravação
@@ -10,7 +12,7 @@ O grupo entrega um vídeo só e pode escolher apenas um integrante para falar. M
 2. Atualize a cópia local para a versão que será entregue. Se ela estiver sem alterações locais e a entrega estiver em `main`, use `git switch main` e `git pull --ff-only`.
 3. Execute `npm ci`, abra o editor na pasta do projeto e prepare dois terminais nessa pasta.
 4. Confirme que `git status --short` não mostra alterações. Isso é necessário para poder desfazer com segurança a modificação proposital da parte 6.
-5. Aumente a fonte do editor e do terminal e organize as abas `src/dominio.ts`, `src/preco.ts`, `src/regras.ts`, `src/bilheteria.ts`, `src/servidor.ts` e `src/main.ts`.
+5. Aumente a fonte do editor e do terminal e organize as abas `src/dominio.ts`, `src/preco.ts`, `src/regras.ts`, `src/bilheteria.ts`, `src/servidor.ts`, `src/aplicacao.ts` e `src/main.ts`.
 6. Deixe as notificações pessoais fechadas e ensaie as explicações. O vídeo deve mostrar a versão da entrega; refaça os trechos relevantes se o código mudar depois.
 
 Os comandos `git`, `npm` e os exemplos de `node -e` abaixo podem ser usados em Bash ou PowerShell. Para as requisições HTTP há opções específicas para cada terminal.
@@ -84,12 +86,12 @@ $resposta.Content
 
 Explique o que apareceu:
 
-- `GET /eventos` retorna os **três eventos reserváveis**, cada um com `id`, `nome`, `preco`, `capacidade` e `disponivel`.
+- `GET /eventos` retorna os **três eventos da API original, de IDs 1, 2 e 3**, cada um com `id`, `nome`, `preco`, `capacidade` e `disponivel`.
 - O evento 1 começa com 100 poltronas. Ana é estudante: seu ingresso custa R$ 50; a taxa de 10% resulta em R$ 55.
 - Quando o pagamento aprova, `POST /reservas` retorna HTTP **201** e o comprovante com identificação da reserva, evento, ingressos e total.
 - A operadora foi configurada para falhar aleatoriamente em 10% das chamadas. Um **502** nessa demonstração é uma recusa simulada prevista: mostre a disponibilidade, explique a devolução da poltrona e repita o pedido para conseguir apresentar também um comprovante aprovado. Depois de um **201**, repetir a mesma poltrona resulta em **409**; não confunda isso com uma falha de pagamento.
 
-Pode mostrar brevemente a interface, mas mantenha visíveis também os comandos e respostas solicitados. Os outros três artistas do site são conteúdo editorial e não aumentam a quantidade de eventos da API.
+Pode mostrar brevemente a interface, mantendo visíveis também os comandos e respostas solicitados. O site permite simular reservas em **14 eventos**, sendo 12 artistas/turnês e dois espetáculos teatrais, pelas rotas `/catalogo/eventos` e `/catalogo/reservas`. O estoque desse catálogo é independente dos três eventos das rotas originais. Todas as reservas e cobranças são simuladas.
 
 ## 3. Orientação a objetos — `dominio.ts`
 
@@ -131,7 +133,7 @@ Mostre a função e explique seu resultado antes de passar à próxima:
 |---|---|
 | `valorDoIngresso(precoBase)` | É uma fábrica: recebe o preço e devolve uma função que recebe o tipo. `valorDoIngresso(80)('meia')` resulta em 40. |
 | `aplicarTaxa(percentual)` | Devolve uma função que aplica uma taxa já definida. `aplicarTaxa(0.1)(100)` resulta em 110. |
-| Arredondamento | Os resultados são números, arredondados em duas casas. Isso evita apresentar imprecisões como `110.00000000000001`. |
+| Arredondamento | Os resultados são números, arredondados em duas casas com `Math.round`. A tolerância proporcional de ponto flutuante evita perder um centavo em empates como a meia de R$ 2,01, que deve ser R$ 1,01, e também evita resultados como `110.00000000000001`. |
 | `montarIngressos()` | `map` transforma cada pessoa em um ingresso, preservando a ordem e a poltrona, sem alterar o objeto original. A regra de meia é uma função recebida como argumento. |
 | `direitoAMeia()` | Estudante, PcD ou idade de pelo menos 60 anos dá direito à meia. Basta uma das condições. |
 | `calcularTotal()` | `reduce` soma os valores e a função produzida por `aplicarTaxa(0.1)` acrescenta a taxa. |
@@ -243,7 +245,7 @@ Ele serve para estudar e verificar a demonstração. **Não substitui a parte 6 
 
 ## 7. Servidor — `servidor.ts`
 
-**Na tela:** [src/servidor.ts](../src/servidor.ts) e [src/main.ts](../src/main.ts).
+**Na tela:** [src/servidor.ts](../src/servidor.ts), [src/aplicacao.ts](../src/aplicacao.ts) e [src/main.ts](../src/main.ts).
 
 Explique o caminho do pedido:
 
@@ -253,7 +255,9 @@ Explique o caminho do pedido:
 - No tratador de erros com quatro parâmetros, `erro instanceof ErroDeNegocio` permite usar `erro.status` e `erro.message`. Assim, por exemplo, `PoltronaOcupadaErro` vira **409**.
 - O servidor original trata JSON inválido como **400** e um erro inesperado como **500**. O Express 5 encaminha ao tratador também os erros das rotas assíncronas.
 
-Em `main.ts`, mostre a criação de três eventos, a operadora de **80 ms** e **10% de falha**, o limite de **500 ms** e a porta padrão **3000**. `criarEventosDemo()` usa os três itens reserváveis do catálogo. A publicação dos arquivos de `public/` foi acrescentada na composição do aplicativo, preservando `src/servidor.ts` original.
+Em `main.ts`, mostre a operadora de **80 ms** e **10% de falha**, o limite de **500 ms** e a porta padrão **3000**. Explique as duas instâncias de bilheteria: `criarEventosDemo()` seleciona os IDs **1, 2 e 3** para a API original; `criarEventosCatalogo()` cria os **14 eventos reserváveis** da interface. As instâncias possuem estoques independentes.
+
+Mostre `criarAplicacao()` em `src/aplicacao.ts`: ela reúne o servidor original, as rotas adicionais de `src/servidor-catalogo.ts` e os arquivos estáticos de `public/`. Essa mesma composição é usada pelo programa principal e pelas verificações HTTP e de interface. Seu parser externo devolve **400** para JSON inválido ou corpo incompleto, **413** para JSON acima de 100 KB e **415** para codificação não suportada. Esses complementos preservam `src/servidor.ts` e os demais arquivos originais do professor.
 
 ## 8. Benchmark e interpretação
 
@@ -283,8 +287,8 @@ Explique os números da execução exibida:
 
 Mostre a [tabela real de benchmark no README](../README.md#resultados-do-bench) e explique que ela registra uma execução identificada. Não copie números esperados sobre números efetivamente medidos. Se quiser registrar a nova execução, anote o ambiente e os valores reais.
 
-## Depois da gravação
+## Conferência da gravação publicada e atualizações
 
-Confira o áudio, a legibilidade do código, as oito partes na ordem e a restauração do erro. Publique no YouTube como **não listado** ou no Google Drive com acesso para **qualquer pessoa com o link**. Teste o link numa janela anônima, coloque-o no início do README e siga o [guia de entrega](ENTREGA.md).
+Confira no [vídeo publicado](https://youtu.be/PAbFfoOZ0Is?is=VjZeK27Q1f91e-Pz) o áudio, a legibilidade do código, as oito partes na ordem e a restauração do erro. O enunciado pede publicação no YouTube como **não listado** ou no Google Drive com acesso para **qualquer pessoa com o link**. Teste o acesso numa janela anônima e siga o [guia de entrega](ENTREGA.md). Se publicar uma nova gravação, atualize o link no início do README e no texto de envio ao Blackboard.
 
 Se apenas a documentação mudar para acrescentar o link do próprio vídeo, mantenha claro qual commit de código foi mostrado. Se a implementação mudar, atualize a gravação para corresponder ao código entregue.

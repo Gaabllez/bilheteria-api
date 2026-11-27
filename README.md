@@ -73,44 +73,46 @@ Neste processo Node, o JavaScript executa um trecho síncrono por vez, e os pedi
 
 ## Resultados do bench
 
-Medição real de **26/11/2026**, no GitHub Actions, com **Ubuntu e Node.js 22.23.5**, registrada na [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771), referente ao commit [153b8d7cfbfcd6e0621dad1e65110069e39f84df](https://github.com/Gaabllez/bilheteria-api/commit/153b8d7cfbfcd6e0621dad1e65110069e39f84df).
+Medição real de **26/11/2026**, no GitHub Actions, com **Ubuntu e Node.js 22.23.5**, registrada na [execução 45922063858](https://github.com/Gaabllez/bilheteria-api/actions/runs/45922063858), referente ao commit [f23a223](https://github.com/Gaabllez/bilheteria-api/commit/f23a223bb93ecd8c67f28db0b6188f828ae5aab2).
 
 | Cenário | Pedidos | Tempo (ms) | Pedidos/s reportados | Vendidos — 201 | Poltrona ocupada — 409 | Falha de pagamento — 502 |
 |---|---:|---:|---:|---:|---:|---:|
-| Padrão (`main.ts`) | 200 | 168 | 1191 | 93 | 100 | 7 |
+| Padrão (`main.ts`) | 200 | 167 | 1194 | 88 | 100 | 12 |
 
-Ao final, o evento 1 tinha **7 poltronas disponíveis**, compatíveis com as 93 reservas confirmadas, e os outros dois eventos estavam intactos. A quantidade de falhas é aleatória porque a operadora foi configurada com taxa de 10%; o tempo e a distribuição de respostas podem variar entre execuções. A tabela registra a medição acima, não um resultado fixo esperado.
+Ao final, o evento 1 tinha **12 poltronas disponíveis**, compatíveis com as 88 reservas confirmadas, e os outros dois eventos estavam intactos. As falhas de pagamento são simuladas e aleatórias; o tempo e a distribuição de respostas podem variar entre execuções. A tabela registra a medição identificada acima.
 
 ## Validação
 
-A execução de validação do commit de correção [11552f3](https://github.com/Gaabllez/bilheteria-api/commit/11552f3aacf3075b24e1b7536c55bd51265d25ef) concluiu com **success** nos dois checks (`validar` e `interface`): [ver GitHub Actions](https://github.com/Gaabllez/bilheteria-api/actions/runs/45866704404). A mesma [execução 45755830771](https://github.com/Gaabllez/bilheteria-api/actions/runs/45755830771) aprovou os jobs de backend e interface para o commit identificado acima:
+A revisão do [PR #5](https://github.com/Gaabllez/bilheteria-api/pull/5), commit [f23a223](https://github.com/Gaabllez/bilheteria-api/commit/f23a223bb93ecd8c67f28db0b6188f828ae5aab2), passou nos jobs **`validar` e `interface`** da [execução 45922063858](https://github.com/Gaabllez/bilheteria-api/actions/runs/45922063858):
 
 | Verificação | Resultado |
 |---|---|
 | TypeScript e sintaxe JavaScript | Aprovados |
 | Testes originais do professor | **14 cenários, 16/16 pontos** |
-| Regressões adicionais de backend, catálogo e validação | **38 testes/subtestes aprovados**, zero falhas |
-| Interface no Chromium | **17 cenários aprovados**, zero falhas |
+| Regressões adicionais de backend, catálogo, HTTP e gate | **49 testes/subtestes aprovados**, zero falhas |
+| Interface no Chromium | **38 cenários aprovados**, zero falhas |
 | Arquivos originais do professor | **10 preservados**, verificados por hash |
 | Benchmark | 200 pedidos, estoque consistente nos três eventos |
 
-O ensaio da demonstração de concorrência também foi executado em uma cópia isolada: **16/16 com o código correto → 11/16 com a reserva após o pagamento → 16/16 depois da restauração**. A versão incorreta produziu a falha “cobrou 200 pessoas por 50 poltronas”.
+A revisão corrigiu a aceitação de comprovantes divergentes, diferenças de centavos, reenvio manual de poltronas com resultado incerto, fallback de imagens, validação do catálogo e erros HTTP de entrada. A suíte compra pela interface em **cada um dos 14 eventos** e verifica que o estoque da API original permanece independente. Também cobre celular, filtros, falhas, recibos e impressão.
+
+O ensaio da demonstração de concorrência confirmou **16/16 com o código correto → 11/16 com a reserva após o pagamento → 16/16 depois da restauração**, em uma cópia isolada. A versão incorreta produziu a falha “cobrou 200 pessoas por 50 poltronas”.
 
 Para repetir as verificações adicionais:
 
 ```bash
 node validacao/conferir-originais.mjs
 node validacao/conferir-testes.mjs
-node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts
+node --import tsx --test validacao/backend.test.ts validacao/infra.test.mjs validacao/catalogo.test.ts validacao/http.test.ts
 node --check public/app.js
 node validacao/demonstrar-concorrencia.mjs
 ```
 
-O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, pois o executor original pode terminar com código de saída zero mesmo exibindo falhas. Os testes originais foram preservados; as verificações adicionais ficam em `validacao/`. Consulte [VALIDACAO.md](VALIDACAO.md) para comandos de navegador, evidências, histórico e limites dos testes.
+O gate `conferir-testes.mjs` exige os 16 pontos e todos os cenários aprovados, pois o executor original pode terminar com código de saída zero mesmo exibindo falhas. Os testes originais foram preservados; as verificações adicionais ficam em `validacao/`. Consulte [VALIDACAO.md](VALIDACAO.md) para reproduções, comandos de navegador, evidências, histórico e limites dos testes.
 
 ## Catálogo e interface
 
-O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As novas entradas editoriais usam arte abstrata original quando não há fotografia específica licenciada. Todos os 14 itens com `reservable: true` no [catálogo](public/catalogo.json) aparecem na interface e permitem simular uma reserva. O estoque da interface é independente do estoque da API original de três eventos.
+O site mantém 14 registros editoriais: 12 artistas/turnês e dois espetáculos teatrais, com busca, filtros por estilo e categoria, detalhes e links oficiais. As fotografias possuem créditos e usam arquivos locais ou URLs do Wikimedia Commons; quando uma imagem não carrega, card, detalhes e seleção exibem uma arte alternativa. Todos os 14 itens com `reservable: true` no [catálogo](public/catalogo.json) aparecem na interface e permitem simular uma reserva. O estoque da interface é independente do estoque da API original de três eventos.
 
 | Artista | Turnê | Uso no projeto |
 |---|---|---|
